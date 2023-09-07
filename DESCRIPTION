@@ -1,11 +1,35 @@
 Package: songClip
-Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Modify songs
+Version: 0.0.0.9000
+Authors@R: 
+    c(
+    person(given = "Krzysztof", family = "Mazur", email = "", role = c("aut", "cre")),
+    person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", role = c("aut"))
+    )
+Description: Modify songs
+License: GPL (>= 3)
 Encoding: UTF-8
-LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    audio,
+    av,
+    cli (>= 3.3.0),
+    checkmate,
+    dplyr,
+    glue (>= 1.6.2),
+    htmltools,
+    magrittr (>= 2.0.3),
+    markdown,
+    purrr,
+    rmarkdown,
+    shiny (>= 1.6.0),
+    shinydashboard,
+    shinydashboardPlus (>= 2.0.0),
+    shinyWidgets,
+    tuneR
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: 
+    knitr
