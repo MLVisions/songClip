@@ -76,18 +76,14 @@ adjust_audio_speed <- function(audio_obj, speed_factor = 2){
   # Multiply sampling rate by speed
   new_sample_rate <- audio_obj@samp.rate * speed_factor
 
-  # Calculate the number of samples in the adjusted audio
-  num_samples <- length(audio_data)
-
-  # Create a time vector for the adjusted audio
-  adjusted_time <- seq(0, (num_samples - 1) / new_sample_rate, 1 / new_sample_rate)
-
-  # Interpolate the audio data to adjust speed
-  adjusted_audio_data <- approx(x = adjusted_time, y = audio_data, xout = seq(0, max(adjusted_time), 1 / audio_obj@samp.rate))$y
+  # Resample the audio data to adjust speed and pitch
+  adjusted_audio_data <- signal::resample(audio_data, p = speed_factor)
 
   # Create a new Wave object with adjusted audio data and sampling rate
-  adjusted_audio_obj <- tuneR::Wave(adjusted_audio_data, samp.rate = new_sample_rate)
+  adjusted_audio_obj <- tuneR::Wave(adjusted_audio_data, samp.rate = new_sample_rate, bit = audio_obj@bit)
 
+  # Normalize the adjusted audio
+  adjusted_audio_obj_norm <- tuneR::normalize(adjusted_audio_obj, unit = as.character(audio_obj@bit))
 
-  return(adjusted_audio_obj)
+  return(adjusted_audio_obj_norm)
 }
