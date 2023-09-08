@@ -24,19 +24,28 @@ plot_mp3 <- function(mp3_file){
 }
 
 
-spec_mp3 <- function(mp3_file){
-  media_info <- av::av_media_info(mp3_file)
-  crop_limits <- c(0, media_info$duration)
+#' Get duration of audio file
+#'
+#' @param audio_obj a `tuneR` audio object
+#'
+#' @returns a vector of `c(0, duration)`
+#'
+#' @keywords internal
+get_audio_dur <- function(audio_obj){
+  # Calculate duration
+  duration <- length(audio_obj@left) / audio_obj@samp.rate
 
-  audio_info <- c(media_info, crop_limits = list(crop_limits))
-  return(audio_info)
+  # Round -down- to two decimal places
+  duration <- floor(duration * 100) / 100
+
+  return(c(0, duration))
 }
 
 
 
 #' Crop mp3 file to specified limits
 #'
-#' @param audio_obj a `tuneR` audio object
+#' @inheritParams get_audio_dur
 #' @param limits vector specifying the start and end time
 #'
 #' @keywords internal
@@ -55,13 +64,30 @@ crop_mp3 <- function(audio_obj, limits = c(0, 10)){
 
 #' Speed up or slow down mp3 file
 #'
-#' @param audio_obj a `tuneR` audio object
-#' @param speed multiplier of song frequency
+#' @inheritParams get_audio_dur
+#' @param speed_factor multiplier of song frequency
 #'
 #' @keywords internal
-mp3_speed <- function(audio_obj, speed = 2){
-  # Multiply sampling rate by speed
-  audio@samp.rate <- audio@samp.rate * speed
+adjust_audio_speed <- function(audio_obj, speed_factor = 2){
 
-  return(audio)
+  # Extract the audio data
+  audio_data <- audio_obj@left
+
+  # Multiply sampling rate by speed
+  new_sample_rate <- audio_obj@samp.rate * speed_factor
+
+  # Calculate the number of samples in the adjusted audio
+  num_samples <- length(audio_data)
+
+  # Create a time vector for the adjusted audio
+  adjusted_time <- seq(0, (num_samples - 1) / new_sample_rate, 1 / new_sample_rate)
+
+  # Interpolate the audio data to adjust speed
+  adjusted_audio_data <- approx(x = adjusted_time, y = audio_data, xout = seq(0, max(adjusted_time), 1 / audio_obj@samp.rate))$y
+
+  # Create a new Wave object with adjusted audio data and sampling rate
+  adjusted_audio_obj <- tuneR::Wave(adjusted_audio_data, samp.rate = new_sample_rate)
+
+
+  return(adjusted_audio_obj)
 }
