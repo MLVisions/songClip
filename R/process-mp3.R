@@ -36,18 +36,18 @@ spec_mp3 <- function(mp3_file){
 
 #' Crop mp3 file to specified limits
 #'
-#' @param audio a `tuneR` audio object
+#' @param audio_obj a `tuneR` audio object
 #' @param limits vector specifying the start and end time
 #'
 #' @keywords internal
-crop_mp3 <- function(audio, limits = c(0, 10)){
+crop_mp3 <- function(audio_obj, limits = c(0, 10)){
 
   # Convert time limits to sample indices
-  start_sample <- round(limits[1] * audio@samp.rate)
-  end_sample <- round(limits[2] * audio@samp.rate)
+  start_sample <- round(limits[1] * audio_obj@samp.rate)
+  end_sample <- round(limits[2] * audio_obj@samp.rate)
 
   # Crop audio by sample indices
-  cropped_audio <- audio[start_sample:end_sample]
+  cropped_audio <- audio_obj[start_sample:end_sample]
 
   return(cropped_audio)
 }
@@ -55,11 +55,11 @@ crop_mp3 <- function(audio, limits = c(0, 10)){
 
 #' Speed up or slow down mp3 file
 #'
-#' @param audio a `tuneR` audio object
+#' @param audio_obj a `tuneR` audio object
 #' @param speed multiplier of song frequency
 #'
 #' @keywords internal
-mp3_speed <- function(audio, speed = 2){
+mp3_speed <- function(audio_obj, speed = 2){
   # Multiply sampling rate by speed
   audio@samp.rate <- audio@samp.rate * speed
 
