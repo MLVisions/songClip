@@ -4,7 +4,15 @@
 \alias{clip_song}
 \title{songClip shiny app}
 \usage{
-clip_song()
+clip_song(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR)
+}
+\arguments{
+\item{browser}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, launch the app in a browser.}
+
+\item{audio_dir}{a directory containing audio files.}
+}
+\value{
+a shiny instance
 }
 \description{
 songClip shiny app

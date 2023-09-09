@@ -1,4 +1,4 @@
-EXAMPLE_MP3 <- system.file(file.path("examples", "flowers.mp3"), package = "songClip", mustWork = TRUE)
+
 
 
 download_youtube <- function(url = "https://youtu.be/F8Zt3mYlOqU", filename = "temp.mp4"){

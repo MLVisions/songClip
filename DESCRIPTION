@@ -14,10 +14,12 @@ RoxygenNote: 7.2.3
 Imports: 
     audio,
     av,
+    bslib,
     cli (>= 3.3.0),
     checkmate,
     dplyr,
     glue (>= 1.6.2),
+    here,
     htmltools,
     magrittr (>= 2.0.3),
     markdown,
@@ -26,6 +28,7 @@ Imports:
     shiny (>= 1.6.0),
     shinydashboard,
     shinydashboardPlus (>= 2.0.0),
+    shinyFiles,
     shinyWidgets,
     tuneR
 Suggests: 
