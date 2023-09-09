@@ -37,7 +37,12 @@ import_audio_ui <- function(id,
       br(),
       h5("Audio library currently set to:"),
       verbatimTextOutput(ns("dir_selected"), placeholder = TRUE),
-      uiOutput(ns("audio_import_ui"))
+      fluidRow(
+        column(
+          width = 4,
+          uiOutput(ns("audio_import_ui"))
+        )
+      )
     )
   )
 }
@@ -68,7 +73,7 @@ import_audio_server <- function(id,
       filetypes = c('', 'mp4','mp3', 'wav')
     )
 
-    global <- reactiveValues(audio_dir = audio_dir)
+    global <- reactiveValues(audio_dir = audio_dir, audio_choices = NULL)
 
     output$dir_selected <- renderText({
       global$audio_dir
@@ -106,6 +111,13 @@ import_audio_server <- function(id,
         paste("~", duration)
       })
 
+      global$audio_choices <- tibble::tibble(
+        choice_name = choice_names,
+        choice = choices,
+        icon = icons,
+        subtext = subtext
+      )
+
       # Update Choices
       shinyWidgets::updatePickerInput(
         session = session, "audio_imports", choices = choice_names,
@@ -136,7 +148,7 @@ import_audio_server <- function(id,
 
     return(
       list(
-        audio_files = reactive({file.path(global$audio_dir, input$audio_imports)}),
+        audio_choices = reactive({global$audio_choices}),
         audio_dir = reactive({global$audio_dir})
       )
     )

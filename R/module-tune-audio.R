@@ -22,10 +22,14 @@ tune_audio_ui <- function(id){
       fluidRow(
         column(
           width = 12,
+          shinyWidgets::pickerInput(ns("audio_select"), "Select an audio file", choices = c()),
           bslib::navset_card_pill(
             placement = "above",
-            bslib::nav_panel(title = "One", p("First tab content.")),
-            bslib::nav_panel(title = "Two", p("Second tab content.")),
+            bslib::nav_panel(
+              title = "Cropping, Looping, & Speed",
+              plotOutput(ns("audio_plot"))
+            ),
+            bslib::nav_panel(title = "Tuning", p("Adjust Trebble, Bass, etc.")),
             bslib::nav_spacer(),
             bslib::nav_item(link_youtube),
             bslib::nav_menu(
@@ -46,20 +50,41 @@ tune_audio_ui <- function(id){
 
 #' @describeIn tune_audio_ui Create module server for tuning an audio file
 #'
-#' @param audio_files reactive vector of audio files
+#' @param audio_choices reactive list of audio files and their parameters
+#' @param audio_dir reactive audio directory (selected)
 #'
 #' @keywords internal
-tune_audio_server <- function(id, audio_files) {
+tune_audio_server <- function(id, audio_choices, audio_dir) {
   moduleServer(id, function(input, output, session) {
 
     ns <- session$ns
     .rv <- reactiveValues()
 
+    observeEvent(audio_choices(), {
+      audio_choices <- shiny::req(audio_choices())
+      # Update Choices
+      shinyWidgets::updatePickerInput(
+        session = session, "audio_select", choices = audio_choices$choice_name,
+        selected = audio_choices$choice_name[1],
+        choicesOpt = list(icon = audio_choices$icon, subtext = audio_choices$subtext),
+        options = shinyWidgets::pickerOptions(container = "body",iconBase = "fas"),
+      )
+    })
+
 
     audio_obj <- reactive({
-      shiny::req(audio_files())
-      audio_path <- audio_files()[1]
+      audio_select <- shiny::req(input$audio_select, audio_dir())
+      audio_path <- file.path(audio_dir(), audio_select)
       tuneR::readMP3(here::here(audio_path))
+    })
+
+    audio_plot <- reactive({
+      audio_obj <- shiny::req(audio_obj())
+      tuneR::plot(audio_obj)
+    })
+
+    output$audio_plot <- renderPlot({
+      audio_plot()
     })
 
     return(

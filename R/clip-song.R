@@ -25,8 +25,8 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
       sidebar = shinydashboardPlus::dashboardSidebar(
         collapsed = TRUE,
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Download Songs", tabName = "tab_download", icon = icon("download")),
-          shinydashboard::menuItem("Song Clip", tabName = "tab_clipsong", icon = icon("scissors"))
+          shinydashboard::menuItem("Import Audio", tabName = "tab_download", icon = icon("download")),
+          shinydashboard::menuItem("Cropping & Tuning", tabName = "tab_clipsong", icon = icon("scissors"))
         )
       ),
       body = shinydashboard::dashboardBody(
@@ -59,7 +59,10 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
     imported_audio <- import_audio_server("import_audio", audio_dir = getOption("songClip.audio_dir"))
 
-    tune_audio_server("tune_audio", audio_files = imported_audio$audio_files)
+    tune_audio_server("tune_audio",
+                      audio_choices = imported_audio$audio_choices,
+                      audio_dir = imported_audio$audio_dir
+                      )
   }
 
   app <- shiny::shinyApp(ui, server)
