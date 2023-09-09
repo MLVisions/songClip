@@ -83,10 +83,40 @@ import_audio_server <- function(id,
     # Find audio files
     observeEvent(global$audio_dir,{
       shiny::req(global$audio_dir)
+
       # filter to relevant files only
-      files <- list.files(global$audio_dir, full.names = FALSE)
-      choices <- files[grep("mp4|mp3|wav", files)]
-      updateSelectInput(session = session, "audio_imports", choices = choices, selected = choices[1])
+      files <- list.files(global$audio_dir, full.names = TRUE)
+      choices <- files[grep("mp3|wav|mp4", fs::path_ext(files))]
+      choice_names <- basename(choices)
+
+      # Set Icons
+      icons <- gsub(".*mp4.*", "fa-video", choice_names) %>%
+        gsub(".*mp3|wav.*", "fa-music", .)
+
+      # Set subtext
+      subtext = paste("mpg", mtcars$mpg, sep = ": ")
+      subtext <- purrr::map_chr(choices, function(choice_path){
+        info <- av::av_media_info(choice_path)
+        duration <- floor(info$duration)
+        duration <- strftime(as.POSIXct("00:00:00", format="%H:%M:%S") +
+                               duration, format="%H:%M:%S")
+        if(grepl("^00:", duration)){
+          duration <- gsub("^00\\:", "", duration)
+        }
+        paste("~", duration)
+      })
+
+      # Update Choices
+      shinyWidgets::updatePickerInput(
+        session = session, "audio_imports", choices = choice_names,
+        selected = choice_names,
+        choicesOpt = list(icon = icons, subtext = subtext),
+        options = shinyWidgets::pickerOptions(
+          container = "body",
+          actionsBox = TRUE,
+          iconBase = "fas"
+        ),
+      )
     })
 
 
@@ -95,20 +125,18 @@ import_audio_server <- function(id,
       tagList(
         hr(),
         h3("Select audio files to import"),
-        selectInput(ns("audio_imports"), "Files to Import", choices = c())
+        shinyWidgets::pickerInput(
+          ns("audio_imports"), "Files to Import", choices = c(), multiple = TRUE
+        )
       )
     })
     outputOptions(output, "audio_import_ui", suspendWhenHidden = FALSE)
 
-    audio_obj <- reactive({
-      shiny::req(input$audio_imports)
-      audio_path <- file.path(global$audio_dir, input$audio_imports)
-      tuneR::readMP3(here::here(audio_path))
-    })
+
 
     return(
       list(
-        audio_obj = audio_obj,
+        audio_files = reactive({file.path(global$audio_dir, input$audio_imports)}),
         audio_dir = reactive({global$audio_dir})
       )
     )

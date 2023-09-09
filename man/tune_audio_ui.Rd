@@ -7,10 +7,10 @@
 \usage{
 tune_audio_ui(id)
 
-tune_audio_server(id, imported_audio)
+tune_audio_server(id, audio_files)
 }
 \arguments{
-\item{imported_audio}{reactive vector of audio files}
+\item{audio_files}{reactive vector of audio files}
 }
 \description{
 Create shiny module for tuning an audio file

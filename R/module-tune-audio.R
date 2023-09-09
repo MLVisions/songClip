@@ -46,14 +46,21 @@ tune_audio_ui <- function(id){
 
 #' @describeIn tune_audio_ui Create module server for tuning an audio file
 #'
-#' @param imported_audio reactive vector of audio files
+#' @param audio_files reactive vector of audio files
 #'
 #' @keywords internal
-tune_audio_server <- function(id, imported_audio) {
+tune_audio_server <- function(id, audio_files) {
   moduleServer(id, function(input, output, session) {
 
     ns <- session$ns
     .rv <- reactiveValues()
+
+
+    audio_obj <- reactive({
+      shiny::req(audio_files())
+      audio_path <- audio_files()[1]
+      tuneR::readMP3(here::here(audio_path))
+    })
 
     return(
       list(

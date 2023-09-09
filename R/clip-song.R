@@ -59,7 +59,7 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
     imported_audio <- import_audio_server("import_audio", audio_dir = getOption("songClip.audio_dir"))
 
-    tune_audio_server("tune_audio", imported_audio = imported_audio)
+    tune_audio_server("tune_audio", audio_files = imported_audio$audio_files)
   }
 
   app <- shiny::shinyApp(ui, server)
