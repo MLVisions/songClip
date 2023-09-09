@@ -1,0 +1,800 @@
+
+body {
+    font-family: 'Roboto';
+    font-size:16px;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6{
+    font-family: 'Roboto';
+}
+
+.main-header .logo {
+     font-family:'Roboto', sans-serif ;
+     font-weight:bold;
+     letter-spacing:-1px;
+     font-size:25px;
+     color:#ffffff;
+     height: 55px;
+}
+
+.skin-blue .main-header > .logo {
+     color:#ffffff;
+     border-bottom:0 solid transparent;
+     border-right:1px solid #086A87;
+}
+
+ .skin-blue .main-header .navbar .sidebar-toggle {
+     color:#ffffff;
+     min-height: 55px;
+}
+
+ .skin-blue .main-header .navbar .sidebar-toggle:hover {
+     color:white;
+     background:#fff
+}
+
+ .skin-blue .main-header .navbar .navbar-custom-menu .navbar-nav > li > a, .skin-blue .main-header .navbar .navbar-right > li > a {
+     border-left:1px solid green;
+     border-right-width:0;
+     min-height: 55px;
+}
+
+
+ .nav-tabs-custom > .nav-tabs > li.active {
+     border-top-color:#616365
+}
+
+
+ .nav-tabs-custom {
+     box-shadow:0px 0px 0px lightgrey;
+     margin-bottom: 0px;
+}
+
+
+ .skin-blue .sidebar-menu > li > .treeview-menu {
+     margin:0 1px;
+     color: white;
+     background:#8a8c8f;
+     box-shadow:inset 0px 0px 7px #000000;
+     padding-bottom:2px;
+}
+
+ .skin-blue .sidebar-menu > li > a{
+     color:white;
+ }
+
+.skin-blue .sidebar a {
+    color: black;
+}
+
+.skin-blue .sidebar-menu .treeview-menu>li>a {
+    color: white;
+    font-size:15px;
+}
+
+.treeview-menu {
+     margin:0 0px;
+     color: white;
+     background:#8a8c8f;
+     box-shadow:inset 0px 0px 7px #000000;
+     padding-bottom:2px;
+     padding-left: 0px;
+}
+
+.navbar-nav > .messages-menu > .dropdown-menu, .navbar-nav > .notifications-menu > .dropdown-menu, .navbar-nav > .tasks-menu > .dropdown-menu {
+    width: 400px;
+    padding: 0;
+    margin: 10px;
+    top: 100%;
+    background-color: #fefefe;
+        box-shadow: 10px 10px 10px darkgrey;
+    color:white;
+}
+
+
+.navbar-nav > .messages-menu > .dropdown-menu > li.header, .navbar-nav > .notifications-menu > .dropdown-menu > li.header, .navbar-nav > .tasks-menu > .dropdown-menu > li.header {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: #086A87;
+        padding: 7px 10px;
+    border-bottom: 1px solid #086A87;
+    color: #ffffff;
+        font-size: 16px;
+}
+.navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
+    max-height: 1200px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: hidden;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a {
+    color: black;
+    overflow: hidden;
+    white-space: normal;
+}
+
+.control-sidebar-dark {
+    color: black;
+}
+
+.main-footer {
+    background: #ecf0f5;
+        padding: 15px;
+    color: #444;
+        border-top: 1px solid #d2d6de;
+}
+
+.sweet-alert {
+    font-family: 'Roboto';
+}
+.sweet-alert p {
+    font-family: 'Roboto';
+}
+.navbar-nav>li>.dropdown-menu {
+    width:460px;
+}
+
+.skin-blue .sidebar-menu > li > a {
+    color: white;
+    font-size:18px;
+    padding: 25px 15px 25px 15px;
+    display: block;
+}
+
+
+/** collapsibleTree styling **/
+
+.collapsibleTree .node {
+  cursor: pointer;
+}
+
+.collapsibleTree .node circle {
+  fill: #fff;
+  stroke: #000;
+}
+
+.collapsibleTree .node text {
+  font-size: 16px;
+  font-family: 'Roboto';
+}
+
+.collapsibleTree .link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.collapsibleTree div.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 3px;
+    font-size: 16px;
+    font-family: 'Roboto';
+    background: #fff;
+    border: 2px;
+    border-radius: 8px;
+    border-style: solid;
+    pointer-events: none;
+}
+
+
+
+
+/* Metrum Colors */
+
+
+
+/* shinydashboard page themes */
+
+
+/* shinydashboard Header */
+.skin-blue .main-header .logo {
+    background-color: #086A87;
+    color: #fff;
+    border-bottom: 0 solid transparent;
+}
+.skin-blue .main-header .logo:hover {
+    background-color: #086A87;
+}
+.skin-blue .main-header .navbar {
+    background-color: #086A87;
+}
+
+.skin-blue .main-header > .logo {
+    color: #ffffff;
+    border-bottom: 0 solid transparent;
+    border-right: 1px solid #086A87;
+}
+
+
+/* shinydashboard sidebar */
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+    /*  background-color: #007319; */
+    /* box-shadow: inset 40px 110px 90px 40px #086A87; */
+    background-color:#086A87;
+    box-shadow: inset 0px 110px 120px 2px #000000;
+}
+.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li:hover > a {
+     color:white;
+     background:#086A87;
+     border-left-color:#007319;
+     font-size:20px;
+}
+
+.js-focus-visible .focus-visible:not(.gwt-MenuBar), input[type="checkbox"].focus-visible {
+    outline: #086A87 solid 2px !important;
+    outline-offset: -1px !important;
+}
+
+
+/* Main Background color (defaulted to #ecf0f5 (grey))*/
+.content-wrapper {
+    min-height: 100%;
+    background-color: #ecf0f5;
+    z-index: 800;
+}
+.main-footer {
+    background: #ecf0f5;
+    color: #000000;
+}
+
+
+
+/* shinydashboard button themes */
+.btn-primary {
+    background-color: #086A87;
+    border-color: #086A87;
+    white-space: inherit;
+}
+
+.btn-info {
+    background-color: #4AA2B1;
+    border-color: #4AA2B1;
+    white-space: inherit;
+}
+
+.btn-success {
+    background-color: #007319;
+    border-color: #007319;
+    white-space: inherit;
+}
+
+.btn-warning {
+    background-color: #E0E4CC;
+    border-color: #E0E4CC;
+    color: black;
+    white-space: inherit;
+}
+.btn-warning.active, .btn-warning:active, .open>.dropdown-toggle.btn-warning,
+.btn-warning:hover, .btn-warning:focus {
+    color: #fff;
+    background-color: #626364;
+    background-image: none;
+    border-color: #626364;
+}
+
+.btn-danger {
+    background-color: #626364;
+    border-color: #626364;
+}
+.btn-danger.active, .btn-danger:active, .open>.dropdown-toggle.btn-danger,
+.btn-danger:hover, .btn-danger:focus {
+    color: #fff;
+    background-color: #343a3f;
+    background-image: none;
+    border-color: #343a3f;
+}
+
+/* shinyWidgets switchInput (primary) */
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+    background: #086A87;
+    color: #fff;
+}
+
+/* shinyWidgets switchInput (default) - make this, warning, or danger 'off' or 'FALSE'*/
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default {
+    background: #086A87;
+    color: #fff;
+}
+/* shinyWidgets switchInput (danger)*/
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-danger, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-danger {
+    background: #626364;
+    color: #fff;
+}
+/* shinyWidgets switchInput (warning)*/
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning {
+    background: #E0E4CC;
+    color: #000000;
+}
+/* shinyWidgets switchInput (success) */
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-success, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-success {
+    background: #007319;
+    color: #fff;
+}
+
+/* shinyWidgets prettySwitch (primary) */
+/* These couldnt be overwritten. Adding a div(., class= 'mertrumrg') around a prettySwitch is necessary */
+div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-primary:before {
+    background-color: #086A87!important;
+}
+div.metrumrg .pretty.p-switch input:checked~.state.p-primary:before {
+    border-color: #086A87;
+}
+/* shinyWidgets prettySwitch (info) */
+div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-info:before {
+    background-color: #4AA2B1!important;
+}
+div.metrumrg .pretty.p-switch input:checked~.state.p-info:before {
+    border-color: #4AA2B1;
+}
+/* shinyWidgets prettySwitch (success) */
+.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-success:before {
+    background-color: #007319!important;
+}
+div.metrumrg .pretty.p-switch input:checked~.state.p-success:before {
+    border-color: #007319;
+}
+/* shinyWidgets prettySwitch (warning) */
+div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-warning:before {
+    background-color: #E0E4CC!important;
+}
+div.metrumrg .pretty.p-switch input:checked~.state.p-warning:before {
+    border-color: #E0E4CC;
+}
+/* shinyWidgets prettySwitch (danger) */
+div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-danger:before {
+    background-color: #626364!important;
+}
+div.metrumrg .pretty.p-switch input:checked~.state.p-danger:before {
+    border-color: #626364;
+}
+
+
+/* shinyWidgets actionbttn/dropdown unite (default) */
+.bttn-unite.bttn-default {
+    border-color: #086A87;
+    color: #086A87;
+}
+.bttn-unite.bttn-default:before {
+    background: #086A87;
+}
+.bttn-unite.bttn-default:after {
+    background: #086A87;
+}
+.bttn-unite.bttn-default:focus, .bttn-unite.bttn-default:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+/* shinyWidgets actionbttn/dropdown unite (primary) */
+.bttn-unite.bttn-primary {
+    border-color: #086A87;
+    color: #086A87;
+}
+.bttn-unite.bttn-primary:before {
+    background: #086A87;
+}
+.bttn-unite.bttn-primary:after {
+    background: #086A87;
+}
+.bttn-unite.bttn-primary:focus, .bttn-unite.bttn-primary:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+/* shinyWidgets actionbttn/dropdown unite (info) */
+.bttn-unite.bttn-info {
+    border-color: #30B1BF;
+    color: #30B1BF;
+}
+.bttn-unite.bttn-info:before {
+    background: #30B1BF;
+}
+.bttn-unite.bttn-info:after {
+    background: #30B1BF;
+}
+.bttn-unite.bttn-info:focus, .bttn-unite.bttn-info:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+
+/* shinyWidgets actionbttn/dropdown unite (warning) */
+.bttn-unite.bttn-warning {
+    border-color: #E0E4CC;
+    color: #E0E4CC;
+}
+.bttn-unite.bttn-warning:before {
+    background: #E0E4CC;
+}
+.bttn-unite.bttn-warning:after {
+    background: #E0E4CC;
+}
+.bttn-unite.bttn-warning:focus, .bttn-unite.bttn-warning:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+
+/* shinyWidgets actionbttn/dropdown unite (danger) */
+.bttn-unite.bttn-danger {
+    border-color: #626364;
+    color: #626364;
+}
+.bttn-unite.bttn-danger:before {
+    background: #626364;
+}
+
+.bttn-unite.bttn-danger:after {
+    background: #626364;
+}
+.bttn-unite.bttn-danger:focus, .bttn-unite.bttn-danger:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+
+/* shinyWidgets actionbttn/dropdown unite (success) */
+.bttn-unite.bttn-success {
+    border-color: #007319;
+    color: #007319;
+}
+.bttn-unite.bttn-success:before {
+    background: #007319;
+}
+
+.bttn-unite.bttn-success:after {
+    background: #007319;
+}
+.bttn-unite.bttn-success:focus, .bttn-unite.bttn-success:hover {
+    color: #fff;
+    background: #d6e3ff;
+}
+
+
+/* shinydashboard box themes */
+/* Box Primary */
+.box.box-solid.box-primary>.box-header {
+    color: #fff;
+    background: #086A87;
+    background-color: #086A87;
+    height: 50px;
+}
+.box.box-solid.box-primary {
+    border: 1px solid #086A87;
+}
+.box.box-primary {
+    border-top-color: #086A87;
+}
+
+/* Box Success */
+.box.box-solid.box-success>.box-header {
+    color: #fff;
+    background: #007319;
+    background-color: #007319;
+    height: 50px;
+}
+.box.box-solid.box-success {
+    border: 1px solid #007319;
+}
+.box.box-success {
+    border-top-color: #007319;
+}
+
+/* Box Success (light) - sucess color with 0.5 alpha */
+/* Applied to success boxes within a div of class 'successlight' */
+.successlight > div > .box.box-solid.box-success>.box-header {
+    color: #fff;
+    background: #007319;
+    background-color: #00731980;
+    background-color: rgba(0, 115, 25, 0.5);
+    height: 50px;
+}
+.successlight > div > .box.box-solid.box-success {
+    border: 1px solid #007319;
+}
+.successlight > div > .box.box-success {
+    border-top-color: #007319;
+}
+.successlight > .box.box-solid.box-success >.box-header .btn,
+.successlight > .box.box-solid.box-success >.box-header a {
+    background-color: #00731980;
+    background-color: rgba(0, 115, 25, 0.5);
+}
+
+/* Box Warning */
+.box.box-solid.box-warning>.box-header {
+    color: #000000;
+    background: #E0E4CC;
+    background-color: #E0E4CC;
+    height: 50px;
+}
+.box.box-solid.box-warning {
+    border: 1px solid #E0E4CC;
+}
+.box.box-warning {
+    border-top-color: #E0E4CC;
+}
+
+/* Box Danger */
+.box.box-solid.box-danger>.box-header {
+    color: #fff;
+    background: #626364;
+    background-color: #626364;
+    height: 50px;
+}
+.box.box-solid.box-danger {
+    border: 1px solid #626364;
+}
+.box.box-danger {
+    border-top-color: #626364;
+}
+
+/* Box Info */
+.box.box-solid.box-info>.box-header {
+    color: #fff;
+    background: #30B1BF;
+    background-color: #30B1BF;
+    height: 50px;
+}
+.box.box-solid.box-info {
+    border: 1px solid #30B1BF;
+}
+.box.box-info {
+    border-top-color: #30B1BF;
+}
+
+/* Box Black (similar to default theme) */
+.box.box-solid.box-black>.box-header {
+    color: #fff;
+    background: #086A87;
+    background-color: #086A87;
+    height: 50px;
+}
+.box.box-solid.box-black {
+    border: 1px solid #086A87;
+}
+.box.box-black {
+    border-top-color: #086A87;
+}
+
+
+/* shinyWidgets awesomeCheckbox */
+/* awesomeCheckbox primary */
+.checkbox-primary input[type="checkbox"]:checked+label::before, .checkbox-primary input[type="radio"]:checked+label::before {
+    background-color: #086A87;
+    border-color: #086A87;
+}
+/* awesomeCheckbox info */
+.checkbox-info input[type="checkbox"]:checked+label::before, .checkbox-info input[type="radio"]:checked+label::before {
+    background-color: #4AA2B1;
+    border-color: #4AA2B1;
+}
+/* awesomeCheckbox success */
+.checkbox-success input[type="checkbox"]:checked+label::before, .checkbox-success input[type="radio"]:checked+label::before {
+    background-color: #007319;
+    border-color: #007319;
+}
+/* awesomeCheckbox warning */
+.checkbox-warning input[type="checkbox"]:checked+label::before, .checkbox-warning input[type="radio"]:checked+label::before {
+    background-color: #E0E4CC;
+    border-color: #E0E4CC;
+}
+/* awesomeCheckbox danger */
+.checkbox-danger input[type="checkbox"]:checked+label::before, .checkbox-danger input[type="radio"]:checked+label::before {
+    background-color: #626364;
+    border-color: #626364;
+}
+/* awesomeCheckbox default */
+.checkbox-default input[type="checkbox"]:checked+label::before, .checkbox-default input[type="radio"]:checked+label::before {
+    background-color: #086A87;
+    border-color: #086A87;
+}
+
+
+/* shinyWidgets awesomeRadio */
+/* awesomeRadio primary */
+.radio-primary input[type="radio"]:checked+label::before {
+    border-color: #4AA2B1;
+}
+.radio-primary input[type="radio"]:checked+label::after {
+    background-color: #086A87;
+}
+/* awesomeRadio info */
+.radio-info input[type="radio"]:checked+label::before {
+    border-color: #086A87;
+}
+.radio-info input[type="radio"]:checked+label::after {
+    background-color: #4AA2B1;
+}
+/* awesomeRadio success */
+.radio-success input[type="radio"]:checked+label::before {
+    border-color: #007319;
+}
+.radio-success input[type="radio"]:checked+label::after {
+    background-color: #007319;
+}
+/* awesomeRadio warning */
+.radio-warning input[type="radio"]:checked+label::before {
+    border-color: #E0E4CC;
+}
+.radio-warning input[type="radio"]:checked+label::after {
+    background-color: #E0E4CC;
+}
+/* awesomeRadio danger */
+.radio-danger input[type="radio"]:checked+label::before {
+    border-color: #626364;
+}
+.radio-danger input[type="radio"]:checked+label::after {
+    background-color: #626364;
+}
+/* awesomeRadio default */
+.radio-default input[type="radio"]:checked+label::before {
+    border-color: #086A87;
+}
+
+
+/* shinydashboard valueBox */
+.small-box.bg-blue {
+    background-color: #086A87!important;
+}
+.small-box.bg-green {
+    background-color: #007319!important;
+}
+
+
+
+/* DT dataTable */
+table.dataTable tbody tr.selected>* {
+    box-shadow: inset 0 0 0 9999px #4AA2B1 !important;
+    color: white;
+}
+table.dataTable.stripe>tbody>tr.odd.selected>*, table.dataTable.display>tbody>tr.odd.selected>* {
+    box-shadow: inset 0 0 0 9999px #4AA2B1 !important;
+}
+table.dataTable.hover>tbody>tr.selected:hover>*, table.dataTable.display>tbody>tr.selected:hover>* {
+    box-shadow: inset 0 0 0 9999px #086A87 !important;
+}
+
+.btn-box-tool {
+    font-size: 18px;
+}
+
+/* Unique bullet (less indentation) */
+ul.b {
+  padding-left: 0.5em;
+}
+
+ul.menu > div {
+  width: 100%
+}
+
+ul.menu #nested-div {
+  width: 100%
+}
+
+
+/* navlistPanel (using success color) */
+.nav-stacked>li.active>a, .nav-stacked>li.active>a{
+    background: 0 0;
+    color: #444;
+    border-top: 0;
+    border-left-color: #007319;
+    background-color: #007319;
+}
+.nav-stacked>li.active>a, .nav-stacked>li.active>a:focus, .nav-stacked>li.active>a, .nav-stacked>li.active>a:hover {
+    background: 0 0;
+    color: white;
+    border-top: 0;
+    border-left-color: #007319;
+    background-color: #007319;
+    background-color: rgba(0, 115, 25, 0.5);
+}
+.navbar-brand{
+  font-size:24px;
+  color: #007319;
+}
+
+
+/* wellPanel */
+.well {
+  padding:10px 5px 10px 5px;
+}
+
+/* sliderInput (using primary and info colors) */
+.irs--shiny .irs-bar {
+    top: 25px;
+    height: 8px;
+    border-top: 1px solid #086A87;
+    border-bottom: 1px solid #086A87;
+    background: #4AA2B1;
+}
+.irs--shiny .irs-from, .irs--shiny .irs-to, .irs--shiny .irs-single {
+    color: #fff;
+    text-shadow: none;
+    padding: 1px 3px;
+    background-color: #086A87;
+    border-radius: 5px;
+    font-size: 11px;
+    line-height: 1.333;
+}
+
+
+/* Regular shiny radiobutton*/
+/* Special case that is native to each OS/browser, normally cant change this color, */
+/* but here we will remove the old one, and make a new one. */
+/* Use primary filling with info border. Increase size and adjust margin.*/
+label > input[type="radio"] {
+  display: none;
+}
+
+label > input[type="radio"] + *::before {
+  content: '';
+  margin: 2px 0 0;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  margin-left: -24px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: #086A87;
+}
+label > input[type="radio"]:checked + *::before {
+  background: radial-gradient(#086A87 0%, #086A87 40%, transparent 50%, transparent);
+  border-color: #4AA2B1;
+}
+/* radiobutton checked font color*/
+label > input[type="radio"]:checked + * {
+  color: black;
+}
+
+
+/* Regular shiny checkbox*/
+/* Remove the old one, and make a new one */
+/* Use primary filling. Adjust size and adjust margin.*/
+label > input[type='checkbox'] {
+  opacity: 0;
+  position: absolute;
+}
+label > input[type='checkbox'] + *::before {
+  content: '';
+  position: absolute;
+  margin: 4px 0 0;
+  margin-left: -20px;
+  width: 16px;
+  height: 16px;
+  margin-right: 1rem;
+  border-radius: 0.1em;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: #086A87;
+}
+label > input[type='checkbox']:checked + *::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background-color: #086A87;
+}
+label > input[type='checkbox']:checked + *::after {
+   content: '';
+   position: absolute;
+   margin: 4px 0 0;
+   margin-left: 0px;
+   width: 1.2ex;
+   height: 0.4ex;
+   top: 0.5ex;
+   left: 0.3ex;
+   border: 3px solid white;
+   border-top: none;
+   border-right: none;
+   -webkit-box-sizing: content-box;
+   -webkit-transform: rotate(-45deg);
+   -moz-transform: rotate(-45deg);
+   -o-transform: rotate(-45deg);
+   -ms-transform: rotate(-45deg);
+   transform: rotate(-45deg);
+}

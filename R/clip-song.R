@@ -18,10 +18,9 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
   ui <-
     shinydashboardPlus::dashboardPage(
-      freshTheme = song_clip_theme,
       options = list(sidebarExpandOnHover = TRUE),
       header = shinydashboardPlus::dashboardHeader(
-        title = "Song Clip"
+        title = "Audio Tuner"
       ),
       sidebar = shinydashboardPlus::dashboardSidebar(
         collapsed = TRUE,
@@ -34,7 +33,9 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
         tags$head(
           tags$style(HTML(jsHeader)),
           tags$script(HTML(jqueryHeader)),
-          tags$style(HTML(noWrap_css))
+          tags$style(HTML(noWrap_css)),
+          tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "styles.css")),
+          tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "roboto.css")),
         ),
         shinydashboard::tabItems(
           shinydashboard::tabItem("tab_download",
@@ -78,30 +79,3 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
 }
 
-
-#' Set theme for songClip app
-#' @keywords internal
-song_clip_theme <- fresh::create_theme(
-  fresh::adminlte_color(
-    light_blue = "#086A87"
-  ),
-  fresh::adminlte_sidebar(
-    width = "300px",
-    dark_bg = "#D8DEE9",
-    dark_hover_bg = "#81A1C1",
-    dark_color = "#2E3440"
-  ),
-  fresh::adminlte_global(
-    content_bg = "#FFFFFF",
-    box_bg = "#D8DEE9",
-    info_box_bg = "#D8DEE9"
-  )
-)
-
-# song_clip_styles <- bslib::bs_add_rules(bslib::bs_theme(
-#   version = 5,
-#   "well-bg" = "#FFF",
-#   base_font = bslib::font_google("Poppins")
-# ), rules = c(
-#   ".nav-link.active {@extend .text-light }"
-# ))
