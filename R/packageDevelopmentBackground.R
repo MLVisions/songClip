@@ -83,6 +83,9 @@
 ### Full Example ###
 # You can change the lines below, delete or add roxygen to experiment, and then
 # run `devtools::document()`, followed by `?my_function` to see the changes to the helper file.
+# If you remove a `@importFrom`, run `devtools::document()` followed by `devtools::load_all()`,
+# you will notice an error when you try to use the function. Although you have the function installed,
+# it must be directly imported to be able to be used, *without qualifiers (::)*.
 
 
 #' Append a symbol to a dataframe. This is the title.
