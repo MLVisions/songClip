@@ -20,8 +20,8 @@
 
 # `devtools::document()`
 
-# The NAMESPACE file defines which functions in your package are **exported**, along with what other packages
-# were needed to be **imported**
+# The **NAMESPACE** file defines which functions in your package are **exported**, along with what other packages
+# were needed to be **imported**. This **must be set up correctly** for other users to be able to use your package.
 
 
 
