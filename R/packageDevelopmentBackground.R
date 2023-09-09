@@ -28,15 +28,20 @@
 ### Intro ###
 
 # When you normally install packages, and are not developing a package (such as a specific client project),
-# you would call `library(tuneR)`, `library(myPackage)`, etc. to load the functions you need. This will load
+# you would call `library(tuneR)`, `library(songClip)`, etc. to load the functions you need. This will load
 # all functions *exported* by the package into your current environment.
+# Example:
+# library(dplyr)
+# data(mtcars)
+# mtcars %>% mutate(new_column = gear + 2) # point being, you didnt have to write `dplyr::mutate()` because you called the library
 
 # However in R package development, we *only* have access to the specific functions we *import* when we go to
-# *release* a package. The `main` branch
-# You can call `library(myPackage)` for testing things during development, but when you go to write
+# *release* a package. The `main` branch is meant to signify a state where the code works, but doesnt have to match the latest release.
+# You can call `library(songClip)` for testing things during development, but when you go to write
 # the final function, you have to do one of the following two things:
 #
-# A) Use qualifiers (double colon prefix (::)) for the function (e.g., myPackage::my_function() or tuneR::readMP3("file_path"))
+# A) Use qualifiers (double colon prefix (::)) for the function (e.g., dplyr::mutate() or tuneR::readMP3("file_path"))
+#       Note: You can reference installed packages' internal (unexported) functions, using the triple colon (:::)
 #
 # B) Use roxygen to add the function to the namespace:
 #       Format:   #' @importFrom <package> <functions separated by a space>
