@@ -2,6 +2,7 @@
 
 # Useful Commands ---------------------------------------------------------
 
+
 # Sections like the one above can be created with `CMD + SHIFT + r`
 
 # `CMD + f` will search the script
@@ -22,8 +23,6 @@
 
 
 
-
-
 # Loading all functions and variables defined in R/ directory during package development:
 
 # `devtools::load_all()`
@@ -41,6 +40,9 @@
 # you either A) import the package functions you need and it to the `NAMESPACE` (more on this later), or
 # B) use qualifiers (<package_name>::<package function>, e.g, `tuneR::readMP3()`)
 
+
+### Background on the important package files ###
+
 # Packages that are needed for the package, are added to the `Imports` section of the `DESCRIPTION` file.
 
 # The `DESCRIPTION`, `NAMESPACE`, and `.Rbuildignore` files are the 3 files that decide how an R package
@@ -50,6 +52,52 @@
 # as an R package development environment. You often use one to set `options()` or for static file paths
 # (e.g., a path to an installation or tarball).
 # Here, we are using it to set where to grab the packages from.
+
+
+### Checking your package is good: `R CMD Check` ###
+
+# When we go to validate the R package, we will run what's called an 'R command check' or `R CMD Check`
+# (more on this in a second...).
+# In Rstudio, if you look at the top right pane, you will see "Environment', 'History', 'Connections',
+# 'Build', 'Git', and 'Tutorial'.
+# The 'Git' tab will show up if and only if you are linked to a remote repository
+# The 'Build' tab will show up if and only if Rstudio knows you're in a package development type R project
+# Navigate to the 'Build' tab.
+# You will see a 'Check' button. This will run the `R CMD Check`. You can also run `devtools::check()`, which
+# will run a *slightly different* `R CMD Check`, and is what we would run in CI/CD (e.g., `drone`).
+
+# The `R CMD Check` checks several things:
+# it will check the `DESCRIPTION`, `NAMESPACE`, and `.Rbuildignore` files, and attempt to install the package
+# based on the contents of them. This is the most important step. Ensuring the package can be installed, confirms whether
+# another user could install and use our package. After installed, it will check the `man/` files, and look for any errors
+# in the documentation. It performs some other checks after this that aren't as important, but at the end it will check to
+# see if you have a `tests/` directory at the highest level. If you have tests in that directory, `R CMD Check` will
+# execute those as well.
+
+# From this you can see that CI/CD is actually pretty simple. You just A) make sure it can pull the required packages
+# from somewhere, and B) run `devtools::check()`, which performs all the important checks, and runs your test suite if
+# you have one.
+
+# Here is an example drone file that does exactly that:
+# https://github.com/metrumresearchgroup/mrgda/blob/main/.drone.yml
+
+
+### Implementing a new Feature ###
+
+# To make a feature in a typical R package change you would then:
+# (we dont have to be this rigorous, im just telling you the typical development process)
+
+# - Branch off `main` (click the `New Branch` button in the 'Git' Pane)
+# - Open a Pull Request (PR), and add a description
+# - Implement the new feature. E.g., Add new function `my_function()`
+# - Document new functions. Decide if it is an internal or exported function. More on this in the next section.
+# - add tests that validate the new feature in `tests/testthat/test-my_function.R`
+# - Run `R CMD Check`, and make sure there are no errors.
+#    - Ideally this would be running in CI/CD with every commit, or at least ensuring there
+#      would be no conflicts if you merged.
+# - assign me to review it (not needed)
+# - I approve it or refuse it, and suggest any necessary changes
+# - merge the PR once approved
 
 
 
