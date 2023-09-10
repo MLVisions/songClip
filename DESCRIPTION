@@ -17,6 +17,7 @@ Imports:
     bslib,
     cli (>= 3.3.0),
     checkmate,
+    cowplot,
     dplyr,
     ggplot2,
     glue (>= 1.6.2),
