@@ -26,7 +26,7 @@ set_audio_player()
 #'
 .onLoad <- function(...){
   description <- packageDescription("songClip")
-  src_name <- paste0("merge-shiny-", description$Version)
+  src_name <- paste0("songClip-", description$Version)
   src_path <- system.file("www", package = "songClip")
   addResourcePath(src_name, src_path)
   # Add shinyFiles resource path (needed for installation)
