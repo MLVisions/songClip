@@ -33,6 +33,15 @@ This is a terrible, disgusting function. Why would you ever want to do this.
 Im mainly trying to illustrate the different types of arguments/defaults you
 can have, and how roxygen/the loaded function will work.
 
+The \verb{@importFrom} statements above will not show up in the helper file (this text will),
+however the \code{NAMESPACE} file will update when you run \code{devtools::document()} if you modify them.
+
+The \verb{@importFrom} statements above translate to:
+\itemize{
+\item "import \code{syms} and \code{sym} from the package \code{rlang}
+\item "import \code{n} from the package \code{dplyr}
+}
+
 \strong{bolded} word
 
 \emph{italizized phrase}
@@ -41,7 +50,7 @@ can have, and how roxygen/the loaded function will work.
 
 This section will be a code block:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{# Adds a new column to a dataset, repeating 'A' all the way down:
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# Adds a new column to a dataset, repeating 'A' all the way down (see ?dplyr::mutate for more details):
 data \%>\% dplyr::mutate(new_column = "A")
 }\if{html}{\out{</div>}}
 }
@@ -66,6 +75,7 @@ my_function(add_id_col = TRUE)
 my_function(add_id_col = TRUE, group_by_col = "columnDoesntExist")
 my_function(symbol = "c")
 }
+
 
 }
 \keyword{internal}
