@@ -100,6 +100,29 @@
 # - merge the PR once approved
 
 
+# If adding this new feature *required a new package*, you would also:
+# - Make sure to add it to the DESCRIPTION file under 'Imports:'
+# - Import the required functions and update the NAMESPACE (more on this in the next section)
+
+# If you need a new package to add your feature, you can:
+# A) add it to the DESCRIPTION file, and run `pkgr install` in your terminal
+#    - (this might work on your end now, as I update the .Rprofile and think that was the issue)
+#    - This will install all package listed in the DESCRIPTION file, as well as their dependencies.
+#    - This is the preferred way, because it is less prone to installation issues. If you can get this to work, it
+#      will also make adding new packages much easier
+# B) Run `install.packages("new_package")`. It will install from `getOption("repos")` by default, which I set in the
+# `.Rprofile`.
+#    - After you install it, you have to document the version so we both work with the same package versions. You
+#      can do this by running `renv::snapshot()`, which will update the `renv.lock` file. Commit this.
+#    - Other developers would then call `renv::restore()` to install the package at the correct version
+#    - We should *probably* update the `renv.lock` file regardless of the method, but in this case, we are mainly
+#      using it to make sure our environments are as similar as possible.
+#    - Note: make sure to add it to the DESCRIPTION file in this case too.
+
+
+
+
+
 
 # Package Documentation and Roxygen ---------------------------------------
 
