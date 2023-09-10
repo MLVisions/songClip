@@ -19,7 +19,8 @@ set_audio_player()
 
 #' Adds the content of www to src_name
 #'
-#' @importFrom shiny addResourcePath
+#' @import shiny
+#' @import ggplot2
 #'
 #' @noRd
 #'

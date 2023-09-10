@@ -6,7 +6,6 @@
 #'
 #' @returns a shiny instance
 #' @importFrom htmltools tags p HTML tagList
-#' @import shiny
 #' @importFrom shinydashboardPlus box
 #'
 #'

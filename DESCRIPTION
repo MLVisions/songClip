@@ -18,6 +18,7 @@ Imports:
     cli (>= 3.3.0),
     checkmate,
     dplyr,
+    ggplot2,
     glue (>= 1.6.2),
     here,
     htmltools,
