@@ -93,7 +93,6 @@ import_audio_server <- function(id,
         gsub(".*mp3|wav.*", "fa-music", .)
 
       # Set subtext
-      subtext = paste("mpg", mtcars$mpg, sep = ": ")
       subtext <- purrr::map_chr(choices, function(choice_path){
         info <- av::av_media_info(choice_path)
         duration <- floor(info$duration)
