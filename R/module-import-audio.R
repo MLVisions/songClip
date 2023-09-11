@@ -18,7 +18,7 @@
 #' @keywords internal
 import_audio_ui <- function(id,
                             title = "Select a folder containing audio files",
-                            box_title = "Import Audio Files",
+                            box_title = "Set Audio Library",
                             collapsible = FALSE,
                             collapsed = FALSE,
                             status = "primary") {
@@ -36,8 +36,7 @@ import_audio_ui <- function(id,
       shinyFiles::shinyDirButton(ns("audio_dir"), label = title, title = title),
       br(),
       h5("Audio library currently set to:"),
-      verbatimTextOutput(ns("dir_selected"), placeholder = TRUE),
-      uiOutput(ns("audio_import_ui"))
+      verbatimTextOutput(ns("dir_selected"), placeholder = TRUE)
     )
   )
 }
@@ -113,38 +112,7 @@ import_audio_server <- function(id,
         subtext = subtext
       )
 
-      # Update Choices
-      shinyWidgets::updatePickerInput(
-        session = session, "audio_imports", choices = choice_names,
-        selected = choice_names,
-        choicesOpt = list(icon = icons, subtext = subtext),
-        options = shinyWidgets::pickerOptions(
-          container = "body",
-          actionsBox = TRUE,
-          iconBase = "fas"
-        ),
-      )
     })
-
-
-    output$audio_import_ui <- renderUI({
-      shiny::req(global$audio_dir)
-      tagList(
-        hr(),
-        h3("Select audio files to import"),
-        fluidRow(
-          column(
-            width = 4,
-            shinyWidgets::pickerInput(
-              ns("audio_imports"), "Files to Import", choices = c(), multiple = TRUE
-            )
-          )
-        )
-      )
-    })
-    outputOptions(output, "audio_import_ui", suspendWhenHidden = FALSE)
-
-
 
     return(
       list(

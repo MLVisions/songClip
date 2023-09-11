@@ -29,10 +29,11 @@ tune_audio_ui <- function(id){
               title = "Cropping, Looping, & Speed",
               plotOutput(ns("audio_plot"))
             ),
-            bslib::nav_panel(title = "Equalizer",
-                             p("TODO: add mechanism for moving the points"),
-                             plotly::plotlyOutput(ns("equalizer_plot"))
-                             ),
+            bslib::nav_panel(
+              title = "Equalizer",
+              p("TODO: add mechanism for moving the points"),
+              plotly::plotlyOutput(ns("equalizer_plot"))
+            ),
             bslib::nav_panel(title = "Tuning",
                              p("Adjust Trebble, Bass, etc.")
             ),
@@ -77,7 +78,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
       )
     })
 
-
+    # Load Audio object
     audio_obj <- reactive({
       audio_select <- shiny::req(input$audio_select, audio_dir())
       audio_path <- file.path(audio_dir(), audio_select)

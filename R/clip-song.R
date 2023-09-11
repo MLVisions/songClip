@@ -17,14 +17,13 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
   ui <-
     shinydashboardPlus::dashboardPage(
-      options = list(sidebarExpandOnHover = TRUE),
       header = shinydashboardPlus::dashboardHeader(
         title = "Audio Tuner"
       ),
       sidebar = shinydashboardPlus::dashboardSidebar(
         collapsed = TRUE,
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Import Audio", tabName = "tab_download", icon = icon("download")),
+          shinydashboard::menuItem("Set Audio Library", tabName = "tab_download", icon = icon("download")),
           shinydashboard::menuItem("Cropping & Tuning", tabName = "tab_clipsong", icon = icon("scissors"))
         )
       ),

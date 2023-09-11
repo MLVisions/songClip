@@ -8,7 +8,7 @@
 import_audio_ui(
   id,
   title = "Select a folder containing audio files",
-  box_title = "Import Audio Files",
+  box_title = "Set Audio Library",
   collapsible = FALSE,
   collapsed = FALSE,
   status = "primary"
