@@ -1,5 +1,11 @@
 
 #' Make Equalizer plot
+#'
+#' TODO: add mechanism for moving the points (drag and drop)
+#' # worst case can use sliders or something, but drag and drop is much more
+#' user friendly.
+#'
+#' potential resource: https://stackoverflow.com/questions/47280032/draggable-line-chart-in-r-shiny
 make_equalizer_plot <- function(shift_bounds = c(-12, 12)){
   data <- tibble::tibble(
     frequency = c(60, 150, 400, 1000, 2400, 15000),
@@ -55,52 +61,19 @@ make_equalizer_plot <- function(shift_bounds = c(-12, 12)){
       axis.text.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
       plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
     )
+
+  plot <- plotly::ggplotly(pl)
+
   return(
     list(
       plot_data = data,
-      plot = pl
+      plot = plot
     )
   )
 }
 
 
 
-make_equalizer <- function(shift_bounds = c(-12, 12)){
 
 
-  ui <- fluidPage(
-    plotOutput("equalizer_plot", height = "500px", dblclick = "resetPlot"),
-    tags$script("
-      Shiny.addCustomMessageHandler('resetPlot', function(message) {
-        Plotly.relayout('equalizer_plot', {
-          'xaxis.range': [-10, 10],
-          'yaxis.range': [-12, 12]
-        });
-      });
-    ")
-  )
 
-  server <- function(input, output, session) {
-    output$equalizer_plot <- plotly::renderPlotly({
-      equalizer_plot <- make_equalizer_plot(shift_bounds = shift_bounds)
-      equalizer_plot$plot %>%
-      plotly::ggplotly() %>%
-       plotly::config(editable = TRUE)
-        plotly::layout(
-          shapes = list(
-            type = "circle",
-            fillcolor = "white",
-            line = list(color = "gray"),
-            x0 = -2, x1 = 1,
-            y0 = -2, y1 = 2,
-            xsizemode = "pixel",
-            ysizemode = "pixel",
-            xref = "paper",  # Use paper for x-axis reference
-            yref = "y"      # Use y for y-axis reference
-          )
-        )
-    })
-  }
-
-  shinyApp(ui, server)
-}

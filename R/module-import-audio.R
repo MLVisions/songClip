@@ -37,12 +37,7 @@ import_audio_ui <- function(id,
       br(),
       h5("Audio library currently set to:"),
       verbatimTextOutput(ns("dir_selected"), placeholder = TRUE),
-      fluidRow(
-        column(
-          width = 4,
-          uiOutput(ns("audio_import_ui"))
-        )
-      )
+      uiOutput(ns("audio_import_ui"))
     )
   )
 }
@@ -137,8 +132,13 @@ import_audio_server <- function(id,
       tagList(
         hr(),
         h3("Select audio files to import"),
-        shinyWidgets::pickerInput(
-          ns("audio_imports"), "Files to Import", choices = c(), multiple = TRUE
+        fluidRow(
+          column(
+            width = 4,
+            shinyWidgets::pickerInput(
+              ns("audio_imports"), "Files to Import", choices = c(), multiple = TRUE
+            )
+          )
         )
       )
     })
