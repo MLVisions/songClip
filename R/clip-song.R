@@ -24,7 +24,7 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
         collapsed = TRUE,
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Set Audio Library", tabName = "tab_download", icon = icon("download")),
-          shinydashboard::menuItem("Cropping & Tuning", tabName = "tab_clipsong", icon = icon("scissors"))
+          shinydashboard::menuItem("Tune Audio", tabName = "tab_clipsong", icon = icon("scissors"))
         )
       ),
       body = shinydashboard::dashboardBody(

@@ -12,8 +12,7 @@
 #' @param collapsible whether the module can be collapsed/hidden
 #' @param collapsed whether the module should start off as collapsed
 #'
-#' @importFrom htmltools h3 h5
-#' @importFrom shiny verbatimTextOutput uiOutput
+#' @importFrom htmltools h1 h2 h3 h4 h5
 #'
 #' @keywords internal
 import_audio_ui <- function(id,

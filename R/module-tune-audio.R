@@ -26,23 +26,25 @@ tune_audio_ui <- function(id){
           bslib::navset_card_pill(
             placement = "above",
             bslib::nav_panel(
+              # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
               plotOutput(ns("audio_plot"))
             ),
             bslib::nav_panel(
               title = "Equalizer",
-              p("TODO: add mechanism for moving the points"),
+              # TODO: add mechanism for moving the points
+              # also add labels for adjusting Trebble, Bass, etc.
               plotly::plotlyOutput(ns("equalizer_plot"))
-            ),
-            bslib::nav_panel(title = "Tuning",
-                             p("Adjust Trebble, Bass, etc.")
             ),
             bslib::nav_spacer(),
             bslib::nav_item(link_youtube),
             bslib::nav_menu(
               title = "Other links",
               align = "right",
-              bslib::nav_panel("Three", p("Third tab content")),
+              bslib::nav_panel(
+                title = "Three",
+                p("Third tab content")
+              ),
               bslib::nav_item(link_posit)
             )
           )
@@ -88,6 +90,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     # Audio inspection plot
     audio_plot <- reactive({
       audio_obj <- shiny::req(audio_obj())
+      assign("audio_obj", audio_obj, envir = .GlobalEnv)
       tuneR::plot(audio_obj)
     })
 
