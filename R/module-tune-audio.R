@@ -29,14 +29,14 @@ tune_audio_ui <- function(id){
             bslib::nav_panel(
               # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
-              plotOutput(ns("audio_plot"))
+              plotOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
             ),
             ### Equalizer ###
             bslib::nav_panel(
               title = "Equalizer",
               # TODO: add mechanism for moving the points
               # also add labels for adjusting Trebble, Bass, etc.
-              plotly::plotlyOutput(ns("equalizer_plot")),
+              plotly::plotlyOutput(ns("equalizer_plot")) %>% withSpinner(color="#086A87"),
               # plotOutput(ns("equalizer_plot")),
               fluidRow(
                 column(

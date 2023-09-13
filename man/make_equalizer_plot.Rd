@@ -4,15 +4,30 @@
 \alias{make_equalizer_plot}
 \title{Make Equalizer plot}
 \usage{
-make_equalizer_plot(shift_bounds = c(-12, 12))
+make_equalizer_plot(
+  eq_data = make_equalizer_data(),
+  shift_bounds = c(-12, 12),
+  avg_line = FALSE
+)
+}
+\arguments{
+\item{eq_data}{equalizer data with expected columns returned from
+\code{make_equalizer_data()}}
+
+\item{shift_bounds}{y-axis limits.}
+
+\item{avg_line}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, plot additional polynomial fit}
 }
 \description{
-TODO: add mechanism for moving the points (drag and drop)
+Make Equalizer plot
 }
 \details{
-potential resource: https://stackoverflow.com/questions/47280032/draggable-line-chart-in-r-shiny
+TODO: add mechanism for moving the points (drag and drop)
 }
 \section{worst case can use sliders or something, but drag and drop is much more}{
 user friendly.
+
+potential resource: https://stackoverflow.com/questions/47280032/draggable-line-chart-in-r-shiny
 }
 
+\keyword{internal}
