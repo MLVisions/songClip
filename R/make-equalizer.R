@@ -79,7 +79,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
     geom_hline(yintercept = 0, linetype = "solid", color = "lightgrey", size = 0.5) +
     # Plot Data
     # geom_line(color = "green", group = 1, linewidth = 2) +
-    geom_smooth(color = "green") +
+    geom_smooth(color = "green", linewidth = 2, se = FALSE) +
     theme_dark() +
     labs(x = NULL, y = NULL) +
     ggtitle("Equalizer")
@@ -136,7 +136,11 @@ stagger_eq_data <- function(eq_data, ntimes = 12){
 #'
 stagger_eq_ribbon <- function(pl, data_pl, nsteps, ntimes){
 
-  data_stagger <- eq_smooth_line(data_pl, nsteps = 20) %>% stagger_eq_data(ntimes = 20)
+  main_line <- ggplot_build(pl)$data[[2]] %>% dplyr::select(index=x, shift=y) %>%
+    suppressWarnings()
+  # main_line <- eq_smooth_line(data_pl, nsteps = 20)
+
+  data_stagger <- main_line %>% stagger_eq_data(ntimes = 20)
 
   shifts <- names(data_stagger)[grepl("r_shift", names(data_stagger))]
 
