@@ -67,9 +67,9 @@ plot_wave_audio <- function(audio_obj,
   use_stereo <- has_stereo && type == "stereo"
 
   # Define plotting function
-  plot_Wave_channel <- switch (format,
-                               "base" = plot_Wave_channel_base,
-                               "fancy" = plot_Wave_channel_fancy
+  plot_wave_channel <- switch (format,
+                               "base" = plot_wave_channel_base,
+                               "fancy" = plot_wave_channel_fancy
   )
 
   # ylim
@@ -119,7 +119,7 @@ plot_wave_audio <- function(audio_obj,
           nr = nr
         )
         # plot each channel stacked vertically (according to set margins)
-        plot_Wave_channel(
+        plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
           ylab = ylab, ylim = ylim,
@@ -143,7 +143,7 @@ plot_wave_audio <- function(audio_obj,
           nr = nr
         )
         # plot each channel stacked vertically
-        plot_Wave_channel(
+        plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
           ylab = ylab, ylim = ylim,
@@ -184,14 +184,14 @@ plot_wave_audio <- function(audio_obj,
         on.exit(par(opar))
       }
 
-      plot_Wave_channel(
+      plot_wave_channel(
         audio_data = wave_channel$audio_data,
         audio_params = wave_channel$params,
         ylab = ylab, ylim = ylim,
         plot_title = NULL, xlab = NA
       )
     }else{
-      pl <- plot_Wave_channel(
+      pl <- plot_wave_channel(
         audio_data = wave_channel$audio_data,
         audio_params = wave_channel$params,
         ylab = ylab, ylim = ylim,
@@ -228,6 +228,79 @@ plot_wave_audio <- function(audio_obj,
   }
 
 }
+
+
+
+
+#' New plotting method
+#'
+#' @inheritParams plot_wave_channel_base
+#'
+#' @keywords internal
+plot_wave_channel_fancy <- function(audio_data,
+                                    audio_params,
+                                    ylim,
+                                    xlab,
+                                    ylab,
+                                    plot_title = NULL,
+                                    axes = TRUE
+){
+  ggplot(data = audio_data) + aes(x = x, y = y, group = GRP) +
+    geom_line()
+}
+
+
+
+#' Original plotting method
+#'
+#' @param audio_data Audio data returned from `process_wave_channel`.
+#' @param audio_params List of audio parameters returned from `process_wave_channel`.
+#' @inheritParams plot_wave_audio
+#' @param axes Logical (`TRUE`/`FALSE`). If `TRUE`, add axes to the plot
+#' @param center Logical (`TRUE`/`FALSE`). If `TRUE`, center the plot
+#'
+#' @keywords internal
+plot_wave_channel_base <- function(audio_data,
+                                   audio_params,
+                                   ylim,
+                                   xlab,
+                                   ylab,
+                                   plot_title = NULL,
+                                   axes = TRUE,
+                                   center = TRUE
+){
+  simplified <- audio_params$simplified
+  null <- audio_params$null
+  index <- unique(audio_data$x)
+
+  if(isTRUE(simplified)){
+
+    rg <- tibble::tibble(
+      y0 = audio_data$y[audio_data$GRP=="y0"],
+      y1 = audio_data$y[audio_data$GRP=="y1"]
+    )
+
+    plot(rep(index, 2), c(rg[["y0"]], rg[["y1"]]), type = "n", yaxt = "n", ylim = ylim,
+         xlab = xlab, ylab = NA, main = plot_title, axes = axes, las = 1)
+    segments(x0 = index, y0 = rg[["y0"]], y1 = rg[["y1"]])
+  }else{
+    plot(audio_data,
+         type = "l", yaxt = "n", ylim = ylim, xlab = xlab,
+         ylab = NA, main = plot_title, axes = axes, las = 1)
+  }
+
+  mtext(ylab, side = 4, line = 0.5, at = mean(par("usr")[3:4]), cex = par("cex.lab"))
+
+  if(!center || all(ylim <= 0)) {
+    at <- axTicks(2)
+  } else {
+    at <- round((ylim[2] - null) * 2/3, -floor(log(ylim[2], 10)))
+    at <- null + c(-at, 0, at)
+  }
+
+  if(axes) axis(2, at = at, yaxt = par("yaxt"), las = 1)
+}
+
 
 
 #' Process Wave channel
@@ -271,74 +344,4 @@ process_wave_channel <- function(audio_obj,
       )
     )
   )
-}
-
-
-#' New plotting method
-#'
-#' @inheritParams plot_Wave_channel_base
-#'
-#' @keywords internal
-plot_Wave_channel_fancy <- function(audio_data,
-                                    audio_params,
-                                    ylim,
-                                    xlab,
-                                    ylab,
-                                    plot_title = NULL,
-                                    axes = TRUE
-){
-  ggplot(data = audio_data) + aes(x = x, y = y, group = GRP) +
-    geom_line()
-}
-
-
-
-#' Original plotting method
-#'
-#' @param audio_data Audio data returned from `process_wave_channel`.
-#' @param audio_params List of audio parameters returned from `process_wave_channel`.
-#' @inheritParams plot_wave_audio
-#' @param axes Logical (`TRUE`/`FALSE`). If `TRUE`, add axes to the plot
-#' @param center Logical (`TRUE`/`FALSE`). If `TRUE`, center the plot
-#'
-#' @keywords internal
-plot_Wave_channel_base <- function(audio_data,
-                                   audio_params,
-                                   ylim,
-                                   xlab,
-                                   ylab,
-                                   plot_title = NULL,
-                                   axes = TRUE,
-                                   center = TRUE
-){
-  simplified <- audio_params$simplified
-  null <- audio_params$null
-  index <- unique(audio_data$x)
-
-  if(isTRUE(simplified)){
-
-    rg <- tibble::tibble(
-      y0 = audio_data$y[audio_data$GRP=="y0"],
-      y1 = audio_data$y[audio_data$GRP=="y1"]
-    )
-
-    plot(rep(index, 2), c(rg[["y0"]], rg[["y1"]]), type = "n", yaxt = "n", ylim = ylim,
-         xlab = xlab, ylab = NA, main = plot_title, axes = axes, las = 1)
-    segments(x0 = index, y0 = rg[["y0"]], y1 = rg[["y1"]])
-  }else{
-    plot(audio_data,
-         type = "l", yaxt = "n", ylim = ylim, xlab = xlab,
-         ylab = NA, main = plot_title, axes = axes, las = 1)
-  }
-
-  mtext(ylab, side = 4, line = 0.5, at = mean(par("usr")[3:4]), cex = par("cex.lab"))
-
-  if(!center || all(ylim <= 0)) {
-    at <- axTicks(2)
-  } else {
-    at <- round((ylim[2] - null) * 2/3, -floor(log(ylim[2], 10)))
-    at <- null + c(-at, 0, at)
-  }
-
-  if(axes) axis(2, at = at, yaxt = par("yaxt"), las = 1)
 }
