@@ -33,6 +33,9 @@
 #' plot_wave_audio(audio_obj, type = "right")
 #'
 #' plot_wave_audio(audio_obj, type = "stereo")
+#'
+#' # Experimental, not yet fancy
+#' plot_wave_audio(audio_obj, format = "fancy")
 #' }
 #'
 #'
@@ -88,11 +91,11 @@ plot_wave_audio <- function(audio_obj,
 
     # List of inputs to map across
     inputs <- list(
-      audio_obj = list(
+      audio_obj_i = list(
         tuneR::mono(audio_obj, "left"),
         tuneR::mono(audio_obj, "right")
       ),
-      ylab = list(
+      ylab_i = list(
         if(is.null(ylab)) "Left Channel" else ylab[1],
         if(is.null(ylab)) "Right Channel" else ylab[2]
       )
@@ -109,11 +112,11 @@ plot_wave_audio <- function(audio_obj,
       par(mar = c(0, mar[2], 0, mar[4]))
 
       # Print plots directly to viewer using base R plot() function
-      purrr::pwalk(inputs, function(audio_obj, ylab){
+      purrr::pwalk(inputs, function(audio_obj_i, ylab_i){
         # browser()
         # process each wave channel
         wave_channel <- process_wave_channel(
-          audio_obj,
+          audio_obj_i,
           xunit = xunit,
           simplify = simplify,
           nr = nr
@@ -122,7 +125,7 @@ plot_wave_audio <- function(audio_obj,
         plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
-          ylab = ylab, ylim = ylim,
+          ylab = ylab_i, ylim = ylim,
           plot_title = NULL, xlab = NA
         )
       })
@@ -135,9 +138,9 @@ plot_wave_audio <- function(audio_obj,
     }else{
 
       # Store plots as list of ggplot objects
-      plots <- purrr::pmap(inputs, function(audio_obj, ylab){
+      plots <- purrr::pmap(inputs, function(audio_obj_i, ylab_i){
         wave_channel <- process_wave_channel(
-          audio_obj,
+          audio_obj_i,
           xunit = xunit,
           simplify = simplify,
           nr = nr
@@ -146,12 +149,12 @@ plot_wave_audio <- function(audio_obj,
         plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
-          ylab = ylab, ylim = ylim,
-          plot_title = NULL, xlab = NA
+          ylab = ylab_i, ylim = ylim,
+          plot_title = NULL, xlab = xlab
         )
       })
 
-      pl <- facet_grid(plots, cols = 1)
+      pl <- cowplot::plot_grid(plotlist=plots, ncol = 1)
     }
   }else{
     ### Single Audio Channel ###
@@ -239,14 +242,15 @@ plot_wave_audio <- function(audio_obj,
 #' @keywords internal
 plot_wave_channel_fancy <- function(audio_data,
                                     audio_params,
-                                    ylim,
-                                    xlab,
-                                    ylab,
+                                    ylim = NULL,
+                                    xlab = NULL,
+                                    ylab = NULL,
                                     plot_title = NULL,
                                     axes = TRUE
 ){
   ggplot(data = audio_data) + aes(x = x, y = y, group = GRP) +
-    geom_line()
+    geom_line() +
+    ggplot2::xlab(xlab) + ggplot2::ylab(ylab) + ggtitle(plot_title)
 }
 
 
@@ -262,9 +266,9 @@ plot_wave_channel_fancy <- function(audio_data,
 #' @keywords internal
 plot_wave_channel_base <- function(audio_data,
                                    audio_params,
-                                   ylim,
-                                   xlab,
-                                   ylab,
+                                   ylim = NULL,
+                                   xlab = NULL,
+                                   ylab = NULL,
                                    plot_title = NULL,
                                    axes = TRUE,
                                    center = TRUE
@@ -275,6 +279,7 @@ plot_wave_channel_base <- function(audio_data,
 
   if(isTRUE(simplified)){
 
+    # Format table of y points
     rg <- tibble::tibble(
       y0 = audio_data$y[audio_data$GRP=="y0"],
       y1 = audio_data$y[audio_data$GRP=="y1"]
@@ -313,12 +318,14 @@ process_wave_channel <- function(audio_obj,
                                  simplify = TRUE,
                                  nr = 2500
 ){
+  # Get channel and other parameters
   channel <- if(is(audio_obj, "WaveMC")) audio_obj@.Data[,1] else audio_obj@left
   null <- if(audio_obj@bit == 8) 127 else 0
   l <- length(channel)
-
   simplified <- simplify && (l > nr)
+
   if(isTRUE(simplified)){
+    # Simplify Data
     nr <- ceiling(l / round(l / nr))
     index <- seq(1, l, length = nr)
     if(xunit == "Time") index <- index / audio_obj@samp.rate
@@ -328,9 +335,13 @@ process_wave_channel <- function(audio_obj,
     audio_data <- tibble::tibble(x = index, y0=rg[1,], y1 = rg[2,]) %>%
       tidyr::pivot_longer(c(y0, y1), names_to = "GRP", values_to = "y")
   }else{
+    # Take whole channel
     index <- seq(along = channel)
     if(xunit == "Time") index <- index / audio_obj@samp.rate
     audio_data <- tibble::tibble(x = index, y=channel)
+    # TODO: I got this warning, when I accidentally passed the right channel of an already left-filtered channel:
+    # i.e. new_channel <- tuneR::mono(audio_obj, "left")
+    # new_channel@right --> this makes sense, as it's empty. Might want to check for empty channels separately
     dev_warning("Unexpected audio format (may just be short): plotting code may have to be adjusted")
   }
 

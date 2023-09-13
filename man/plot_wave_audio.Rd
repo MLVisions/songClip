@@ -65,6 +65,9 @@ plot_wave_audio(audio_obj)
 plot_wave_audio(audio_obj, type = "right")
 
 plot_wave_audio(audio_obj, type = "stereo")
+
+# Experimental, not yet fancy
+plot_wave_audio(audio_obj, format = "fancy")
 }
 
 
