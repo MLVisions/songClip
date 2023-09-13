@@ -9,7 +9,7 @@
 make_equalizer_plot <- function(shift_bounds = c(-12, 12)){
   data <- tibble::tibble(
     frequency = c(60, 150, 400, 1000, 2400, 15000),
-    shift = rep(0, 6)
+    shift = rep(0, 6) #round(jitter(c(rep(0, 2), 2, rep(0, 3)), 4)) # for testing
   ) %>%
     dplyr::mutate(
       freq_fmt = ifelse(frequency >= 1000, paste0(frequency/1000, "KHz"), paste0(frequency, "Hz")),
@@ -26,18 +26,22 @@ make_equalizer_plot <- function(shift_bounds = c(-12, 12)){
     })
   }
 
-  data_pl <- data %>% dplyr::rename(Frequency = freq_fmt)
+  data_pl <- data %>%
+    dplyr::mutate(freq_fmt = ordered(freq_fmt, levels = unique(data$freq_fmt))) %>%
+    dplyr::rename(Frequency = freq_fmt)
 
   # Base plot
   pl <- ggplot(data = data_pl, aes(x = Frequency, y = shift)) +
     # Fix Scales
-    scale_x_discrete(limits = factor(data_pl$Frequency)) +
+    scale_x_discrete(limits = data_pl$Frequency) +
     scale_y_continuous(limits = shift_bounds, breaks = shift_bounds,
                        labels = labeller_func) +
     # Add custom lines for the center
     geom_hline(yintercept = 0, linetype = "solid", color = "lightgrey", size = 0.5) +
     # Plot Data
     geom_line(color = "green", group = 1, size = 2) +
+    # TODO: add fake variability (negative only) to create shadow effect in spotify
+    # geom_smooth(method='gam', se = TRUE, alpha=0.2, formula=y~s(x,bs="cr")) +
     geom_point(color = "white", size = 3.5) +
     theme_dark() +
     labs(x = NULL, y = NULL) +
