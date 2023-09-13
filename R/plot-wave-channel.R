@@ -66,6 +66,11 @@ plot_wave_audio <- function(audio_obj,
   has_stereo <- audio_obj@stereo
   use_stereo <- has_stereo && type == "stereo"
 
+  # Define plotting function
+  plot_Wave_channel <- switch (format,
+                               "base" = plot_Wave_channel_base,
+                               "fancy" = plot_Wave_channel_fancy
+  )
 
   # ylim
   if(is.null(ylim)){
@@ -80,12 +85,6 @@ plot_wave_audio <- function(audio_obj,
   if(isTRUE(use_stereo)){
 
     if(length(ylab)==1) ylab <- rep(ylab, 2)
-
-    # Define plotting function
-    plot_Wave_channel <- switch (format,
-                                 "base" = plot_Wave_channel_base,
-                                 "fancy" = plot_Wave_channel_fancy
-    )
 
     # List of inputs to map across
     inputs <- list(
@@ -122,9 +121,8 @@ plot_wave_audio <- function(audio_obj,
         # plot each channel stacked vertically (according to set margins)
         plot_Wave_channel(
           audio_data = wave_channel$audio_data,
-          null = wave_channel$params$null,
+          audio_params = wave_channel$params,
           ylab = ylab, ylim = ylim,
-          simplified = wave_channel$params$simplified,
           plot_title = NULL, xlab = NA
         )
       })
@@ -147,8 +145,8 @@ plot_wave_audio <- function(audio_obj,
         # plot each channel stacked vertically
         plot_Wave_channel(
           audio_data = wave_channel$audio_data,
+          audio_params = wave_channel$params,
           ylab = ylab, ylim = ylim,
-          simplified = wave_channel$params$simplified,
           plot_title = NULL, xlab = NA
         )
       })
@@ -162,8 +160,8 @@ plot_wave_audio <- function(audio_obj,
     if(is.null(ylab)){
       if(isTRUE(has_stereo)){
         ylab <- switch (type,
-          "left" = "Left Channel",
-          "right" = "Right Channel"
+                        "left" = "Left Channel",
+                        "right" = "Right Channel"
         )
       }else{
         ylab <- "Audio Channel"
@@ -188,15 +186,15 @@ plot_wave_audio <- function(audio_obj,
 
       plot_Wave_channel(
         audio_data = wave_channel$audio_data,
+        audio_params = wave_channel$params,
         ylab = ylab, ylim = ylim,
-        simplified = wave_channel$params$simplified,
         plot_title = NULL, xlab = NA
       )
     }else{
       pl <- plot_Wave_channel(
         audio_data = wave_channel$audio_data,
+        audio_params = wave_channel$params,
         ylab = ylab, ylim = ylim,
-        simplified = wave_channel$params$simplified,
         plot_title = plot_title, xlab = xlab
       )
     }
@@ -209,7 +207,7 @@ plot_wave_audio <- function(audio_obj,
                          round(l / audio_obj@samp.rate, 2),  " sec.), ",
                          audio_obj@samp.rate, " Hertz, ",
                          audio_obj@bit, " bit, ",
-                         if(has_stereo) "stereo." else "mono.", sep = "")
+                         if(audio_obj@stereo) "stereo." else "mono.", sep = "")
 
     if(format == "base"){
       mtext(
@@ -232,8 +230,11 @@ plot_wave_audio <- function(audio_obj,
 }
 
 
-
+#' Process Wave channel
+#'
 #' @inheritParams plot_wave_audio
+#'
+#' @keywords internal
 process_wave_channel <- function(audio_obj,
                                  xunit = "Time",
                                  simplify = TRUE,
@@ -273,29 +274,47 @@ process_wave_channel <- function(audio_obj,
 }
 
 
-
-#' @inheritParams plot_wave_audio
-plot_Wave_channel_fancy <- function(audio_data){
+#' New plotting method
+#'
+#' @inheritParams plot_Wave_channel_base
+#'
+#' @keywords internal
+plot_Wave_channel_fancy <- function(audio_data,
+                                    audio_params,
+                                    ylim,
+                                    xlab,
+                                    ylab,
+                                    plot_title = NULL,
+                                    axes = TRUE
+){
   ggplot(data = audio_data) + aes(x = x, y = y, group = GRP) +
     geom_line()
 }
 
 
 
-# original plotting method
+#' Original plotting method
+#'
+#' @param audio_data Audio data returned from `process_wave_channel`.
+#' @param audio_params List of audio parameters returned from `process_wave_channel`.
+#' @inheritParams plot_wave_audio
+#' @param axes Logical (`TRUE`/`FALSE`). If `TRUE`, add axes to the plot
+#' @param center Logical (`TRUE`/`FALSE`). If `TRUE`, center the plot
+#'
+#' @keywords internal
 plot_Wave_channel_base <- function(audio_data,
-                                   null,
+                                   audio_params,
                                    ylim,
                                    xlab,
                                    ylab,
                                    plot_title = NULL,
-                                   simplified = TRUE,
                                    axes = TRUE,
-                                   yaxt = par("yaxt"),
                                    center = TRUE
 ){
-
+  simplified <- audio_params$simplified
+  null <- audio_params$null
   index <- unique(audio_data$x)
+
   if(isTRUE(simplified)){
 
     rg <- tibble::tibble(
@@ -321,5 +340,5 @@ plot_Wave_channel_base <- function(audio_data,
     at <- null + c(-at, 0, at)
   }
 
-  if(axes) axis(2, at = at, yaxt = yaxt, las = 1)
+  if(axes) axis(2, at = at, yaxt = par("yaxt"), las = 1)
 }
