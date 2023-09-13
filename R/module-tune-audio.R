@@ -25,16 +25,24 @@ tune_audio_ui <- function(id){
           shinyWidgets::pickerInput(ns("audio_select"), "Select an audio file", choices = c()),
           bslib::navset_card_pill(
             placement = "above",
+            ### Cropping, looping, and speed ###
             bslib::nav_panel(
               # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
               plotOutput(ns("audio_plot"))
             ),
+            ### Equalizer ###
             bslib::nav_panel(
               title = "Equalizer",
               # TODO: add mechanism for moving the points
               # also add labels for adjusting Trebble, Bass, etc.
-              plotly::plotlyOutput(ns("equalizer_plot"))
+              plotly::plotlyOutput(ns("equalizer_plot")),
+              fluidRow(
+                column(
+                  width = 8, offset = 2,
+                  make_vertical_sliders()
+                )
+              )
             ),
             bslib::nav_spacer(),
             bslib::nav_item(link_youtube),
@@ -91,7 +99,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     audio_plot <- reactive({
       audio_obj <- shiny::req(audio_obj())
       assign("audio_obj", audio_obj, envir = .GlobalEnv)
-      tuneR::plot(audio_obj)
+      plot_wave_audio(audio_obj)
     })
 
     output$audio_plot <- renderPlot({
@@ -115,3 +123,39 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
   })
 }
+
+
+
+make_vertical_sliders <- function(id_prefix = "slider",
+                                  values = rep(0, 6),
+                                  labels = c("60Hz", "150Hz", "400Hz", "1KHz", "2.4KHz", "15KHz"),
+                                  min = -12,
+                                  max = 12,
+                                  step = 0.2
+){
+
+  # values cannot be named
+  if(!is.null(names(values))) names(values) <- NULL
+
+  # Column sizing
+  l <- length(values)
+  col_size <- floor(12/l)
+
+  slider_uis <- purrr::imap(values, function(value, index){
+    label_i <- labels[index]
+    column(
+      width = col_size,
+      shinyWidgets::noUiSliderInput(
+        inputId = paste0(id_prefix,"_", index), label = label_i,
+        min = min, max = max, step = step,
+        value = value, margin = 100,
+        orientation = "vertical",
+        width = "100px", height = "300px"
+      )
+    )
+  })
+
+  fluidRow(slider_uis)
+}
+
+
