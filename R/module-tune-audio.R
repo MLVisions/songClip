@@ -34,19 +34,8 @@ tune_audio_ui <- function(id){
             ### Equalizer ###
             bslib::nav_panel(
               title = "Equalizer",
-              # TODO: add mechanism for moving the points
               # also add labels for adjusting Trebble, Bass, etc.
-              plotly::plotlyOutput(ns("equalizer_plot")) %>% withSpinner(color="#086A87"),
-              # plotOutput(ns("equalizer_plot")),
-              fluidRow(
-                column(
-                  width = 10, offset = 2,
-                  make_vertical_sliders(
-                    id_prefix = "equalizer_freq", ns = ns,
-                    rep(0, 6), labels = NULL, height="100px", use_columns = TRUE
-                  )
-                )
-              )
+              make_equalizer_ui(ns("equalizer"))
             ),
             bslib::nav_spacer(),
             bslib::nav_item(link_youtube),
@@ -129,31 +118,11 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
     # Equalizer ---------------------------------------------------------------
 
-    equalizer_data <- reactiveVal(make_equalizer_data())
+    equalizer <- make_equalizer_server("equalizer")
+    equalizer_data <- reactive({equalizer$eq_data()})
 
-    # Equalizer Plot
-    equalizer_plot_reac <- reactive({
-      data_pl <- shiny::req(equalizer_data())
-      make_equalizer_plot(data_pl, shift_bounds = c(-12, 12))
-    })
-
-    output$equalizer_plot <- plotly::renderPlotly({
-      equalizer_plot_reac()
-    })
-
-    # Equalizer Input
     observe({
-
-      # Vertical slider inputs
-      input_ids <- paste0("equalizer_freq_", seq(1,6))
-      equalizer_freqs <- purrr::map_dfr(input_ids, function(id){
-        data.frame(input = id, value = shiny::req(input[[id]]))
-      }) %>% tibble::as_tibble()
-
-      # Starting table or preset
-      eq_data <- shiny::req(equalizer_data())
-      update_eq <- update_equalizer_data(eq_data, equalizer_freqs)
-      equalizer_data(update_eq)
+      shiny::req(equalizer_data())
     })
 
     return(
@@ -164,48 +133,4 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
   })
 }
-
-
-
-make_vertical_sliders <- function(id_prefix = "slider",
-                                  ns = shiny::NS(id_prefix),
-                                  values = rep(0, 6),
-                                  labels = c("60Hz", "150Hz", "400Hz", "1KHz", "2.4KHz", "15KHz"),
-                                  min = -12,
-                                  max = 12,
-                                  step = 0.2,
-                                  height = "150px",
-                                  use_columns = FALSE
-){
-
-  # values cannot be named
-  if(!is.null(names(values))) names(values) <- NULL
-
-  # Column sizing
-  l <- length(values)
-  col_size <- floor(12/l)
-
-  slider_uis <- purrr::imap(values, function(value, index){
-    label_i <- if(is.null(labels)) NULL else labels[index]
-    ui <- shinyWidgets::noUiSliderInput(
-      inputId = ns(paste0(id_prefix,"_", index)), label = label_i,
-      min = min, max = max, step = step,
-      value = value, margin = 0,
-      orientation = "vertical",
-      height = height, width = "30px",
-      color = "#27ae60", inline = TRUE,
-      tooltips = FALSE
-    )
-    if(isTRUE(use_columns)){
-      ui <- column(
-        width = col_size,
-        ui
-      )
-    }
-    return(ui)
-  })
-
-  slider_uis
-}
-
 

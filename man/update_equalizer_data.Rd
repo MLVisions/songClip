@@ -2,15 +2,15 @@
 % Please edit documentation in R/make-equalizer.R
 \name{update_equalizer_data}
 \alias{update_equalizer_data}
-\title{Update equalizer data based on values in sliders}
+\title{Update equalizer data in response to changes in plotly shape anchors}
 \usage{
-update_equalizer_data(eq_data, slider_updates)
+update_equalizer_data(eq_data, event_data)
 }
 \arguments{
 \item{eq_data}{dataset in the form returned by \code{make_equalizer_data}}
 
-\item{slider_updates}{table of values returned by vertical sliders}
+\item{event_data}{data returned by \code{plotly::event_data()}}
 }
 \description{
-Update equalizer data based on values in sliders
+Update equalizer data in response to changes in plotly shape anchors
 }

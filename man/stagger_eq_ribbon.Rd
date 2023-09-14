@@ -4,7 +4,7 @@
 \alias{stagger_eq_ribbon}
 \title{Add geom_ribbon to create shadow effect}
 \usage{
-stagger_eq_ribbon(pl, data_pl, ntimes = 12, color = "green", alpha = 0.05)
+stagger_eq_ribbon(pl, data_pl, ntimes = 12, color = "#0BDA51", alpha = 0.05)
 }
 \arguments{
 \item{data_pl}{plot data}
