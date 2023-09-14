@@ -8,8 +8,6 @@
 tune_audio_ui <- function(id){
 
   ns <- shiny::NS(id)
-  link_youtube <- tags$a(shiny::icon("youtube"), "Youtube", href = "https://www.youtube.com/", target = "_blank")
-  link_posit <- tags$a(shiny::icon("r-project"), "Posit", href = "https://posit.co", target = "_blank")
 
   tagList(
     shinydashboardPlus::box(
@@ -38,15 +36,32 @@ tune_audio_ui <- function(id){
               make_equalizer_ui(ns("equalizer"))
             ),
             bslib::nav_spacer(),
-            bslib::nav_item(link_youtube),
             bslib::nav_menu(
-              title = "Other links",
+              title = "Options",
               align = "right",
               bslib::nav_panel(
-                title = "Three",
-                p("Third tab content")
+                title = "Save Audio",
+                h3("Save tuned audio as a new MP3 file")
+                # TODO: make module (simple) for saving editted video out as MP3
+                # - I dont think this will include equalizer settings (I think those will
+                #   happen *over* the audio file, rather than actually modifying the file itself),
+                #   however those settings could more easily be cached in the other module.
               ),
-              bslib::nav_item(link_posit)
+              bslib::nav_panel(
+                title = "Cache Settings",
+                # TODO: move text to separate file
+                # TODO: make module for saving settings out as a yaml, mapped to file path.
+                # We cant save settings across R sessions, but there is a work around:
+                # - User will have to choose a directory to store saved yamls.
+                # - They will have to set this directory every time, as there is no persistent
+                #   storage across R sessions.
+                # - Upon loading the directory, we can read in all yamls and perform some checks.
+                # - There can be multiple cached scenarios saved per song. This loading should be fast.
+                # TODO: make UI for setting caching directory on load
+                h3("Save the current tuning settings for this song"),
+                p("Upon loading this song in the future (must be in the same file location),
+                  you will be able to choose this scenario.")
+              )
             )
           )
         )
