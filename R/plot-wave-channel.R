@@ -6,6 +6,7 @@
 #' @param type channel to plot. One of `c("left", "right", "stereo")`.
 #' @param format format type. `"fancy"` is experimental and will eventually be
 #'        the main one used within the app.
+#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow. Only usable for `"fancy"` plots.
 #' @param simplify Logical (`TRUE`/`FALSE`). Whether to simplify large audio files. Defaults to `TRUE`.
 #' @param nr noise reduction. Only takes affect if `simplify = TRUE`.
 #' @param include_info Logical (`TRUE`/`FALSE`). If `TRUE`, append information
@@ -44,6 +45,7 @@
 plot_wave_audio <- function(audio_obj,
                             type = c("left", "right", "stereo"),
                             format = c("fancy", "base"),
+                            hollow = FALSE,
                             simplify = TRUE,
                             nr = 2500,
                             include_info = TRUE,
@@ -150,6 +152,7 @@ plot_wave_audio <- function(audio_obj,
         plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
+          hollow = hollow,
           ylab = ylab_i, ylim = ylim,
           plot_title = NULL, xlab = xlab
         )
@@ -200,6 +203,7 @@ plot_wave_audio <- function(audio_obj,
       pl <- plot_wave_channel(
         audio_data = wave_channel$audio_data,
         audio_params = wave_channel$params,
+        hollow = hollow,
         ylab = ylab, ylim = ylim,
         plot_title = plot_title, xlab = xlab
       )

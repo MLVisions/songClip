@@ -8,6 +8,7 @@ plot_wave_audio(
   audio_obj,
   type = c("left", "right", "stereo"),
   format = c("fancy", "base"),
+  hollow = FALSE,
   simplify = TRUE,
   nr = 2500,
   include_info = TRUE,
@@ -25,6 +26,8 @@ plot_wave_audio(
 
 \item{format}{format type. \code{"fancy"} is experimental and will eventually be
 the main one used within the app.}
+
+\item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow. Only usable for \code{"fancy"} plots.}
 
 \item{simplify}{Logical (\code{TRUE}/\code{FALSE}). Whether to simplify large audio files. Defaults to \code{TRUE}.}
 
