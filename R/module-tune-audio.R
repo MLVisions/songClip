@@ -27,7 +27,8 @@ tune_audio_ui <- function(id){
             bslib::nav_panel(
               # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
-              plotOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
+              br(),
+              plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
             ),
             ### Equalizer ###
             bslib::nav_panel(
@@ -40,7 +41,7 @@ tune_audio_ui <- function(id){
               title = "Options",
               align = "right",
               bslib::nav_panel(
-                title = "Save Audio",
+                title = "Save Audio as MP3", icon = icon("music"),
                 h3("Save tuned audio as a new MP3 file")
                 # TODO: make module (simple) for saving editted video out as MP3
                 # - I dont think this will include equalizer settings (I think those will
@@ -48,7 +49,7 @@ tune_audio_ui <- function(id){
                 #   however those settings could more easily be cached in the other module.
               ),
               bslib::nav_panel(
-                title = "Cache Settings",
+                title = "Cache Settings", icon = icon("list-check"),
                 # TODO: move text to separate file
                 # TODO: make module for saving settings out as a yaml, mapped to file path.
                 # We cant save settings across R sessions, but there is a work around:
@@ -126,7 +127,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
       plot_wave_audio(audio_obj)
     })
 
-    output$audio_plot <- renderPlot({
+    output$audio_plot <- plotly::renderPlotly({
       audio_plot()
     })
 

@@ -7,7 +7,7 @@
 plot_wave_audio(
   audio_obj,
   type = c("left", "right", "stereo"),
-  format = c("base", "fancy"),
+  format = c("fancy", "base"),
   simplify = TRUE,
   nr = 2500,
   include_info = TRUE,
@@ -44,7 +44,7 @@ about the audio file.}
 \item{ylab}{label for y-axis. Will be determined if not set.}
 }
 \value{
-a \code{ggplot} object if \code{format = "fancy"}. Otherwise \code{NULL} invisibly
+a \code{plotly} object if \code{format = "fancy"}. Otherwise \code{NULL} invisibly
 }
 \description{
 Plot wave channels of audio file
@@ -66,7 +66,7 @@ plot_wave_audio(audio_obj, type = "right")
 
 plot_wave_audio(audio_obj, type = "stereo")
 
-# Experimental, not yet fancy
+# Experimental
 plot_wave_audio(audio_obj, format = "fancy")
 }
 

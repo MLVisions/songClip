@@ -11,7 +11,11 @@ plot_wave_channel_fancy(
   xlab = NULL,
   ylab = NULL,
   plot_title = NULL,
-  axes = TRUE
+  axes = TRUE,
+  hollow = FALSE,
+  line_color = "#ADD8E6",
+  ft_color = "lightgrey",
+  bg_color = "#252525"
 )
 }
 \arguments{
@@ -28,6 +32,8 @@ plot_wave_channel_fancy(
 \item{plot_title}{a title for the plot (optional).}
 
 \item{axes}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add axes to the plot}
+
+\item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow}
 }
 \description{
 New plotting method

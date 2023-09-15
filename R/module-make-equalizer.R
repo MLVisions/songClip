@@ -174,7 +174,6 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
   pl_plotly <-
     plotly::plot_ly(data_pl, x = ~index, y= ~shift) %>%
     # add_lines(y = predict(model(), eq_data), color = I("red")) %>%
-
     plotly::layout(
       shapes = circles,
       yaxis = list(
@@ -203,7 +202,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
       showlegend = FALSE
     ) %>%
     stagger_eq_ribbon(data_pl = data_pl) %>%
-    config_plotly_eq()
+    config_plotly()
 
   return(pl_plotly)
 }
@@ -264,7 +263,7 @@ update_equalizer_data <- function(eq_data, event_data){
 }
 
 
-config_plotly_eq <- function(pl){
+config_plotly <- function(pl){
   pl %>% plotly::config(
     edits = list(shapePosition = TRUE),
     showTips = FALSE, displayModeBar = FALSE
@@ -272,24 +271,22 @@ config_plotly_eq <- function(pl){
     plotly::style(hoverinfo = "none")
 }
 
-#' Add geom_ribbon to create shadow effect
+#' Add lines to create shadow effect
 #'
 #' @param data_pl plot data
 #' @param ntimes number of ribbons to make
 #' @param color string. Color of ribbon fill.
-#' @param alpha numeric. Value of alpha, passed to `ggplot::geom_ribbon()`
 #'
 #' @keywords internal
 stagger_eq_ribbon <- function(pl,
                               data_pl,
                               ntimes = 12,
-                              color = "#0BDA51",
-                              alpha = 0.05){
+                              color = "#0BDA51"){
 
   # Add fake geom_smooth line to get data
-  pl_fake <- ggplot(data = data_pl, aes(x = index, y = shift, group = 1)) +
-    geom_smooth(se = FALSE)
-  main_line <- suppressWarnings(ggplot_build(pl_fake)$data[[1]]) %>%
+  pl_fake <- ggplot2::ggplot(data = data_pl, ggplot2::aes(x = index, y = shift, group = 1)) +
+    ggplot2::geom_smooth(se = FALSE)
+  main_line <- suppressWarnings(ggplot2::ggplot_build(pl_fake)$data[[1]]) %>%
     dplyr::select(index = x, shift = y) %>% tibble::as_tibble()
 
   stagger_eq_data <- function(data_pl, ntimes){

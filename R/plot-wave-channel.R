@@ -34,16 +34,16 @@
 #'
 #' plot_wave_audio(audio_obj, type = "stereo")
 #'
-#' # Experimental, not yet fancy
+#' # Experimental
 #' plot_wave_audio(audio_obj, format = "fancy")
 #' }
 #'
 #'
-#' @return a `ggplot` object if `format = "fancy"`. Otherwise `NULL` invisibly
+#' @return a `plotly` object if `format = "fancy"`. Otherwise `NULL` invisibly
 #' @export
 plot_wave_audio <- function(audio_obj,
                             type = c("left", "right", "stereo"),
-                            format = c("base", "fancy"),
+                            format = c("fancy", "base"),
                             simplify = TRUE,
                             nr = 2500,
                             include_info = TRUE,
@@ -55,6 +55,7 @@ plot_wave_audio <- function(audio_obj,
 ){
 
   if(!inherits(audio_obj, "Wave")){
+    # This will almost certainly happen at some point, but want to catch when.
     dev_bug("Different audio type object. Wont be able to plot")
   }
 
@@ -137,7 +138,7 @@ plot_wave_audio <- function(audio_obj,
       par(mar = mar)
     }else{
 
-      # Store plots as list of ggplot objects
+      # Store plots as list of plotly objects
       plots <- purrr::pmap(inputs, function(audio_obj_i, ylab_i){
         wave_channel <- process_wave_channel(
           audio_obj_i,
@@ -154,6 +155,7 @@ plot_wave_audio <- function(audio_obj,
         )
       })
 
+      # This wont work anymore
       pl <- cowplot::plot_grid(plotlist=plots, ncol = 1)
     }
   }else{
@@ -172,6 +174,7 @@ plot_wave_audio <- function(audio_obj,
     }
 
     # Process wave channel
+    # TODO: have informative error/warning messages and handling for tryCatch
     audio_obj <- tryCatch(tuneR::mono(audio_obj, type), error = identity)
     wave_channel <- process_wave_channel(
       audio_obj,
@@ -219,7 +222,17 @@ plot_wave_audio <- function(audio_obj,
         line = (if(use_stereo) 5 else 2.5)
       )
     }else{
-      pl <- pl + ggplot2::labs(caption = caption_txt)
+      # For some reason, the margins are intepreted differently when run in
+      # a shiny environment
+      y_shift <- ifelse(shiny::isRunning(), -0.6, -0.3)
+      pl <- pl %>% plotly::layout(
+        annotations = list(
+          x = 1, y = y_shift, text = caption_txt,
+          showarrow = F, xref='paper', yref='paper',
+          xanchor='right', yanchor='auto', xshift=0, yshift=0,
+          font=list(size=13)
+        )
+      )
     }
   }
 
@@ -238,6 +251,7 @@ plot_wave_audio <- function(audio_obj,
 #' New plotting method
 #'
 #' @inheritParams plot_wave_channel_base
+#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow
 #'
 #' @keywords internal
 plot_wave_channel_fancy <- function(audio_data,
@@ -246,11 +260,57 @@ plot_wave_channel_fancy <- function(audio_data,
                                     xlab = NULL,
                                     ylab = NULL,
                                     plot_title = NULL,
-                                    axes = TRUE
+                                    axes = TRUE,
+                                    hollow = FALSE,
+                                    line_color = "#ADD8E6",
+                                    ft_color = "lightgrey",
+                                    bg_color = "#252525"
 ){
-  ggplot(data = audio_data) + aes(x = x, y = y, group = GRP) +
-    geom_line() +
-    ggplot2::xlab(xlab) + ggplot2::ylab(ylab) + ggtitle(plot_title)
+
+  n_points <- length(unique(audio_data$x))
+  duration <- audio_params$duration/60 # convert to minutes
+
+  # Group data
+  group <- ifelse(isTRUE(hollow), "y_point", "line_group")
+  pl_data <- audio_data %>%
+    # convert to minutes
+    dplyr::mutate(x = x/60) %>%
+    dplyr::group_by(!!sym(group))
+
+  # font and styling
+  t1 <- list(size = 15, color = ft_color)
+  # Add unit if unchanged xlab and time
+  if(xlab == audio_params$xunit && xlab == "Time"){
+    xlab <- paste(xlab, "(minutes)")
+  }
+
+  # Core plot
+  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y) %>%
+    plotly::add_lines( color = I(line_color))
+
+  # Format
+  pl %>%
+    plotly::layout(
+      yaxis = list(
+        range = ylim*2,
+        fixedrange = TRUE, title = ylab,
+        tickvals = ylim,
+        zerolinecolor = "black",
+        tickfont = list(size = 18)
+      ),
+      xaxis = list(
+        title = xlab,
+        range = duration
+      ),
+      # styling
+      font = t1,
+      paper_bgcolor = bg_color,
+      plot_bgcolor = bg_color,
+      # margin
+      margin = list(pad = 30, b = 130, t = 80),
+      # Legend
+      showlegend = FALSE
+    ) %>% config_plotly()
 }
 
 
@@ -281,8 +341,8 @@ plot_wave_channel_base <- function(audio_data,
 
     # Format table of y points
     rg <- tibble::tibble(
-      y0 = audio_data$y[audio_data$GRP=="y0"],
-      y1 = audio_data$y[audio_data$GRP=="y1"]
+      y0 = audio_data$y[audio_data$y_point=="y0"],
+      y1 = audio_data$y[audio_data$y_point=="y1"]
     )
 
     plot(rep(index, 2), c(rg[["y0"]], rg[["y1"]]), type = "n", yaxt = "n", ylim = ylim,
@@ -323,6 +383,7 @@ process_wave_channel <- function(audio_obj,
   null <- if(audio_obj@bit == 8) 127 else 0
   l <- length(channel)
   simplified <- simplify && (l > nr)
+  duration <- get_audio_dur(audio_obj)
 
   if(isTRUE(simplified)){
     # Simplify Data
@@ -333,7 +394,8 @@ process_wave_channel <- function(audio_obj,
                   ncol = nr)
     rg <- apply(mat, 2, range, na.rm = TRUE)
     audio_data <- tibble::tibble(x = index, y0=rg[1,], y1 = rg[2,]) %>%
-      tidyr::pivot_longer(c(y0, y1), names_to = "GRP", values_to = "y")
+      tidyr::pivot_longer(c(y0, y1), names_to = "y_point", values_to = "y") %>%
+      dplyr::mutate(line_group = rep(c(1, 1, 2, 2), length.out = n()))
   }else{
     # Take whole channel
     index <- seq(along = channel)
@@ -349,7 +411,9 @@ process_wave_channel <- function(audio_obj,
     list(
       audio_data = audio_data,
       params = list(
+        duration = duration,
         simplified = simplified,
+        xunit = xunit,
         null = null,
         l = l
       )
