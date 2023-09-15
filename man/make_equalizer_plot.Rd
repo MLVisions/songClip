@@ -4,13 +4,21 @@
 \alias{make_equalizer_plot}
 \title{Make Equalizer plot}
 \usage{
-make_equalizer_plot(eq_data = make_equalizer_data(), shift_bounds = c(-12, 12))
+make_equalizer_plot(
+  eq_data = make_equalizer_data(),
+  shift_bounds = c(-12, 12),
+  source = "equalizer_plot"
+)
 }
 \arguments{
 \item{eq_data}{equalizer data with expected columns returned from
 \code{make_equalizer_data()}}
 
 \item{shift_bounds}{y-axis limits.}
+
+\item{source}{a character string of length 1. Match the value of this string
+with the source argument in \code{plotly::plot_ly()} to respond to events
+emitted from that specific plot. See \code{?plotly::event_data} for details.}
 }
 \value{
 \code{plotly} object with draggable points

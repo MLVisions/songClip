@@ -32,6 +32,7 @@ make_equalizer_ui <- function(id) {
 
 #' @describeIn make_equalizer_ui Create module server for modifying the equalizer
 #'
+#' @importFrom plotly event_data
 #'
 #' @keywords internal
 make_equalizer_server <- function(id) {
@@ -39,71 +40,45 @@ make_equalizer_server <- function(id) {
     id,
     function(input, output, session) {
 
-      .rv <- reactiveValues(reset = FALSE)
+      .rv <- reactiveValues(suspended = TRUE)
+      .r_data <- reactiveValues(event_data = NULL, equalizer_data = make_equalizer_data())
       ns <- session$ns
 
       # TODO: make list of presets
 
-      # Cached dataset - this one updates as soon as plotly does
-      equalizer_data_cache <- reactiveVal(make_equalizer_data())
-
-      # reactive dataset - updates less frequently
-      # TODO: fix reset button (complicated reactivity)
-      equalizer_data <- eventReactive(list(equalizer_data_cache(), input$reset),{
-        # browser()
-        if(isTRUE(.rv$reset)){
-          .rv$reset <- FALSE
-          df <- make_equalizer_data()
-        }else{
-          df <- shiny::req(equalizer_data_cache())
-        }
-        df
-      }) #%>% throttle(1000)
-
-
-      # not currently used or needed (just in case)
-      # model <- reactive({
-      #   eq_data <- shiny::req(equalizer_data())
-      #   lm(shift ~ poly(index,2), eq_data)
-      # })
-
       equalizer_plot_reac <- reactive({
-        eq_data <- shiny::req(equalizer_data())
-        make_equalizer_plot(eq_data = eq_data)
+        eq_data <- shiny::req(.r_data$equalizer_data)
+        make_equalizer_plot(eq_data = eq_data, source = "equalizer_plot")
       })
 
       output$equalizer_plot <- plotly::renderPlotly({
         pl <- shiny::req(equalizer_plot_reac())
-        plotly::event_register(pl, 'plotly_relayout')
-        pl
+        ## resume observer only if suspended
+        if(.rv$suspended) {
+          observer$resume()
+          .rv$suspended <- FALSE
+        }
+        return(pl)
       })
 
-      # Get new location
-      event_data <- reactive({
-        plotly::event_data("plotly_relayout")
-      })
 
-      # update equalizer data in response dragging points
-      observe({
-        pl <- shiny::req(equalizer_plot_reac())
-        plotly::event_register(pl, 'plotly_relayout')
-        eq_data <- shiny::req(equalizer_data())
-        ed <- shiny::req(event_data())
-
-        update <- update_equalizer_data(eq_data, ed)
-        equalizer_data_cache(update)
-      }) %>% throttle(2000)
+      # observe plotly events -> update equalizer data in response to dragging points
+      observer <- observeEvent(
+        event_data("plotly_relayout", source = "equalizer_plot"), {
+          eq_data <- shiny::req(.r_data$equalizer_data)
+          .r_data$event_data <- event_data("plotly_relayout", source = "equalizer_plot")
+          .r_data$equalizer_data <- update_equalizer_data(eq_data, .r_data$event_data)
+        }, suspended = TRUE)
 
 
       # Reset values
       observeEvent(input$reset, {
-        .rv$reset <- TRUE
-        # equalizer_data_cache(make_equalizer_data())
+        .r_data$equalizer_data <- make_equalizer_data()
       }, priority = 2, ignoreInit = TRUE)
 
       return(
         list(
-          eq_data = reactive(equalizer_data())
+          eq_data = reactive(.r_data$equalizer_data)
         )
       )
     }
@@ -122,6 +97,9 @@ make_equalizer_server <- function(id) {
 #' @param eq_data equalizer data with expected columns returned from
 #'        `make_equalizer_data()`
 #' @param shift_bounds y-axis limits.
+#' @param source a character string of length 1. Match the value of this string
+#'        with the source argument in `plotly::plot_ly()` to respond to events
+#'        emitted from that specific plot. See `?plotly::event_data` for details.
 #'
 #'
 #' @examples
@@ -136,7 +114,8 @@ make_equalizer_server <- function(id) {
 #'
 #' @keywords internal
 make_equalizer_plot <- function(eq_data = make_equalizer_data(),
-                                shift_bounds = c(-12, 12)
+                                shift_bounds = c(-12, 12),
+                                source = "equalizer_plot"
 ){
 
 
@@ -175,7 +154,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
 
   # plot the shapes and fitted line
   pl_plotly <-
-    plotly::plot_ly(data_pl, x = ~index, y= ~shift) %>%
+    plotly::plot_ly(data = data_pl, x = ~index, y= ~shift, source = source) %>%
     # add_lines(y = predict(model(), eq_data), color = I("red")) %>%
     plotly::layout(
       shapes = circles,
