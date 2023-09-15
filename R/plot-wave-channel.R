@@ -393,6 +393,10 @@ process_wave_channel <- function(audio_obj,
     mat <- matrix(c(channel, if(l %% nr > 0) rep(NA, nr - (l %% nr))),
                   ncol = nr)
     rg <- apply(mat, 2, range, na.rm = TRUE)
+
+    # Standardize output to be more understandable regardless of plotting method
+    # `line_group` column is the grouping that connects the segments meant to connect.
+    # see ?segments and tuneR::plot() methods for Wave files for more details.
     audio_data <- tibble::tibble(x = index, y0=rg[1,], y1 = rg[2,]) %>%
       tidyr::pivot_longer(c(y0, y1), names_to = "y_point", values_to = "y") %>%
       dplyr::mutate(line_group = rep(c(1, 1, 2, 2), length.out = n()))
