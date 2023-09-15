@@ -73,7 +73,9 @@ make_equalizer_server <- function(id) {
       })
 
       output$equalizer_plot <- plotly::renderPlotly({
-        shiny::req(equalizer_plot_reac())
+        pl <- shiny::req(equalizer_plot_reac())
+        plotly::event_register(pl, 'plotly_relayout')
+        pl
       })
 
       # Get new location
@@ -83,7 +85,8 @@ make_equalizer_server <- function(id) {
 
       # update equalizer data in response dragging points
       observe({
-        shiny::req(equalizer_plot_reac())
+        pl <- shiny::req(equalizer_plot_reac())
+        plotly::event_register(pl, 'plotly_relayout')
         eq_data <- shiny::req(equalizer_data())
         ed <- shiny::req(event_data())
 
