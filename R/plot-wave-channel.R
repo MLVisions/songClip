@@ -3,6 +3,10 @@
 #' Plot wave channels of audio file
 #'
 #' @param audio_obj a `tuneR` audio object.
+#' @param source a character string of length 1. Match the value of this string
+#'        with the source argument in `plotly::plot_ly()` to respond to events
+#'        emitted from that specific plot. Only used if `format = "fancy"`.
+#'        See `?plotly::event_data` for more details.
 #' @param type channel to plot. One of `c("left", "right", "stereo")`.
 #' @param format format type. `"fancy"` is experimental and will eventually be
 #'        the main one used within the app.
@@ -24,6 +28,8 @@
 #' We want more control, the ability to plot the average (versus left and right),
 #' and an interactive plot
 #'
+#' Not sure if `source` will be supported for `stereo` types
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -43,6 +49,7 @@
 #' @return a `plotly` object if `format = "fancy"`. Otherwise `NULL` invisibly
 #' @export
 plot_wave_audio <- function(audio_obj,
+                            source = "wave_audio",
                             type = c("left", "right", "stereo"),
                             format = c("fancy", "base"),
                             hollow = FALSE,
@@ -152,6 +159,7 @@ plot_wave_audio <- function(audio_obj,
         plot_wave_channel(
           audio_data = wave_channel$audio_data,
           audio_params = wave_channel$params,
+          source = source,
           hollow = hollow,
           ylab = ylab_i, ylim = ylim,
           plot_title = NULL, xlab = xlab
@@ -203,6 +211,7 @@ plot_wave_audio <- function(audio_obj,
       pl <- plot_wave_channel(
         audio_data = wave_channel$audio_data,
         audio_params = wave_channel$params,
+        source = source,
         hollow = hollow,
         ylab = ylab, ylim = ylim,
         plot_title = plot_title, xlab = xlab
@@ -260,12 +269,14 @@ plot_wave_audio <- function(audio_obj,
 #' @keywords internal
 plot_wave_channel_fancy <- function(audio_data,
                                     audio_params,
+                                    source = NULL,
                                     ylim = NULL,
                                     xlab = NULL,
                                     ylab = NULL,
                                     plot_title = NULL,
                                     axes = TRUE,
                                     hollow = FALSE,
+                                    show_y_axis = FALSE,
                                     line_color = "#ADD8E6",
                                     ft_color = "lightgrey",
                                     bg_color = "#252525"
@@ -283,13 +294,14 @@ plot_wave_channel_fancy <- function(audio_data,
 
   # font and styling
   t1 <- list(size = 15, color = ft_color)
+  y_tick_vals <- if(isTRUE(show_y_axis)) ylim else NULL
   # Add unit if unchanged xlab and time
   if(xlab == audio_params$xunit && xlab == "Time"){
     xlab <- paste(xlab, "(minutes)")
   }
 
   # Core plot
-  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y) %>%
+  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y, source = source) %>%
     plotly::add_lines( color = I(line_color))
 
   # Format
@@ -298,7 +310,7 @@ plot_wave_channel_fancy <- function(audio_data,
       yaxis = list(
         range = ylim*2,
         fixedrange = TRUE, title = ylab,
-        tickvals = ylim,
+        tickvals = y_tick_vals,
         zerolinecolor = "black",
         tickfont = list(size = 18)
       ),
@@ -425,6 +437,53 @@ process_wave_channel <- function(audio_obj,
         null = null,
         l = l
       )
+    )
+  )
+}
+
+
+
+#' Add vertical lines to plotly object that can be used for cropping
+#'
+#' @param pl_plotly a `plotly` object
+#' @inheritParams plot_wave_channel_fancy
+#' @param color color of lines
+#'
+#' @keywords internal
+add_crop_lines <- function(pl_plotly, audio_params, color = "#0BDA51"){
+
+  crop_range <- audio_params$duration/60
+  crop_start <- crop_range*(3/4)
+
+  pl_plotly %>% plotly::layout(
+    shapes = list(
+      # vertical line
+      list(type = "line",
+           line = list(color = color, width = 3),
+           x0 = crop_start[1], x1 = crop_start[1],
+           y0 = 0, y1 = 1, yref = "paper"),
+      list(type = "line",
+           line = list(color = color, width = 3),
+           x0 = crop_start[2], x1 = crop_start[2],
+           y0 = 0, y1 = 1, yref = "paper")
+    )
+  )
+}
+
+#' Add vertical line to plotly object to track current play time
+#'
+#' @param pl_plotly a `plotly` object
+#' @param color color of line
+#'
+#' @keywords internal
+add_play_tracker_line <- function(pl_plotly, color = "red"){
+  pl_plotly %>% plotly::layout(
+    shapes = list(
+      # vertical line
+      list(type = "line",
+           line = list(color = color),
+           x0 = 0, x1 = 0,
+           y0 = 0, y1 = 1, yref = "paper")
     )
   )
 }

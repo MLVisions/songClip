@@ -53,7 +53,8 @@ make_equalizer_server <- function(id) {
 
       output$equalizer_plot <- plotly::renderPlotly({
         pl <- shiny::req(equalizer_plot_reac())
-        ## resume observer only if suspended
+        # Resume observer only if suspended - silences warning related to
+        # fetching events of an object that doesnt exist yet
         if(.rv$suspended) {
           observer$resume()
           .rv$suspended <- FALSE
@@ -133,7 +134,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
     data_pl$index, eq_data$shift,
     ~ list(
       type = "circle",
-      # anchor circles at (mpg, wt)
+      # anchor circles at (.x, .y)
       xanchor = .x,
       yanchor = .y,
       # give each circle a 2 pixel diameter
