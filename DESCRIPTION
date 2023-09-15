@@ -28,6 +28,7 @@ Imports:
     purrr,
     plotly (>= 4.9.2),
     readr,
+    reticulate,
     rmarkdown,
     shiny (>= 1.6.0),
     shinycssloaders,

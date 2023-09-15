@@ -51,6 +51,13 @@
       "Repository": "CRAN",
       "Hash": "ae6cbbe1492f4de79c45fce06f967ce8"
     },
+    "RcppTOML": {
+      "Package": "RcppTOML",
+      "Version": "0.2.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c232938949fcd8126034419cc529333a"
+    },
     "anytime": {
       "Package": "anytime",
       "Version": "0.3.9",
@@ -520,6 +527,13 @@
       "Repository": "CRAN",
       "Hash": "6c00a09ba7d34917d9a3e28b15dd74e3"
     },
+    "png": {
+      "Package": "png",
+      "Version": "0.1-8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bd54ba8a0a5faded999a7aab6e46b374"
+    },
     "praise": {
       "Package": "praise",
       "Version": "1.0.0",
@@ -596,6 +610,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "30e5eba91b67f7f4d75d31de14bbfbdc"
+    },
+    "reticulate": {
+      "Package": "reticulate",
+      "Version": "1.32.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3bcef49cfb33dcc522ab94eabd5d3714"
     },
     "rlang": {
       "Package": "rlang",
