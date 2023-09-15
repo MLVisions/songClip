@@ -159,7 +159,7 @@ plot_wave_audio <- function(audio_obj,
       })
 
       # This wont work anymore
-      pl <- cowplot::plot_grid(plotlist=plots, ncol = 1)
+      pl <- plotly::subplot(plots, shareY = TRUE, shareX = TRUE, nrows = 2)
     }
   }else{
     ### Single Audio Channel ###
