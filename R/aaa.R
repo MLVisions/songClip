@@ -1,5 +1,4 @@
 #' @import shiny
-#' @import ggplot2
 #' @importFrom shinycssloaders withSpinner
 NULL
 
