@@ -7,12 +7,14 @@
 plot_wave_channel_fancy(
   audio_data,
   audio_params,
+  source = NULL,
   ylim = NULL,
   xlab = NULL,
   ylab = NULL,
   plot_title = NULL,
   axes = TRUE,
   hollow = FALSE,
+  show_y_axis = FALSE,
   line_color = "#ADD8E6",
   ft_color = "lightgrey",
   bg_color = "#252525"

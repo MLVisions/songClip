@@ -6,6 +6,7 @@
 \usage{
 plot_wave_audio(
   audio_obj,
+  source = "wave_audio",
   type = c("left", "right", "stereo"),
   format = c("fancy", "base"),
   hollow = FALSE,
@@ -21,6 +22,11 @@ plot_wave_audio(
 }
 \arguments{
 \item{audio_obj}{a \code{tuneR} audio object.}
+
+\item{source}{a character string of length 1. Match the value of this string
+with the source argument in \code{plotly::plot_ly()} to respond to events
+emitted from that specific plot. Only used if \code{format = "fancy"}.
+See \code{?plotly::event_data} for more details.}
 
 \item{type}{channel to plot. One of \code{c("left", "right", "stereo")}.}
 
@@ -58,6 +64,8 @@ tuneR's plotting method:
 https://github.com/cran/tuneR/blob/master/R/plot-Wave.R
 We want more control, the ability to plot the average (versus left and right),
 and an interactive plot
+
+Not sure if \code{source} will be supported for \code{stereo} types
 }
 \examples{
 \dontrun{

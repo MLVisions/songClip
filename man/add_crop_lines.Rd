@@ -4,12 +4,14 @@
 \alias{add_crop_lines}
 \title{Add vertical lines to plotly object that can be used for cropping}
 \usage{
-add_crop_lines(pl_plotly, audio_params)
+add_crop_lines(pl_plotly, audio_params, color = "#0BDA51")
 }
 \arguments{
 \item{pl_plotly}{a \code{plotly} object}
 
 \item{audio_params}{List of audio parameters returned from \code{process_wave_channel}.}
+
+\item{color}{color of lines}
 }
 \description{
 Add vertical lines to plotly object that can be used for cropping

@@ -29,7 +29,7 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
       ),
       body = shinydashboard::dashboardBody(
         tags$head(
-          tags$style(HTML(jsHeader)),
+          tags$style(HTML(cssHeader)),
           tags$script(HTML(jqueryHeader)),
           tags$style(HTML(noWrap_css)),
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "styles.css")),
