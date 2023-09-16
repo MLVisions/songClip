@@ -702,6 +702,13 @@
       "Repository": "CRAN",
       "Hash": "5045276dcad7ad9b785d593b1a710681"
     },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "2.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "802e4786b353a4bb27116957558548d5"
+    },
     "signal": {
       "Package": "signal",
       "Version": "0.7-7",

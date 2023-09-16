@@ -35,6 +35,7 @@ Imports:
     shinydashboard,
     shinydashboardPlus (>= 2.0.0),
     shinyFiles,
+    shinyjs,
     shinyWidgets,
     tuneR
 Suggests: 
