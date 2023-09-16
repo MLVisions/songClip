@@ -6,27 +6,24 @@
 \usage{
 install_py_pkgs(
   py_pkgs = c("scipy", "pandas"),
-  python_version = NULL,
   virtual_env = FALSE,
-  env = SONGCLIP_PYTHON_ENV,
-  method = "auto",
-  ...
+  env_name = SONGCLIP_PYTHON_ENV,
+  update = FALSE,
+  python_version = NULL
 )
 }
 \arguments{
 \item{py_pkgs}{vector of python packages to install}
 
-\item{python_version}{The requested Python version. Ignored when attempting
-to install with a Python virtual environment.}
-
 \item{virtual_env}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, use a virtual environment.}
 
-\item{env}{a virtual environment name}
+\item{env_name}{a virtual environment name}
 
-\item{method}{Installation method. By default, "auto" automatically finds a
-method that will work in the local environment. Change the default to
-force a specific installation method. Note that the "virtualenv"
-method is not available on Windows.}
+\item{update}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, update packages that are
+already installed.}
+
+\item{python_version}{The requested Python version. Ignored when attempting
+to install with a Python virtual environment.}
 }
 \description{
 Install python packages to an environment

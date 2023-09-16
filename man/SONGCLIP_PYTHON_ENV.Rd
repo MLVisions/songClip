@@ -3,7 +3,7 @@
 \docType{data}
 \name{SONGCLIP_PYTHON_ENV}
 \alias{SONGCLIP_PYTHON_ENV}
-\title{Default environment for python packages}
+\title{Default environment name for python packages}
 \format{
 An object of class \code{character} of length 1.
 }
@@ -11,6 +11,6 @@ An object of class \code{character} of length 1.
 SONGCLIP_PYTHON_ENV
 }
 \description{
-Default environment for python packages
+Can be use for virtual of conda environment
 }
 \keyword{datasets}

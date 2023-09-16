@@ -4,10 +4,10 @@
 \alias{shutdown_virtual_env}
 \title{Shut down virtual environment}
 \usage{
-shutdown_virtual_env(env = SONGCLIP_PYTHON_ENV, force = TRUE)
+shutdown_virtual_env(env_name = SONGCLIP_PYTHON_ENV, force = TRUE)
 }
 \arguments{
-\item{env}{a virtual environment name}
+\item{env_name}{a virtual environment name}
 
 \item{force}{Logical (\code{TRUE}/\code{FALSE}). If \code{FALSE}, confirm before removing
 packages or virtual environments}

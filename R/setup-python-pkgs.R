@@ -1,19 +1,129 @@
 
-#' Default environment for python packages
+#' Default environment name for python packages
+#'
+#' Can be use for virtual of conda environment
 SONGCLIP_PYTHON_ENV <- "songClip-python"
 
 
-#' Install python packages to an environment
+
+#' Set up a python environment with required packages
 #'
 #' @param py_pkgs vector of python packages to install
 #' @param python_version The requested Python version. Ignored when attempting
 #'        to install with a Python virtual environment.
 #' @param virtual_env Logical (`TRUE`/`FALSE`). If `TRUE`, use a virtual environment.
-#' @param env a virtual environment name
-#' @param method Installation method. By default, "auto" automatically finds a
-#'        method that will work in the local environment. Change the default to
-#'        force a specific installation method. Note that the "virtualenv"
-#'        method is not available on Windows.
+#' @param env_name a virtual environment name
+#' @param conda_name name of the conda environment to use if `virtual_env = FALSE`.
+#'        Run `reticulate::conda_list()` to see a list of available conda environments.
+#'        The `conda_name` should match the `name` element of that list if you are loading
+#'        *an existing* conda environment. If `conda_name` is not found in this list, a new
+#'        one will be created matching the name of `env_name`.
+#' @param update Logical (`TRUE`/`FALSE`). If `TRUE`, update packages that are
+#'        already installed.
+#'
+#' @details
+#'
+#' This should only be called once per R session because of how long it takes.
+#'
+#' We will want to *install* all packages we need for the app once at the beginning,
+#' and then *import* packages one at a time within each function that needs them
+#'
+#' If we use a virtual environment, we are only using that for packages that dont
+#' come with base python. i.e. the user still needs to have python installed.
+#'
+#' A virtual environment would also be required for each new session of the app,
+#' meaning the user would be installing these packages every time they want to run
+#' the app on a clean R session.
+#'
+#' If we dont use a virtual environment, users would only need to install the required
+#' packages once. I think this could be preferable, and would offer significant
+#' speed improvements.
+#'
+#' @keywords internal
+setup_py_env <- function(
+    py_pkgs = c("scipy", "pandas"),
+    python_version = NULL,
+    virtual_env = FALSE,
+    env_name = SONGCLIP_PYTHON_ENV,
+    conda_name = c("base", "r-reticulate", SONGCLIP_PYTHON_ENV),
+    update = FALSE
+){
+
+  # Make sure python is installed
+  checkmate::assert_true(python_is_installed())
+
+  conda_name <- match.arg(conda_name)
+
+  if(isTRUE(virtual_env)){
+    ### This currently doesnt work ### - cant import modules after installing them
+    # create a new environment
+    env_path <- tryCatch(reticulate::virtualenv_create(env_name), error = identity)
+
+    # make sure the environment was created
+    env_exists <- reticulate::virtualenv_exists(env_name)
+    if(isFALSE(env_exists)){
+      cli::cli_abort(glue::glue("env {env_name} could not be created:\n\n {env_path$message}"))
+    }
+
+    # Configure python installation
+    config <- reticulate::py_discover_config(use_environment = env_name)
+    Sys.setenv("RETICULATE_PYTHON" = config$python)
+    Sys.setenv("RETICULATE_PYTHON_ENV" = env_path)
+    reticulate::use_virtualenv(virtualenv = env_path, required = TRUE)
+    message(glue::glue("a virtual environment has been loaded at: {env_path}"))
+  }else{
+    conda_envir_lst <- reticulate::conda_list()
+    conda_envirs <- conda_envir_lst %>% dplyr::pull(name)
+
+    # pull previous conda environment if it exists, otherwise create new one
+    if(conda_name %in% conda_envirs){
+      # loads a local conda library
+      env_path <- conda_envir_lst %>% dplyr::filter(name == conda_name) %>% dplyr::pull(python)
+      # overwrite env_name with conda_name
+      env_name <- conda_name
+    }else{
+      # Creates a local conda library
+      env_path <- tryCatch(reticulate::conda_create(env_name), error = identity)
+      # make sure the environment was created
+      env_exists <- fs::file_exists(env_path)
+      if(isFALSE(env_exists)){
+        cli::cli_abort(glue::glue("env {env_name} could not be created:\n\n {env_path$message}"))
+      }
+    }
+
+    # Configure python installation
+    config <- reticulate::py_discover_config(use_environment = env_name)
+    Sys.setenv("RETICULATE_PYTHON" = config$python)
+    reticulate::use_condaenv(condaenv = env_path, required = TRUE)
+    message(glue::glue("a conda environment has been loaded at: {env_path}"))
+  }
+
+  # Not sure if this is done right - see ?reticulate::use_python section
+  # on `RETICULATE_PYTHON`
+  # Sys.setenv("RETICULATE_PYTHON" = python_path)
+  config <- reticulate::py_config()
+
+  # install python packages
+  installed_pkgs <- install_py_pkgs(
+    py_pkgs,
+    env_name = env_name,
+    virtual_env = virtual_env,
+    update = update,
+    python_version = python_version
+  )
+
+  env_list <- list(
+    env_name = env_name,
+    env_path = env_path,
+    config = config,
+    installed_pkgs = installed_pkgs
+  )
+  return(env_list)
+}
+
+#' Install python packages to an environment
+#'
+#' @inheritParams setup_py_env
 #'
 #' @details
 #' see `?reticulate::py_install` for more details
@@ -21,28 +131,50 @@ SONGCLIP_PYTHON_ENV <- "songClip-python"
 #' @keywords internal
 install_py_pkgs <- function(
     py_pkgs = c("scipy", "pandas"),
-    python_version = NULL,
     virtual_env = FALSE,
-    env = SONGCLIP_PYTHON_ENV,
-    method = "auto",
-    ...
+    env_name = SONGCLIP_PYTHON_ENV,
+    update = FALSE,
+    python_version = NULL
 ){
+
+
 
   py_install_fn <- ifelse(isTRUE(virtual_env),
                           reticulate::virtualenv_install,
-                          reticulate::py_install
+                          reticulate::conda_install
   )
 
-  purrr::walk(py_pkgs, function(pkg){
-    args <- list(pkg, python_version = python_version)
+  # Check if already installed
+  if(isFALSE(update)){
+    installed_pkgs <- reticulate::py_list_packages(env_name) %>%
+      tibble::as_tibble()
 
-    if(isTRUE(virtual_env)){
-      args <- c(args, list(envname = env))
-    }else{
-      args <- c(args, list(method = method))
-    }
-    do.call(py_install_fn, args)
-  })
+    py_pkgs_installed <- py_pkgs[py_pkgs %in% installed_pkgs$package] %>%
+      paste(collapse = ", ")
+    msg <- paste0(
+      "The following packages have already been installed",
+      " (set `update = TRUE` to override). Skipping...",
+      glue::glue("\n\n{py_pkgs_installed}\n")
+    )
+    message(msg)
+    # filter list of packages to install
+    py_pkgs <- py_pkgs[!(py_pkgs %in% installed_pkgs$package)]
+  }
+
+
+  if(!rlang::is_empty(py_pkgs)){
+    purrr::walk(py_pkgs, function(pkg){
+      args <- list(pkg, python_version = python_version,
+                   envname = env_name)
+      do.call(py_install_fn, args)
+    })
+  }
+
+  # Get new selection of installed packages
+  installed_pkgs <- reticulate::py_list_packages(env_name) %>%
+    tibble::as_tibble()
+
+  return(installed_pkgs)
 }
 
 
@@ -110,70 +242,7 @@ import_main_py <- function(envir = NULL){
   assign("builtins", builtins, envir = envir)
 }
 
-#' Set up a python environment with required packages
-#'
-#' @inheritParams install_py_pkgs
-#' @details
-#'
-#' This should only be called once per R session because of how long it takes.
-#'
-#' We will want to *install* all packages we need for the app once at the beginning,
-#' and then *import* packages one at a time within each function that needs them
-#'
-#' If we use a virtual environment, we are only using that for packages that dont
-#' come with base python. i.e. the user still needs to have python installed.
-#'
-#' A virtual environment would also be required for each new session of the app,
-#' meaning the user would be installing these packages every time they want to run
-#' the app on a clean R session.
-#'
-#' If we dont use a virtual environment, users would only need to install the required
-#' packages once. I think this could be preferable, and would offer significant
-#' speed improvements.
-#'
-#' @keywords internal
-setup_py_env <- function(
-    py_pkgs = c("scipy", "pandas"),
-    virtual_env = FALSE,
-    env = SONGCLIP_PYTHON_ENV
-){
 
-  # Make sure python is installed
-  checkmate::assert_true(reticulate::py_available())
-
-  if(isTRUE(virtual_env)){
-    ### This currently doesnt work ### - cant import modules after instaling them
-    # create a new environment
-    env_path <- tryCatch(reticulate::virtualenv_create(env), error = identity)
-
-    # make sure the environment was created
-    env_exists <- reticulate::virtualenv_exists(env)
-    if(isFALSE(env_exists)){
-      cli::cli_abort(glue::glue("env {env} could not be created:\n\n {env_path$message}"))
-    }
-    # Not sure if this is done right - see ?reticulate::use_virtualenv section
-    # on `RETICULATE_PYTHON`
-    config <- reticulate::py_discover_config(use_environment = env)
-    python_path <- config$python
-    # python_path <- virtualenv_starter()
-  }else{
-    config <- reticulate::py_discover_config()
-    python_path <- config$python
-  }
-
-  # Configure python installation
-  Sys.setenv("RETICULATE_PYTHON" = config$python)
-
-  # install python packages
-  install_py_pkgs(py_pkgs, env = env, virtual_env = virtual_env)
-
-  if(isTRUE(virtual_env)){
-    # load the virtual (or conda) environment - this takes a couple seconds
-    reticulate::use_virtualenv(virtualenv = env_path)
-  }
-
-  return(invisible(env))
-}
 
 
 
@@ -196,11 +265,11 @@ setup_py_env <- function(
 #' whole session))
 #'
 #' @keywords internal
-shutdown_virtual_env <- function(env = SONGCLIP_PYTHON_ENV, force = TRUE){
-  if(reticulate::virtualenv_exists(env)){
-    reticulate::virtualenv_remove(env, confirm = !force)
+shutdown_virtual_env <- function(env_name = SONGCLIP_PYTHON_ENV, force = TRUE){
+  if(reticulate::virtualenv_exists(env_name)){
+    reticulate::virtualenv_remove(env_name, confirm = !force)
   }else{
-    warning(glue::glue("Virtual environment {env} does not exist."))
+    warning(glue::glue("Virtual environment {env_name} does not exist."))
   }
 }
 

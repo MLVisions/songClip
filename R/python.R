@@ -145,10 +145,10 @@ process_audio_py <- function(
     setup_env = FALSE
 ){
 
-  # optionally set up a virtual environment
+  # optionally set up a conda or virtual environment
   if(isTRUE(setup_env)){
-    # import python packages (may not be necessary in all cases?)
-    setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
+    # setup environment and python packages (may not be necessary in all cases?)
+    py_env <- setup_py_env(py_pkgs = c("pandas"), virtual_env = FALSE)
   }
 
   # import main python functions
@@ -158,7 +158,7 @@ process_audio_py <- function(
   # assuming they are already installed, or came with python (e.g. `difflib`)
   difflib <- reticulate::import("difflib")
   filecmp <- reticulate::import("filecmp")
-  import_py_pkgs(py_pkgs = c("scipy", "pandas"))
+  import_py_pkgs(py_pkgs = c("pandas"))
 
   # source specific python scripts
   py_script <- file.path(SONGCLIP_PYTHON_DIR, "process-audio.py")

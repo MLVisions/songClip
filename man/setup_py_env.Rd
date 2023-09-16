@@ -6,16 +6,31 @@
 \usage{
 setup_py_env(
   py_pkgs = c("scipy", "pandas"),
+  python_version = NULL,
   virtual_env = FALSE,
-  env = SONGCLIP_PYTHON_ENV
+  env_name = SONGCLIP_PYTHON_ENV,
+  conda_name = c("base", "r-reticulate", SONGCLIP_PYTHON_ENV),
+  update = FALSE
 )
 }
 \arguments{
 \item{py_pkgs}{vector of python packages to install}
 
+\item{python_version}{The requested Python version. Ignored when attempting
+to install with a Python virtual environment.}
+
 \item{virtual_env}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, use a virtual environment.}
 
-\item{env}{a virtual environment name}
+\item{env_name}{a virtual environment name}
+
+\item{conda_name}{name of the conda environment to use if \code{virtual_env = FALSE}.
+Run \code{reticulate::conda_list()} to see a list of available conda environments.
+The \code{conda_name} should match the \code{name} element of that list if you are loading
+\emph{an existing} conda environment. If \code{conda_name} is not found in this list, a new
+one will be created matching the name of \code{env_name}.}
+
+\item{update}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, update packages that are
+already installed.}
 }
 \description{
 Set up a python environment with required packages
