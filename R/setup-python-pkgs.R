@@ -3,7 +3,21 @@
 SONGCLIP_PYTHON_ENV <- "songClip-python"
 
 
-
+#' Install python packages to an environment
+#'
+#' @param py_pkgs vector of python packages to install
+#' @param python_version The requested Python version. Ignored when attempting
+#'        to install with a Python virtual environment.
+#' @param env a virtual environment name
+#' @param method Installation method. By default, "auto" automatically finds a
+#'        method that will work in the local environment. Change the default to
+#'        force a specific installation method. Note that the "virtualenv"
+#'        method is not available on Windows.
+#'
+#' @details
+#' see `?reticulate::py_install` for more details
+#'
+#' @keywords internal
 install_py_pkgs <- function(
     py_pkgs = c("scipy", "pandas"),
     python_version = NULL,
@@ -24,8 +38,14 @@ install_py_pkgs <- function(
 
 
 
-setup_py_env <- function(env = SONGCLIP_PYTHON_ENV,
-                         py_pkgs = c("scipy", "pandas")
+#' Set up virtual python environment with required packages
+#'
+#' @inheritParams install_py_pkgs
+#'
+#' @keywords internal
+setup_py_env <- function(
+    py_pkgs = c("scipy", "pandas"),
+    env = SONGCLIP_PYTHON_ENV
 ){
   # create a new environment
   reticulate::virtualenv_create(env)
