@@ -2,22 +2,39 @@
 % Please edit documentation in R/setup-python-pkgs.R
 \name{setup_py_env}
 \alias{setup_py_env}
-\title{Set up virtual python environment with required packages}
+\title{Set up a python environment with required packages}
 \usage{
-setup_py_env(py_pkgs = c("scipy", "pandas"), env = SONGCLIP_PYTHON_ENV)
+setup_py_env(
+  py_pkgs = c("scipy", "pandas"),
+  virtual_env = FALSE,
+  env = SONGCLIP_PYTHON_ENV
+)
 }
 \arguments{
 \item{py_pkgs}{vector of python packages to install}
 
+\item{virtual_env}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, use a virtual environment.}
+
 \item{env}{a virtual environment name}
 }
 \description{
-Set up virtual python environment with required packages
+Set up a python environment with required packages
 }
 \details{
 This should only be called once per R session because of how long it takes.
 
 We will want to \emph{install} all packages we need for the app once at the beginning,
 and then \emph{import} packages one at a time within each function that needs them
+
+If we use a virtual environment, we are only using that for packages that dont
+come with base python. i.e. the user still needs to have python installed.
+
+A virtual environment would also be required for each new session of the app,
+meaning the user would be installing these packages every time they want to run
+the app on a clean R session.
+
+If we dont use a virtual environment, users would only need to install the required
+packages once. I think this could be preferable, and would offer significant
+speed improvements.
 }
 \keyword{internal}

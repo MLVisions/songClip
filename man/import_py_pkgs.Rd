@@ -4,11 +4,20 @@
 \alias{import_py_pkgs}
 \title{Import python packages into the environment}
 \usage{
-import_py_pkgs(py_pkgs = c("scipy", "pandas"))
+import_py_pkgs(py_pkgs = c("scipy", "pandas"), envir = NULL)
 }
 \arguments{
 \item{py_pkgs}{vector of python packages to install}
+
+\item{envir}{environment to load the main modules into}
 }
 \description{
 Import python packages into the environment
 }
+\details{
+This function loops through \code{py_pkgs}, and does the equivalent of:
+\code{py_pkg <- reticulate::import("py_pkg")}
+or
+\code{scipy <- reticulate::import("scipy")}
+}
+\keyword{internal}

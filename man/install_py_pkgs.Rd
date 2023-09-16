@@ -7,8 +7,9 @@
 install_py_pkgs(
   py_pkgs = c("scipy", "pandas"),
   python_version = NULL,
+  virtual_env = FALSE,
   env = SONGCLIP_PYTHON_ENV,
-  method = "virtualenv",
+  method = "auto",
   ...
 )
 }
@@ -17,6 +18,8 @@ install_py_pkgs(
 
 \item{python_version}{The requested Python version. Ignored when attempting
 to install with a Python virtual environment.}
+
+\item{virtual_env}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, use a virtual environment.}
 
 \item{env}{a virtual environment name}
 

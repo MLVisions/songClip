@@ -11,9 +11,13 @@ process_audio_py(
 }
 \arguments{
 \item{audio_path}{path to audio file}
+
+\item{setup_env}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, set up a virtual
+environment. This should probably be done outside of the function, once
+per R session.}
 }
 \description{
-Example with working with \code{audio_path}
+Example with working with \code{audio_path} and importing python modules
 }
 \details{
 The \code{os} python module comes with python:
@@ -22,5 +26,18 @@ The \code{os} python module comes with python:
 \item Virtual environment (or conda) is only needed when we have to \emph{install}
 packages.
 }
+}
+\examples{
+\dontrun{
+setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
+
+# dont set up environment within the function
+process_audio_py(
+  audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
+  setup_env = FALSE
+  )
+
+}
+
 }
 \keyword{internal}

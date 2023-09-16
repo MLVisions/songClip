@@ -23,7 +23,9 @@ SONGCLIP_PYTHON_DIR <- system.file("python", package = "songClip", mustWork = TR
 
 # Example functions -------------------------------------------------------
 
-# Each example adds a small amount of complexity
+# Each example adds a bit of complexity
+
+
 
 
 #' Simple python function
@@ -40,10 +42,30 @@ example_py_func <- function(
   reticulate::source_python(py_script)
 
   # `py_add` is a function defined in `py_script`
-  x <- py_add(x, y)
+  sum <- py_add(x, y)
+  cat("sum:\n")
 
-  return(x)
+  return(sum)
 }
+
+
+
+# Since `sum` is a built in python function, the above function could be simplified to:
+example_py_func2 <- function(
+    x = 5,
+    y = 10
+){
+
+  # import main python functions (see `main$` and `builtins$` after running)
+  import_main_py()
+
+  sum <- builtins$sum(c(x, y))
+  builtins$print('sum:\n')
+
+  return(sum)
+}
+
+
 
 
 
@@ -66,6 +88,9 @@ check_audio_py <- function(
     audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3")
 ){
 
+  # import main python functions
+  import_main_py()
+
   # source specific python scripts
   py_script <- file.path(SONGCLIP_PYTHON_DIR, "check-audio-path.py")
   reticulate::source_python(py_script)
@@ -74,16 +99,27 @@ check_audio_py <- function(
   # note: make sure the python function names dont overlap with R function names
   audio_exists <- py_check_audio(audio_path)
 
+  # since we called `import_main_py()` before sourcing the script, we can also
+  # reference the python function `py_check_audio` via `main$py_check_audio`:
+  audio_exists2 <- main$py_check_audio(audio_path)
+  audio_exists == audio_exists2
+
   return(audio_exists)
 }
 
 
 
+
+
+
 #' Do something with python
 #'
-#' Example with working with `audio_path`
+#' Example with working with `audio_path` and importing python modules
 #'
 #' @param audio_path path to audio file
+#' @param setup_env Logical (`TRUE`/`FALSE`). If `TRUE`, set up a virtual
+#'        environment. This should probably be done outside of the function, once
+#'        per R session.
 #'
 #' @details
 #' The `os` python module comes with python:
@@ -91,6 +127,17 @@ check_audio_py <- function(
 #' - Virtual environment (or conda) is only needed when we have to *install*
 #'   packages.
 #'
+#' @examples
+#' \dontrun{
+#' setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
+#'
+#' # dont set up environment within the function
+#' process_audio_py(
+#'   audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
+#'   setup_env = FALSE
+#'   )
+#'
+#' }
 #'
 #' @keywords internal
 process_audio_py <- function(
@@ -98,11 +145,20 @@ process_audio_py <- function(
     setup_env = FALSE
 ){
 
+  # optionally set up a virtual environment
   if(isTRUE(setup_env)){
     # import python packages (may not be necessary in all cases?)
     setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
   }
 
+  # import main python functions
+  import_main_py()
+
+  # import required python packages - this can also be done within `script.py`
+  # assuming they are already installed, or came with python (e.g. `difflib`)
+  difflib <- reticulate::import("difflib")
+  filecmp <- reticulate::import("filecmp")
+  import_py_pkgs(py_pkgs = c("scipy", "pandas"))
 
   # source specific python scripts
   py_script <- file.path(SONGCLIP_PYTHON_DIR, "process-audio.py")
