@@ -122,13 +122,18 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     })
 
 
-    # Load Chosen audio object
-    audio_obj <- reactive({
+    # Audio path
+    audio_path <- reactive({
       audio_select <- shiny::req(input$audio_select, audio_dir())
-      audio_path <- file.path(audio_dir(), audio_select)
-      tuneR::readMP3(here::here(audio_path))
+      file.path(audio_dir(), audio_select)
     })
 
+    # Load Chosen audio object
+    audio_obj <- reactive({
+      audio_path <- shiny::req(audio_path())
+      # Save loaded audio file to inst/www/
+      setup_audio(audio_path)
+    })
 
 
     # Cropping, Looping, & Speed ----------------------------------------------
@@ -140,24 +145,32 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
       if(isTRUE(is_playing)){
         shinyWidgets::actionBttn(
-          ns("pause"), "Pause", icon = icon("pause"),
+          ns("pause_audio"), "Pause", icon = icon("pause"),
           style = "material-flat", color = "primary", size = "sm"
         )
       }else{
         shinyWidgets::actionBttn(
-          ns("play"), "Play", icon = icon("play"),
+          ns("play_audio"), "Play", icon = icon("play"),
           style = "material-flat", color = "primary", size = "sm"
         )
       }
     })
 
-    observeEvent(input$play, {
-      .rv$is_playing <- TRUE
-      tuneR::play(audio_obj())
-    })
-    observeEvent(input$pause, {
+    observeEvent(input$play_audio, {
+      # .rv$is_playing <- TRUE # This stops it from working - look into howler pkg
+      insertUI(
+        selector = paste0("#", ns("play_audio")),
+        where = "afterEnd",
+        ui = tags$audio(
+          src = file.path(src_name, "play.wav"), type = "audio/wav",
+          autoplay = NA, controls = NA, style="display:none;"
+        )
+      )
+    }, ignoreInit = TRUE)
+    observeEvent(input$pause_audio, {
       .rv$is_playing <- FALSE
     })
+
 
     # Audio inspection plot
     audio_plot <- reactive({
@@ -189,3 +202,13 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
   })
 }
 
+
+setup_audio <- function(audio_path){
+  www_dir <- system.file("www", package = "songClip", mustWork = TRUE)
+  path_play <- file.path(www_dir, "play.wav")
+
+  audio_obj <- tuneR::readMP3(here::here(audio_path))
+  tuneR::writeWave(audio_obj, path_play)
+
+  return(audio_obj)
+}
