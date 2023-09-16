@@ -8,7 +8,7 @@ install_py_pkgs(
   py_pkgs = c("scipy", "pandas"),
   python_version = NULL,
   env = SONGCLIP_PYTHON_ENV,
-  method = "auto",
+  method = "virtualenv",
   ...
 )
 }

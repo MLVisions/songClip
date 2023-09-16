@@ -14,4 +14,10 @@ setup_py_env(py_pkgs = c("scipy", "pandas"), env = SONGCLIP_PYTHON_ENV)
 \description{
 Set up virtual python environment with required packages
 }
+\details{
+This should only be called once per R session because of how long it takes.
+
+We will want to \emph{install} all packages we need for the app once at the beginning,
+and then \emph{import} packages one at a time within each function that needs them
+}
 \keyword{internal}

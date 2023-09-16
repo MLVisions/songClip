@@ -7,7 +7,7 @@ NULL
 
   # TODO: determine if this is necessary
   # we may not need miniconda for a virtual environment
-  miniconda_installed <- TRUE #file.exists(is_miniconda_installed())
+  miniconda_installed <- file.exists(is_miniconda_installed())
 
   if(isFALSE(miniconda_installed)){
     user_permission <- utils::askYesNo("Install miniconda? Downloads ~50MB and takes time")
