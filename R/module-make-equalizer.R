@@ -268,7 +268,7 @@ stagger_eq_ribbon <- function(pl,
 
   # Add fake geom_smooth line to get data
   pl_fake <- ggplot2::ggplot(data = data_pl, ggplot2::aes(x = index, y = shift, group = 1)) +
-    ggplot2::geom_smooth(se = FALSE)
+    ggplot2::geom_smooth(se = FALSE) %>% suppressMessages()
   main_line <- suppressWarnings(ggplot2::ggplot_build(pl_fake)$data[[1]]) %>%
     dplyr::select(index = x, shift = y) %>% tibble::as_tibble()
 
@@ -292,6 +292,7 @@ stagger_eq_ribbon <- function(pl,
       shifts_i <- shifts[i]
       data_stagger_i <- data_stagger %>%
         dplyr::transmute(index, shift = !!sym(shifts_i))
+      # becomes more transparent the further away from the main line
       opacity <- (length(shifts) - i + 1)/(length(shifts)+4) * 0.6
       pl <- plotly::add_lines(
         pl,

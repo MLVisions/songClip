@@ -28,7 +28,20 @@ tune_audio_ui <- function(id){
               # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
               br(),
-              plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
+              fluidRow(
+                style = "background-color: #252525; padding-bottom: 1em;
+                margin-right: 0px; margin-left: 0px;",
+                # Inputs
+                fluidRow(
+                  style = "margin-right: 0px; margin-left: 0px;",
+                  br(),
+                  column(
+                    width = 2, offset = 10, align = "right",
+                    uiOutput(ns("play_pause_btn_ui"))
+                  )
+                ),
+                plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
+              )
             ),
             ### Equalizer ###
             bslib::nav_panel(
@@ -87,6 +100,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     .rv <- reactiveValues()
 
     # TODO: use shinyjs to disable play button if tuneR::getWavPlayer() is not set
+    # Add alert and potentially allow user to search for it (low priority)
     observe({
       audio_player_set <- nzchar(tuneR::getWavPlayer()) && fs::file_exists(tuneR::getWavPlayer())
 
@@ -120,11 +134,36 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     # Cropping, Looping, & Speed ----------------------------------------------
 
 
+    ## Play & Pause Button ##
+    output$play_pause_btn_ui <- renderUI({
+      is_playing <- .rv$is_playing
+
+      if(isTRUE(is_playing)){
+        shinyWidgets::actionBttn(
+          ns("pause"), "Pause", icon = icon("pause"),
+          style = "material-flat", color = "primary", size = "sm"
+        )
+      }else{
+        shinyWidgets::actionBttn(
+          ns("play"), "Play", icon = icon("play"),
+          style = "material-flat", color = "primary", size = "sm"
+        )
+      }
+    })
+
+    observeEvent(input$play, {
+      .rv$is_playing <- TRUE
+      tuneR::play(audio_obj())
+    })
+    observeEvent(input$pause, {
+      .rv$is_playing <- FALSE
+    })
+
     # Audio inspection plot
     audio_plot <- reactive({
       audio_obj <- shiny::req(audio_obj())
       assign("audio_obj", audio_obj, envir = .GlobalEnv)
-      plot_wave_audio(audio_obj)
+      plot_wave_audio(audio_obj) %>% add_play_tracker_line()
     })
 
     output$audio_plot <- plotly::renderPlotly({
