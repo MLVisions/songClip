@@ -311,24 +311,3 @@ shutdown_virtual_env <- function(env_name = SONGCLIP_PYTHON_ENV, force = TRUE){
 }
 
 
-
-
-
-
-
-
-
-# helper functions to skip tests if we don't have the 'foo' module
-
-skip_if_no_scipy <- function() {
-  have_scipy <- reticulate::py_module_available("scipy")
-  if (!have_scipy)
-    skip("scipy not available for testing")
-}
-
-skip_if_no_pandas <- function() {
-  have_pandas <- reticulate::py_module_available("pandas")
-  if (!have_pandas)
-    skip("pandas not available for testing")
-}
-
