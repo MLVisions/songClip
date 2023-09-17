@@ -4,7 +4,8 @@
 #' Can be use for virtual of conda environment
 SONGCLIP_PYTHON_ENV <- "songClip-python"
 
-
+utils::globalVariables("main")
+utils::globalVariables("builtins")
 
 #' Set up a python environment with required packages
 #'
