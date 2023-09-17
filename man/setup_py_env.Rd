@@ -61,20 +61,20 @@ You must restart your R session if you want to alternate between both environmen
 \examples{
 \dontrun{
 
-# With a conda environment (the default)
+## With a conda environment (the default) ##
 # much faster loading time after you've installed the packages once
 py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"))
 py_env
 
 # put the environment under a specific name
+# note: you must restart your R session if you've already generated an environment
 py_env <- setup_py_env(
   py_pkgs = c("pandas", "numpy", "scipy"),
   conda_name = SONGCLIP_PYTHON_ENV,
   update = TRUE
 )
 
-# With a virtual environment
-# note: you must restart your R session if you want to try both environment types
+## With a virtual environment ##
 py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
 py_env
 
