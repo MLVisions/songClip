@@ -52,7 +52,7 @@ utils::globalVariables("builtins")
 #' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"))
 #' py_env
 #'
-#' # put the environment under a specific name
+#' # put the conda environment under a specific name
 #' # note: you must restart your R session if you've already generated an environment
 #' py_env <- setup_py_env(
 #'   py_pkgs = c("pandas", "numpy", "scipy"),
