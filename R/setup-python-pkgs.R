@@ -85,7 +85,7 @@ setup_py_env <- function(
       # Creates a local conda library
       env_path <- tryCatch(reticulate::conda_create(env_name), error = identity)
       # make sure the environment was created
-      env_exists <- fs::file_exists(env_path)
+      env_exists <- !inherits(env_path, "error") && fs::file_exists(env_path)
       if(isFALSE(env_exists)){
         cli::cli_abort(glue::glue("env {env_name} could not be created:\n\n {env_path$message}"))
       }
