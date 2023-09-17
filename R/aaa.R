@@ -104,14 +104,28 @@ is_miniconda_installed <- function(path = reticulate::miniconda_path()){
 #'
 #' @keywords internal
 set_audio_player <- function(){
-  player <- '/usr/bin/afplay'
-  if(.Platform$OS.type == "unix" && fs::file_exists(player)){
-    tuneR::setWavPlayer(player)
+  player_path <- tuneR::getWavPlayer()
+  player_chk <- '/usr/bin/afplay'
+
+  player_is_set <- !is.null(player_path) &&
+    nzchar(player_path) &&
+    fs::file_exists(player_path)
+
+  os_supported <- .Platform$OS.type == "unix" && fs::file_exists(player_chk)
+
+  if(os_supported && !player_is_set){
+    # player not set and os is supported
+    tuneR::setWavPlayer(player_chk)
     path <- tuneR::getWavPlayer()
     return(path)
+  }else if(os_supported && player_is_set){
+    # path was already set
+    return(player_path)
   }else{
+    # os not supported
     return(NULL)
   }
+
 }
 
 # Js for header -----------------------------------------------------------
