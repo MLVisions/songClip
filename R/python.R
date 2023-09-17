@@ -152,6 +152,10 @@ check_audio_py <- function(
 #' # shutdown virtual environment
 #' shutdown_virtual_env(py_env$env_name)
 #'
+#' # Installing a package after setup (works with both environment types)
+#' setup_py_env(py_pkgs = c("pandas", "numpy"), virtual_env = TRUE)
+#' install_py_pkgs(py_pkgs = c('scipy'), virtual_env = TRUE)
+#' process_audio_py()
 #'
 #' }
 #'

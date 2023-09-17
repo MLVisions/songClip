@@ -328,7 +328,7 @@ check_py_pkgs_installed <- function(py_pkgs){
     cli::cli_abort(
       c(
         "x" = glue::glue("The following python modules are not installed: {pkgs_not_installed}"),
-        "i" = glue::glue("Did you run {.code py_env <- setup_py_env(py_pkgs = c({{pkgs_not_installed_txt}})}?",.open = "{{", .close = "}}")
+        "i" = glue::glue("Did you run {.code py_env <- setup_py_env(py_pkgs = c({{pkgs_not_installed_txt}}))}?",.open = "{{", .close = "}}")
       )
     )
   }
