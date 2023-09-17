@@ -102,7 +102,7 @@ set_audio_player <- function(){
     tuneR::setWavPlayer(player_chk)
     path <- tuneR::getWavPlayer()
     return(path)
-  }else if(os_supported && player_is_set){
+  }else if(player_is_set){
     # path was already set
     return(player_path)
   }else{
