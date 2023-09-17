@@ -27,21 +27,7 @@ tune_audio_ui <- function(id){
             bslib::nav_panel(
               # TODO: make better title for this
               title = "Cropping, Looping, & Speed",
-              br(),
-              fluidRow(
-                style = "background-color: #252525; padding-bottom: 1em;
-                margin-right: 0px; margin-left: 0px;",
-                # Inputs
-                fluidRow(
-                  style = "margin-right: 0px; margin-left: 0px;",
-                  br(),
-                  column(
-                    width = 2, offset = 10, align = "right",
-                    uiOutput(ns("play_pause_btn_ui"))
-                  )
-                ),
-                plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
-              )
+              audio_playpack_ui(ns("audio_playback"))
             ),
             ### Equalizer ###
             bslib::nav_panel(
@@ -102,7 +88,10 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     # TODO: use shinyjs to disable play button if tuneR::getWavPlayer() is not set
     # Add alert and potentially allow user to search for it (low priority)
     observe({
-      audio_player_set <- nzchar(tuneR::getWavPlayer()) && fs::file_exists(tuneR::getWavPlayer())
+      audio_player_set <-
+        !is.null(tuneR::getWavPlayer()) &&
+        nzchar(tuneR::getWavPlayer()) &&
+        fs::file_exists(tuneR::getWavPlayer())
 
       if(isFALSE(audio_player_set)){
         # shinyjs::disable()
@@ -122,66 +111,18 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     })
 
 
-    # Audio path
-    audio_path <- reactive({
-      audio_select <- shiny::req(input$audio_select, audio_dir())
-      file.path(audio_dir(), audio_select)
-    })
 
-    # Load Chosen audio object
-    audio_obj <- reactive({
-      audio_path <- shiny::req(audio_path())
-      # Save loaded audio file to inst/www/
-      setup_audio(audio_path)
-    })
 
 
     # Cropping, Looping, & Speed ----------------------------------------------
 
+    audio_select <- reactive(input$audio_select)
 
-    ## Play & Pause Button ##
-    output$play_pause_btn_ui <- renderUI({
-      is_playing <- .rv$is_playing
-
-      if(isTRUE(is_playing)){
-        shinyWidgets::actionBttn(
-          ns("pause_audio"), "Pause", icon = icon("pause"),
-          style = "material-flat", color = "primary", size = "sm"
-        )
-      }else{
-        shinyWidgets::actionBttn(
-          ns("play_audio"), "Play", icon = icon("play"),
-          style = "material-flat", color = "primary", size = "sm"
-        )
-      }
-    })
-
-    observeEvent(input$play_audio, {
-      # .rv$is_playing <- TRUE # This stops it from working - look into howler pkg
-      insertUI(
-        selector = paste0("#", ns("play_audio")),
-        where = "afterEnd",
-        ui = tags$audio(
-          src = file.path(src_name, "play.wav"), type = "audio/wav",
-          autoplay = NA, controls = NA, style="display:none;"
-        )
-      )
-    }, ignoreInit = TRUE)
-    observeEvent(input$pause_audio, {
-      .rv$is_playing <- FALSE
-    })
-
-
-    # Audio inspection plot
-    audio_plot <- reactive({
-      audio_obj <- shiny::req(audio_obj())
-      # assign("audio_obj", audio_obj, envir = .GlobalEnv)
-      plot_wave_audio(audio_obj) %>% add_play_tracker_line()
-    })
-
-    output$audio_plot <- plotly::renderPlotly({
-      audio_plot()
-    })
+    audio_playpack <- audio_playpack_server("audio_playback",
+                                            audio_choices = audio_choices,
+                                            audio_dir = audio_dir,
+                                            audio_select = audio_select
+    )
 
 
     # Equalizer ---------------------------------------------------------------
@@ -190,8 +131,9 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     equalizer_data <- reactive({equalizer$eq_data()})
 
     observe({
-      shiny::req(equalizer_data())
+      eq_data <- shiny::req(equalizer_data())
     })
+
 
     return(
       list(

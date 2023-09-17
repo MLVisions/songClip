@@ -55,6 +55,11 @@ VERSION_HEADER <- sprintf("songClip %s", pkg_version)
 #' Example audio directory
 EXAMPLE_AUDIO_DIR <- system.file(file.path("examples"), package = "songClip", mustWork = TRUE)
 
+get_audio_examples <- function() {
+  example_dir <- system.file(file.path("examples"), package = "songClip", mustWork = TRUE)
+  list.files(example_dir)
+}
+
 # Make sure python is set up ----------------------------------------------
 
 python_is_installed <- function(use_environment = NULL){
