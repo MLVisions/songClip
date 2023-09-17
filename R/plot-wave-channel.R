@@ -46,6 +46,7 @@
 #' }
 #'
 #'
+#' @importFrom graphics par title mtext segments axis axTicks
 #' @return a `plotly` object if `format = "fancy"`. Otherwise `NULL` invisibly
 #' @export
 plot_wave_audio <- function(audio_obj,
@@ -289,7 +290,7 @@ plot_wave_channel_fancy <- function(audio_data,
   group <- ifelse(isTRUE(hollow), "y_point", "line_group")
   pl_data <- audio_data %>%
     # convert to minutes
-    dplyr::mutate(x = x/60) %>%
+    dplyr::mutate(x = .data$x/60) %>%
     dplyr::group_by(!!sym(group))
 
   # font and styling

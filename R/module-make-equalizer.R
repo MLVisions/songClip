@@ -151,7 +151,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
   # font styling
   t1 <- list(size = 15, color = "lightgrey")
   # Grey lines color
-  grey_line_color <- rgb(235, 235, 235, 100, maxColorValue = 255)
+  grey_line_color <- grDevices::rgb(235, 235, 235, 100, maxColorValue = 255)
 
   # plot the shapes and fitted line
   pl_plotly <-
@@ -211,13 +211,13 @@ make_equalizer_data <- function(starting_vals = rep(0, 6)){
     shift = starting_vals #round(jitter(c(rep(0, 2), 2, rep(0, 3)), 4)) # for testing
   ) %>%
     dplyr::mutate(
-      freq_fmt = format_freq(frequency),
-      shift_fmt = format_shift(shift)
+      freq_fmt = format_freq(.data$frequency),
+      shift_fmt = format_shift(.data$shift)
     )
 
   # Ordered factor
   data <- data %>% dplyr::mutate(
-    freq_fmt = ordered(freq_fmt, levels = unique(data$freq_fmt))
+    freq_fmt = ordered(.data$freq_fmt, levels = unique(data$freq_fmt))
   )
 
 
@@ -270,14 +270,14 @@ stagger_eq_ribbon <- function(pl,
   pl_fake <- ggplot2::ggplot(data = data_pl, ggplot2::aes(x = index, y = shift, group = 1)) +
     ggplot2::geom_smooth(se = FALSE) %>% suppressMessages()
   main_line <- suppressWarnings(ggplot2::ggplot_build(pl_fake)$data[[1]]) %>%
-    dplyr::select(index = x, shift = y) %>% tibble::as_tibble()
+    dplyr::select(index = "x", shift = "y") %>% tibble::as_tibble()
 
   stagger_eq_data <- function(data_pl, ntimes){
     shifts <- purrr::map_dfc(seq(ntimes), ~ {
       shift_name <- paste0("r_shift_", .x)
       step <- ifelse(.x==1, 0.5, 0.75)
       step2 <- ifelse(.x==1, 0, 0.25)
-      data_pl %>% dplyr::mutate(!!sym(shift_name) := shift - step*.x + step2) %>%
+      data_pl %>% dplyr::mutate(!!sym(shift_name) := .data$shift - step*.x + step2) %>%
         dplyr::select(all_of(shift_name))
     })
     cbind(data_pl, shifts) %>% tibble::as_tibble()

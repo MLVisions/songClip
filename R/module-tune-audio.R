@@ -175,7 +175,7 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     # Audio inspection plot
     audio_plot <- reactive({
       audio_obj <- shiny::req(audio_obj())
-      assign("audio_obj", audio_obj, envir = .GlobalEnv)
+      # assign("audio_obj", audio_obj, envir = .GlobalEnv)
       plot_wave_audio(audio_obj) %>% add_play_tracker_line()
     })
 

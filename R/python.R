@@ -31,6 +31,9 @@ SONGCLIP_PYTHON_DIR <- system.file("python", package = "songClip", mustWork = TR
 
 #' Simple python function
 #'
+#' @param x a number
+#' @param y a number
+#'
 #' @details
 #' This function does not require imports or virtual environment (much faster)
 example_py_func <- function(

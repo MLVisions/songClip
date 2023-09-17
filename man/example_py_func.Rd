@@ -6,6 +6,11 @@
 \usage{
 example_py_func(x = 5, y = 10)
 }
+\arguments{
+\item{x}{a number}
+
+\item{y}{a number}
+}
 \description{
 Simple python function
 }

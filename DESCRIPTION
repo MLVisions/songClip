@@ -3,24 +3,24 @@ Title: Modify songs
 Version: 0.0.0.9000
 Authors@R: 
     c(
-    person(given = "Krzysztof", family = "Mazur", email = "", role = c("aut", "cre")),
-    person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", role = c("aut"))
+      person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", role = c("aut", "cre")),
+      person(given = "Krzysztof", family = "Mazur", email = "krzysztofm321@gmail.com", role = c("aut"))
     )
-Description: Modify songs
+Description: R package (with python dependencies) for cropping & tuning songs.
 License: GPL (>= 3)
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+Depends:
+    R (>= 3.5),
 Imports: 
     audio,
     av,
     bslib,
     cli (>= 3.3.0),
     checkmate,
-    cowplot,
     dplyr,
-    ggplot2,
+    fs,
+    ggplot2 (>= 3.3.5),
     glue (>= 1.6.2),
+    grDevices,
     here,
     htmltools,
     magrittr (>= 2.0.3),
@@ -29,6 +29,7 @@ Imports:
     plotly (>= 4.9.2),
     readr,
     reticulate,
+    rlang,
     rmarkdown,
     shiny (>= 1.6.0),
     shinycssloaders,
@@ -37,9 +38,21 @@ Imports:
     shinyFiles,
     shinyjs,
     shinyWidgets,
-    tuneR
+    signal,
+    tibble,
+    tidyr,
+    tuneR,
+    utils,
+    withr,
+    xfun
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr
 Config/testthat/edition: 3
 VignetteBuilder: 
     knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+StagedInstall: no

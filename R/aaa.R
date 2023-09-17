@@ -2,6 +2,11 @@
 #' @importFrom shinycssloaders withSpinner
 NULL
 
+# needed for running a shiny app in the Rstudio viewer
+utils::globalVariables(".rs.invokeShinyPaneViewer")
+utils::globalVariables(".rs.invokeShinyWindowExternal")
+
+
 
 .onLoad <- function(libname, pkgname){
 
@@ -41,7 +46,7 @@ NULL
 #' @noRd
 #'
 setup_resource_paths <- function(){
-  description <- packageDescription("songClip")
+  description <- utils::packageDescription("songClip")
   src_name <- paste0("songClip-", description$Version)
   src_path <- system.file("www", package = "songClip")
   shiny::addResourcePath(src_name, src_path)
