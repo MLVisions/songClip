@@ -184,8 +184,10 @@ process_audio_py <- function(
   data_df <- pandas$DataFrame(data=py_objs$data)
 
   # source specific python scripts
-  # - this script also imports scipy.
-  # - We had only imported pandas *before* sourcing this script
+  # - this script -also- imports `scipy`.
+  # - you can import packages have been installed via `setup_py_env` or
+  #  `install_py_pkgs` either via `import_py_pkgs` -or- within the script (you
+  #   dont need both)
   py_script <- file.path(SONGCLIP_PYTHON_DIR, "process-audio.py")
   reticulate::source_python(py_script)
 
