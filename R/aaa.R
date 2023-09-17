@@ -94,10 +94,7 @@ set_audio_player <- function(){
   player_path <- tuneR::getWavPlayer()
   player_chk <- '/usr/bin/afplay'
 
-  player_is_set <- !is.null(player_path) &&
-    nzchar(player_path) &&
-    fs::file_exists(player_path)
-
+  player_is_set <- !is.null(player_path) && nzchar(player_path) && fs::file_exists(player_path)
   os_supported <- .Platform$OS.type == "unix" && fs::file_exists(player_chk)
 
   if(os_supported && !player_is_set){
