@@ -20,7 +20,7 @@ install_py_pkgs(
 \item{env_name}{a virtual environment name}
 
 \item{update}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, update packages that are
-already installed.}
+already installed. Otherwise skip their installation.}
 
 \item{python_version}{The requested Python version. Ignored when attempting
 to install with a Python virtual environment.}

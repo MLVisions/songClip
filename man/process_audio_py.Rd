@@ -2,7 +2,7 @@
 % Please edit documentation in R/python.R
 \name{process_audio_py}
 \alias{process_audio_py}
-\title{Do something with python}
+\title{Do something with python (this is probably the function to work with)}
 \usage{
 process_audio_py(
   audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
@@ -29,13 +29,22 @@ packages.
 }
 \examples{
 \dontrun{
-setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
 
-# dont set up environment within the function
-process_audio_py(
-  audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
-  setup_env = FALSE
-  )
+ # With a virtual environment
+py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+
+process_audio_py()
+
+# shutdown virtual environment
+shutdown_virtual_env(py_env$env_name)
+
+
+# With a conda environment
+# note: you must restart your R session if you want to try both environment types
+# much faster loading time after you've installed the packages once
+py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
+
+process_audio_py()
 
 }
 

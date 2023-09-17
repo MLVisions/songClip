@@ -30,26 +30,28 @@ The \code{conda_name} should match the \code{name} element of that list if you a
 one will be created matching the name of \code{env_name}.}
 
 \item{update}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, update packages that are
-already installed.}
+already installed. Otherwise skip their installation.}
 }
 \description{
 Set up a python environment with required packages
 }
 \details{
-This should only be called once per R session because of how long it takes.
-
 We will want to \emph{install} all packages we need for the app once at the beginning,
 and then \emph{import} packages one at a time within each function that needs them
 
-If we use a virtual environment, we are only using that for packages that dont
+If we use a virtual/conda environment, we are only using that for packages that dont
 come with base python. i.e. the user still needs to have python installed.
 
-A virtual environment would also be required for each new session of the app,
-meaning the user would be installing these packages every time they want to run
-the app on a clean R session.
+An environment will be required for each new session of the app.
 
-If we dont use a virtual environment, users would only need to install the required
+For a virtual environment, the user would be installing these packages \emph{every time}
+they want to run the app on a clean R session.
+
+For a conda environment, users would only need to install the required
 packages once. I think this could be preferable, and would offer significant
-speed improvements.
+speed improvements once the packages have been installed once.
+}
+\note{
+You must restart your R session if you want to alternate between both environment types
 }
 \keyword{internal}

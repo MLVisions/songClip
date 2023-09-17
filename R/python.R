@@ -24,7 +24,8 @@ SONGCLIP_PYTHON_DIR <- system.file("python", package = "songClip", mustWork = TR
 # Example functions -------------------------------------------------------
 
 # Each example adds a bit of complexity
-
+# Once you go through each, it probably makes the most sense to work off the
+# last one (or make a new one).
 
 
 
@@ -112,7 +113,7 @@ check_audio_py <- function(
 
 
 
-#' Do something with python
+#' Do something with python (this is probably the function to work with)
 #'
 #' Example with working with `audio_path` and importing python modules
 #'
@@ -129,13 +130,22 @@ check_audio_py <- function(
 #'
 #' @examples
 #' \dontrun{
-#' setup_py_env(py_pkgs = c("pandas"), env = SONGCLIP_PYTHON_ENV)
 #'
-#' # dont set up environment within the function
-#' process_audio_py(
-#'   audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
-#'   setup_env = FALSE
-#'   )
+#'  # With a virtual environment
+#' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+#'
+#' process_audio_py()
+#'
+#' # shutdown virtual environment
+#' shutdown_virtual_env(py_env$env_name)
+#'
+#'
+#' # With a conda environment
+#' # note: you must restart your R session if you want to try both environment types
+#' # much faster loading time after you've installed the packages once
+#' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
+#'
+#' process_audio_py()
 #'
 #' }
 #'
@@ -147,8 +157,15 @@ process_audio_py <- function(
 
   # optionally set up a conda or virtual environment
   if(isTRUE(setup_env)){
-    # setup environment and python packages (may not be necessary in all cases?)
-    py_env <- setup_py_env(py_pkgs = c("pandas"), virtual_env = FALSE)
+    virtual_env <- TRUE
+    # setup environment for installing non-base python packages
+    py_env <- setup_py_env(py_pkgs = c("pandas", "scipy", "numpy"),
+                           virtual_env = virtual_env,
+                           update = FALSE)
+    # close down the virtual environment when exiting -if created in this function-
+    if(virtual_env){
+      on.exit(shutdown_virtual_env(py_env$env_name))
+    }
   }
 
   # import main python functions
@@ -160,12 +177,20 @@ process_audio_py <- function(
   filecmp <- reticulate::import("filecmp")
   import_py_pkgs(py_pkgs = c("pandas"))
 
+  # This object (`py_objs`) will keep track of everything in your python environment
+  # even after it's called
+  py_objs <- reticulate::py_run_string("data={'col1': [1, 2], 'col2': [3, 4]}")
+
+  data_df <- pandas$DataFrame(data=py_objs$data)
+
   # source specific python scripts
+  # - this script also imports scipy.
+  # - We had only imported pandas *before* sourcing this script
   py_script <- file.path(SONGCLIP_PYTHON_DIR, "process-audio.py")
   reticulate::source_python(py_script)
 
-  # some python stuff
-  audio_exists <- py_process_audio(audio_path)
+  # df2 appeared in `py_objs` after sourcing process-audio.py
+  data_return <- py_objs$df2
 
-  return(audio_exists)
+  return(data_return)
 }
