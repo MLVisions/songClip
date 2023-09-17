@@ -152,6 +152,12 @@ check_audio_py <- function(
 #' # shutdown virtual environment
 #' shutdown_virtual_env(py_env$env_name)
 #'
+#' ## Creating environment within the function ##
+#' # not recommended if you need multiple R-python functions.
+#' # also makes it difficult to get information about the environment outside
+#' # of the function (and then you'd have to restart R)
+#' process_audio_py(setup_env = TRUE)
+#'
 #' }
 #'
 #' @keywords internal
