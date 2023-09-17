@@ -124,7 +124,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
   # Ensure formatted frequency is ordered factor
   data_pl <- eq_data %>%
     dplyr::mutate(
-      freq_fmt = ordered(freq_fmt, levels = unique(eq_data$freq_fmt))
+      freq_fmt = ordered(.data$freq_fmt, levels = unique(eq_data$freq_fmt))
     )
 
 
@@ -239,7 +239,7 @@ update_equalizer_data <- function(eq_data, event_data){
   # update values (y-axis only)
   eq_data$shift[row_index] <- round(pts[2], 2)
   update_data <- eq_data %>% dplyr::mutate(
-    shift_fmt = format_shift(shift)
+    shift_fmt = format_shift(.data$shift)
   )
 
   return(update_data)
@@ -267,7 +267,7 @@ stagger_eq_ribbon <- function(pl,
                               color = "#0BDA51"){
 
   # Add fake geom_smooth line to get data
-  pl_fake <- ggplot2::ggplot(data = data_pl, ggplot2::aes(x = index, y = shift, group = 1)) +
+  pl_fake <- ggplot2::ggplot(data = data_pl, ggplot2::aes(x = .data$index, y = .data$shift, group = 1)) +
     ggplot2::geom_smooth(se = FALSE) %>% suppressMessages()
   main_line <- suppressWarnings(ggplot2::ggplot_build(pl_fake)$data[[1]]) %>%
     dplyr::select(index = "x", shift = "y") %>% tibble::as_tibble()
@@ -291,7 +291,7 @@ stagger_eq_ribbon <- function(pl,
     for(i in seq_along(shifts)){
       shifts_i <- shifts[i]
       data_stagger_i <- data_stagger %>%
-        dplyr::transmute(index, shift = !!sym(shifts_i))
+        dplyr::transmute(.data$index, shift = !!sym(shifts_i))
       # becomes more transparent the further away from the main line
       opacity <- (length(shifts) - i + 1)/(length(shifts)+4) * 0.6
       pl <- plotly::add_lines(

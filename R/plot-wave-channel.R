@@ -396,7 +396,7 @@ process_wave_channel <- function(audio_obj,
                                  nr = 2500
 ){
   # Get channel and other parameters
-  channel <- if(is(audio_obj, "WaveMC")) audio_obj@.Data[,1] else audio_obj@left
+  channel <- if(inherits(audio_obj, "WaveMC")) audio_obj@.Data[,1] else audio_obj@left
   null <- if(audio_obj@bit == 8) 127 else 0
   l <- length(channel)
   simplified <- simplify && (l > nr)
@@ -415,7 +415,7 @@ process_wave_channel <- function(audio_obj,
     # `line_group` column is the grouping that connects the segments meant to connect.
     # see ?segments and tuneR::plot() methods for Wave files for more details.
     audio_data <- tibble::tibble(x = index, y0=rg[1,], y1 = rg[2,]) %>%
-      tidyr::pivot_longer(c(y0, y1), names_to = "y_point", values_to = "y") %>%
+      tidyr::pivot_longer(c("y0", "y1"), names_to = "y_point", values_to = "y") %>%
       dplyr::mutate(line_group = rep(c(1, 1, 2, 2), length.out = n()))
   }else{
     # Take whole channel

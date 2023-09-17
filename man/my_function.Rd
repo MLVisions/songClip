@@ -4,12 +4,7 @@
 \alias{my_function}
 \title{Append a symbol to a dataframe. This is the title.}
 \usage{
-my_function(
-  data = mtcars,
-  symbol = c("a", "b"),
-  add_id_col = FALSE,
-  group_by_col
-)
+my_function(data, symbol = c("a", "b"), add_id_col = FALSE, group_by_col)
 }
 \arguments{
 \item{data}{a dataset. Defaults to \code{mtcars}.}
@@ -62,18 +57,18 @@ comes with the base installation of R.
 
 \dontrun{
 # Defaults to symbol 'a'
-my_function(mtcars)
+my_function(data = mtcars)
 
 # Defaults to `mtcars` dataset
-my_function(symbol = "b")
+my_function(data = mtcars, symbol = "b")
 
 # Create ID and row_number columns
-my_function(add_id_col = TRUE, group_by_col = "gear")
+my_function(data = mtcars, add_id_col = TRUE, group_by_col = "gear")
 
 # Would error out in a controlled way:
-my_function(add_id_col = TRUE)
-my_function(add_id_col = TRUE, group_by_col = "columnDoesntExist")
-my_function(symbol = "c")
+my_function(data = mtcars, add_id_col = TRUE)
+my_function(data = mtcars, add_id_col = TRUE, group_by_col = "columnDoesntExist")
+my_function(data = mtcars, symbol = "c")
 }
 
 

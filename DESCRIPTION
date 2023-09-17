@@ -7,7 +7,7 @@ Authors@R:
       person(given = "Krzysztof", family = "Mazur", email = "krzysztofm321@gmail.com", role = c("aut"))
     )
 Description: R package (with python dependencies) for cropping & tuning songs.
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Depends:
     R (>= 3.5),
 Imports: 
@@ -24,13 +24,11 @@ Imports:
     here,
     htmltools,
     magrittr (>= 2.0.3),
-    markdown,
     purrr,
     plotly (>= 4.9.2),
     readr,
     reticulate,
     rlang,
-    rmarkdown,
     shiny (>= 1.6.0),
     shinycssloaders,
     shinydashboard,
@@ -46,8 +44,10 @@ Imports:
     withr,
     xfun
 Suggests: 
-    testthat (>= 3.0.0),
-    knitr
+    knitr,
+    markdown,
+    rmarkdown,
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: 
     knitr

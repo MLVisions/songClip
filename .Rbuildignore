@@ -2,6 +2,8 @@
 ^renv\.lock$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-README.Rmd
-pkgr.yml
+^README\.Rmd$
+^pkgr\.yml$
 ^.*\.wav
+^pkgdown$
+^LICENSE\.md$

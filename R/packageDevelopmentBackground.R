@@ -249,18 +249,18 @@
 #'
 #' \dontrun{
 #' # Defaults to symbol 'a'
-#' my_function(mtcars)
+#' my_function(data = mtcars)
 #'
 #' # Defaults to `mtcars` dataset
-#' my_function(symbol = "b")
+#' my_function(data = mtcars, symbol = "b")
 #'
 #' # Create ID and row_number columns
-#' my_function(add_id_col = TRUE, group_by_col = "gear")
+#' my_function(data = mtcars, add_id_col = TRUE, group_by_col = "gear")
 #'
 #' # Would error out in a controlled way:
-#' my_function(add_id_col = TRUE)
-#' my_function(add_id_col = TRUE, group_by_col = "columnDoesntExist")
-#' my_function(symbol = "c")
+#' my_function(data = mtcars, add_id_col = TRUE)
+#' my_function(data = mtcars, add_id_col = TRUE, group_by_col = "columnDoesntExist")
+#' my_function(data = mtcars, symbol = "c")
 #' }
 #'
 #'
@@ -268,7 +268,7 @@
 #'
 #' @keywords internal
 my_function <- function(
-    data = mtcars,
+    data,
     symbol = c("a","b"),
     add_id_col = FALSE,
     group_by_col
@@ -303,7 +303,7 @@ my_function <- function(
           ID = dplyr::cur_group_id() # Create ID column
           ) %>%
         # Bring the new columns to the front of the dataframe
-        dplyr::relocate(c(row_number, ID, !!sym(group_by_col)))
+        dplyr::relocate(c("row_number", "ID", !!sym(group_by_col)))
     }
   }
 

@@ -102,12 +102,12 @@ setup_py_env <- function(
     message(glue::glue("a virtual environment has been loaded at: {env_path}"))
   }else{
     conda_envir_lst <- reticulate::conda_list()
-    conda_envirs <- conda_envir_lst %>% dplyr::pull(name)
+    conda_envirs <- conda_envir_lst %>% dplyr::pull(.data$name)
 
     # pull previous conda environment if it exists, otherwise create new one
     if(conda_name %in% conda_envirs){
       # loads a local conda library
-      env_path <- conda_envir_lst %>% dplyr::filter(name == conda_name) %>% dplyr::pull(python)
+      env_path <- conda_envir_lst %>% dplyr::filter(.data$name == conda_name) %>% dplyr::pull(.data$python)
       # overwrite env_name with conda_name
       env_name <- conda_name
     }else{

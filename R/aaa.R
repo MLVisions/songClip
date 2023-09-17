@@ -6,6 +6,7 @@ NULL
 utils::globalVariables(".rs.invokeShinyPaneViewer")
 utils::globalVariables(".rs.invokeShinyWindowExternal")
 
+utils::globalVariables(".data")
 
 
 .onLoad <- function(libname, pkgname){
