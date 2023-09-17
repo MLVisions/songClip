@@ -92,7 +92,7 @@ setup_py_env <- function(
     env_path <- tryCatch(reticulate::virtualenv_create(env_name), error = identity)
 
     # make sure the environment was created
-    env_exists <- reticulate::virtualenv_exists(env_name)
+    env_exists <- !inherits(env_path, "error") && reticulate::virtualenv_exists(env_name)
     if(isFALSE(env_exists)){
       cli::cli_abort(glue::glue("env {env_name} could not be created:\n\n {env_path$message}"))
     }
