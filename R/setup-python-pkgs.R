@@ -49,16 +49,20 @@ SONGCLIP_PYTHON_ENV <- "songClip-python"
 #' # With a conda environment (the default)
 #' # much faster loading time after you've installed the packages once
 #' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
-#'
+#' py_env
 #'
 #' # With a virtual environment
 #' # note: you must restart your R session if you want to try both environment types
 #' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+#' py_env
 #'
 #' # shutdown virtual environment
 #' shutdown_virtual_env(py_env$env_name)
 #'
 #' }
+#'
+#' @returns a named list of specifications pertaining to the python environment,
+#' including the packages that are installed there.
 #'
 #' @keywords internal
 setup_py_env <- function(
@@ -132,6 +136,16 @@ setup_py_env <- function(
     config = config,
     installed_pkgs = installed_pkgs
   )
+
+  # show all available conda environments if running a conda environment
+  if(isFALSE(virtual_env)){
+    env_list <- c(
+      env_list,
+      list(
+        avail_conda_envirs = reticulate::conda_list()
+      )
+    )
+  }
 
   return(env_list)
 }

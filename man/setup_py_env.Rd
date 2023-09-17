@@ -32,6 +32,10 @@ one will be created matching the name of \code{env_name}.}
 \item{update}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, update packages that are
 already installed. Otherwise skip their installation.}
 }
+\value{
+a named list of specifications pertaining to the python environment,
+including the packages that are installed there.
+}
 \description{
 Set up a python environment with required packages
 }
@@ -60,11 +64,12 @@ You must restart your R session if you want to alternate between both environmen
 # With a conda environment (the default)
 # much faster loading time after you've installed the packages once
 py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
-
+py_env
 
 # With a virtual environment
 # note: you must restart your R session if you want to try both environment types
 py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+py_env
 
 # shutdown virtual environment
 shutdown_virtual_env(py_env$env_name)
