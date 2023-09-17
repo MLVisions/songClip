@@ -30,21 +30,23 @@ packages.
 \examples{
 \dontrun{
 
- # With a virtual environment
+## With a conda environment (the default) ##
+# much faster loading time after you've installed the packages once
+py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"))
+py_env
+
+process_audio_py()
+
+
+## With a virtual environment ##
+# note: you must restart your R session if you've already generated an environment
 py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+py_env
 
 process_audio_py()
 
 # shutdown virtual environment
 shutdown_virtual_env(py_env$env_name)
-
-
-# With a conda environment
-# note: you must restart your R session if you want to try both environment types
-# much faster loading time after you've installed the packages once
-py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
-
-process_audio_py()
 
 }
 
