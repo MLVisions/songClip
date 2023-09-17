@@ -10,25 +10,6 @@ utils::globalVariables(".rs.invokeShinyWindowExternal")
 
 .onLoad <- function(libname, pkgname){
 
-  # Make sure python is installed:
-  py_installed <- python_is_installed()
-  if(isFALSE(py_installed)){
-    packageStartupMessage("Python is required for this Package. Run `reticulate::install_python()` before proceeding")
-  }
-
-  # TODO: determine if this is necessary
-  # we may not need miniconda for a virtual environment
-  miniconda_installed <- file.exists(is_miniconda_installed())
-
-  if(isFALSE(miniconda_installed)){
-    user_permission <- utils::askYesNo("Install miniconda? Downloads ~50MB and takes time")
-    if (isTRUE(user_permission)) {
-      reticulate::install_miniconda()
-    } else {
-      packageStartupMessage("miniconda is required for this Package. You should run `reticulate::install_miniconda()` before proceeding")
-    }
-  }
-
   # Check audio player is set
   wav_player <- set_audio_player()
   if (!is.null(wav_player)) {
