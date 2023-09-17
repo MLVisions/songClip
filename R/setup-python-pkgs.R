@@ -42,6 +42,24 @@ SONGCLIP_PYTHON_ENV <- "songClip-python"
 #' @note
 #' You must restart your R session if you want to alternate between both environment types
 #'
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # With a conda environment (the default)
+#' # much faster loading time after you've installed the packages once
+#' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = FALSE)
+#'
+#'
+#' # With a virtual environment
+#' # note: you must restart your R session if you want to try both environment types
+#' py_env <- setup_py_env(py_pkgs = c("pandas", "numpy", "scipy"), virtual_env = TRUE)
+#'
+#' # shutdown virtual environment
+#' shutdown_virtual_env(py_env$env_name)
+#'
+#' }
+#'
 #' @keywords internal
 setup_py_env <- function(
     py_pkgs = c("scipy", "pandas"),
