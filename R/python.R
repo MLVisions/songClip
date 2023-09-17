@@ -181,6 +181,7 @@ process_audio_py <- function(
   # even after it's called
   py_objs <- reticulate::py_run_string("data={'col1': [1, 2], 'col2': [3, 4]}")
 
+  # R call that uses the `pandas` python library, and an object created using python
   data_df <- pandas$DataFrame(data=py_objs$data)
 
   # source specific python scripts
@@ -194,5 +195,10 @@ process_audio_py <- function(
   # df2 appeared in `py_objs` after sourcing process-audio.py
   data_return <- py_objs$df2
 
-  return(data_return)
+  return(
+    list(
+      data_df,
+      data_return
+    )
+  )
 }
