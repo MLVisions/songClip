@@ -152,32 +152,17 @@ check_audio_py <- function(
 #' # shutdown virtual environment
 #' shutdown_virtual_env(py_env$env_name)
 #'
-#' ## Creating environment within the function ##
-#' # not recommended if you need multiple R-python functions.
-#' # also makes it difficult to get information about the environment outside
-#' # of the function (and then you'd have to restart R)
-#' process_audio_py(setup_env = TRUE)
 #'
 #' }
 #'
 #' @keywords internal
 process_audio_py <- function(
-    audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
-    setup_env = FALSE
+    audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3")
 ){
 
-  # optionally set up a conda or virtual environment
-  if(isTRUE(setup_env)){
-    virtual_env <- TRUE
-    # setup environment for installing non-base python packages
-    py_env <- setup_py_env(py_pkgs = c("pandas", "scipy", "numpy"),
-                           virtual_env = virtual_env,
-                           update = FALSE)
-    # close down the virtual environment when exiting -if created in this function-
-    if(virtual_env){
-      on.exit(shutdown_virtual_env(py_env$env_name))
-    }
-  }
+  # Check that required packages for this function have been installed
+  required_py_pkgs <- c("pandas", "scipy", "numpy")
+  checkmate::assert_true(check_py_pkgs_installed(required_py_pkgs))
 
   # import main python functions
   import_main_py()
@@ -186,7 +171,7 @@ process_audio_py <- function(
   # assuming they are already installed, or came with python (e.g. `difflib`)
   difflib <- reticulate::import("difflib")
   filecmp <- reticulate::import("filecmp")
-  import_py_pkgs(py_pkgs = c("pandas"))
+  import_py_pkgs(py_pkgs = required_py_pkgs)
 
   # This object (`py_objs`) will keep track of everything in your python environment
   # even after it's called

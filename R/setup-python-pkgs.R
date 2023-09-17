@@ -245,7 +245,11 @@ import_py_pkgs <- function(
       pkg <- reticulate::import(pkg_name)
       assign(pkg_name, pkg, envir = envir)
     }else{
-      message(glue::glue("Could not import {pkg_name}. Please check that it is installed"))
+      cli::cli_warn(
+        glue::glue("Could not import {.code {{pkg_name}}}.
+                    Please check that it is installed.",
+                   .open = "{{", .close = "}}")
+      )
     }
   })
 }
@@ -311,4 +315,17 @@ shutdown_virtual_env <- function(env_name = SONGCLIP_PYTHON_ENV, force = TRUE){
   }
 }
 
+
+check_py_pkgs_installed <- function(py_pkgs){
+  pkgs_installed <- purrr::map_lgl(py_pkgs, function(pkg){
+    reticulate::py_module_available(pkg)
+  })
+
+  if(any(!pkgs_installed)){
+    pkgs_not_installed <- py_pkgs[!pkgs_installed] %>% paste(collapse = ", ")
+    cli::cli_abort(glue::glue("The following python modules are not installed: {pkgs_not_installed}"))
+  }
+
+  return(any(pkgs_installed))
+}
 

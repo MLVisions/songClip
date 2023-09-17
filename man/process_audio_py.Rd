@@ -4,10 +4,7 @@
 \alias{process_audio_py}
 \title{Do something with python (this is probably the function to work with)}
 \usage{
-process_audio_py(
-  audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"),
-  setup_env = FALSE
-)
+process_audio_py(audio_path = file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 }
 \arguments{
 \item{audio_path}{path to audio file}
@@ -48,11 +45,6 @@ process_audio_py()
 # shutdown virtual environment
 shutdown_virtual_env(py_env$env_name)
 
-## Creating environment within the function ##
-# not recommended if you need multiple R-python functions.
-# also makes it difficult to get information about the environment outside
-# of the function (and then you'd have to restart R)
-process_audio_py(setup_env = TRUE)
 
 }
 
