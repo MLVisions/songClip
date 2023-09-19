@@ -111,11 +111,11 @@ HTMLWidgets.widget({
     });
 
     $(`.howler-volumedown-button[data-howler=${el.id}]`).on("mouseup", (e) => {
-      updateVolume(Math.min(1, sound.volume() + 0.1));
+      updateVolume(Math.min(1, sound.volume() - 0.1));
     });
 
     $(`.howler-volumeup-button[data-howler=${el.id}]`).on("mouseup", (e) => {
-      updateVolume(Math.max(0, sound.volume() - 0.1));
+      updateVolume(Math.max(0, sound.volume() + 0.1));
     });
 
     $(`.howler-volume-slider[data-howler=${el.id}]`).on("mouseup", (e) => {

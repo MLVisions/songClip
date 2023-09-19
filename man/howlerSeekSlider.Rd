@@ -20,10 +20,12 @@ A UI element that can be included with a \code{\link{howler}} to manually change
 \examples{
 if (interactive()) {
   library(shiny)
+  sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 
   ui <- fluidPage(
     title = "howler.js Player",
-    howler(elementId = "sound", "audio/sound.mp3"),
+    howler(elementId = "sound", sound_file),
     howlerPlayPauseButton("sound"),
     howlerSeekSlider("sound")
   )

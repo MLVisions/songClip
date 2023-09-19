@@ -28,13 +28,21 @@
 #'
 #' @examples
 #' if (interactive()) {
+#'   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR)[1:2])
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
+#'
 #'   ui <- fluidPage(
 #'     title = "howler.js Module",
-#'     howlerModuleUI("howl", c("audio/track1.mp3", "audio/track2.mp3"))
+#'     h3("Full module"),
+#'     howlerModuleUI("howl", sound_files),
+#'     br(),
+#'     h3("Simple module"),
+#'     howlerBasicModuleUI("howl2", sound_files[1])
 #'   )
 #'
 #'   server <- function(input, output, session) {
-#'     moduleServer("howl", howlerModuleServer)
+#'     howlerModuleServer("howl")
+#'     howlerModuleServer("howl2")
 #'   }
 #'
 #'   shinyApp(ui, server)
@@ -182,16 +190,19 @@ howlerModuleServer <- function(id) {
 #' if (interactive()) {
 #'   library(shiny)
 #'
+#'   sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
+#'
 #'   ui <- fluidPage(
 #'     title = "howler.js Player",
-#'     howler(elementId = "howler", c(sound = "audio/sound.mp3")),
+#'     howler(elementId = "howler", c(sound = file.path("audio", sound_file))),
 #'     howlerPlayPauseButton("howler")
 #'   )
 #'
 #'   server <- function(input, output) {
 #'   }
 #'
-#'   runShiny(ui, server)
+#'   shinyApp(ui, server)
 #' }
 #'
 #' \dontrun{
@@ -347,10 +358,12 @@ widget_html.howler <- function(id, style, class, ...) {
 #' @examples
 #' if (interactive()) {
 #'   library(shiny)
+#'   sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 #'
 #'   ui <- fluidPage(
 #'     tile = "howler.js Player",
-#'     howler(elementId = "howler", "audio/sound.mp3"),
+#'     howler(elementId = "howler", file.path("audio", sound_file)),
 #'     howlerPreviousButton("howler"),
 #'     howlerBackButton("howler"),
 #'     howlerPlayPauseButton("howler"),
@@ -434,7 +447,7 @@ howlerNextButton <- function(howler_id) {
   howlerButton(howler_id, "next", shiny::icon("step-forward"))
 }
 
-#' @param volume_change How much to change the volume by. Default is 10\%.
+#' @param volume_change How much to change the volume by. Default is 10%.
 #'
 #' @rdname howlerButton
 #' @keywords internal
@@ -539,24 +552,27 @@ howlerDurationTime <- function(id, ...) {
 #' @param track Either the track name of the file to change to, or the index of the file to play.
 #' If the file is not included in the player nothing will happen.
 #'
+#'
+#'
 #' @examples
 #' if (interactive()) {
 #'   library(shiny)
+#'   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 #'
-#'   tracks <- c("audio/track1.mp3", "audio/track2.mp3")
 #'
 #'   ui <- fluidPage(
 #'     title = "howler.js Player",
-#'     selectInput("track", "Select Track", basename(tracks)),
-#'     howler(elementId = "howler", tracks),
+#'     selectInput("track", "Select Track", basename(sound_files)),
+#'     howler(elementId = "howler", sound_files),
 #'     howlerPlayPauseButton("howler")
 #'   )
 #'
 #'   server <- function(input, output) {
-#'     observeEvent(input$track, changeHowlerTrack("howler", input$track))
+#'     observeEvent(input$track, changeTrack("howler", input$track))
 #'   }
 #'
-#'   runShiny(ui, server)
+#'   shinyApp(ui, server)
 #' }
 #'
 #' @return
@@ -642,9 +658,9 @@ seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
 #' A more user friendly way to adjust the volume of the \code{howler} than by using buttons. There are
 #' still volume up/down buttons, but a slider can be moved up/down as required.
 #'
-#' @param id ID given to the volume slider. For it to work with the \code{\link{howler}}, the ID
-#' must match that of the \code{howler}.
-#' @param volume Initial volume to set the player at. Defaults at 100\%
+#' @param id ID given to the volume slider. For it to work with the \code{\link{howler}},
+#'        the IDmust match that of the \code{howler}.
+#' @param volume Initial volume to set the player at. Defaults at 100%
 #' @param button Logical, should a mute toggle button be included next to the slider? Default is \code{TRUE}
 #'
 #' @return
@@ -657,10 +673,12 @@ seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
 #' @examples
 #' if (interactive()) {
 #'   library(shiny)
+#'   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 #'
 #'   ui <- fluidPage(
 #'     title = "howler.js Player",
-#'     howler(elementId = "sound", "audio/sound.mp3"),
+#'     howler(elementId = "sound", sound_file),
 #'     howlerPlayPauseButton("sound"),
 #'     howlerVolumeSlider("sound")
 #'   )
@@ -691,6 +709,7 @@ howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
   )
 }
 
+
 #' Seek Slider
 #'
 #' @description
@@ -705,10 +724,12 @@ howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
 #' @examples
 #' if (interactive()) {
 #'   library(shiny)
+#'   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
+#'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 #'
 #'   ui <- fluidPage(
 #'     title = "howler.js Player",
-#'     howler(elementId = "sound", "audio/sound.mp3"),
+#'     howler(elementId = "sound", sound_file),
 #'     howlerPlayPauseButton("sound"),
 #'     howlerSeekSlider("sound")
 #'   )

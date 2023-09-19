@@ -43,13 +43,21 @@ current position of the track being played and the duration of the track.
 }
 \examples{
 if (interactive()) {
+  sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR)[1:2])
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
+
   ui <- fluidPage(
     title = "howler.js Module",
-    howlerModuleUI("howl", c("audio/track1.mp3", "audio/track2.mp3"))
+    h3("Full module"),
+    howlerModuleUI("howl", sound_files),
+    br(),
+    h3("Simple module"),
+    howlerBasicModuleUI("howl2", sound_files[1])
   )
 
   server <- function(input, output, session) {
-    moduleServer("howl", howlerModuleServer)
+    howlerModuleServer("howl")
+    howlerModuleServer("howl2")
   }
 
   shinyApp(ui, server)

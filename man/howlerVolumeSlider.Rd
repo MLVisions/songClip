@@ -7,10 +7,10 @@
 howlerVolumeSlider(id, volume = 1, button = TRUE)
 }
 \arguments{
-\item{id}{ID given to the volume slider. For it to work with the \code{\link{howler}}, the ID
-must match that of the \code{howler}.}
+\item{id}{ID given to the volume slider. For it to work with the \code{\link{howler}},
+the IDmust match that of the \code{howler}.}
 
-\item{volume}{Initial volume to set the player at. Defaults at 100\\%}
+\item{volume}{Initial volume to set the player at. Defaults at 100\%}
 
 \item{button}{Logical, should a mute toggle button be included next to the slider? Default is \code{TRUE}}
 }
@@ -28,10 +28,12 @@ shiny application and prevents the slider from working properly.
 \examples{
 if (interactive()) {
   library(shiny)
+  sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 
   ui <- fluidPage(
     title = "howler.js Player",
-    howler(elementId = "sound", "audio/sound.mp3"),
+    howler(elementId = "sound", sound_file),
     howlerPlayPauseButton("sound"),
     howlerVolumeSlider("sound")
   )

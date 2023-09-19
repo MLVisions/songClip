@@ -60,16 +60,19 @@ i.e. If \code{howler(id = "howler")}, then \code{howlerPlayButton(id = "howler")
 if (interactive()) {
   library(shiny)
 
+  sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
+
   ui <- fluidPage(
     title = "howler.js Player",
-    howler(elementId = "howler", c(sound = "audio/sound.mp3")),
+    howler(elementId = "howler", c(sound = file.path("audio", sound_file))),
     howlerPlayPauseButton("howler")
   )
 
   server <- function(input, output) {
   }
 
-  runShiny(ui, server)
+  shinyApp(ui, server)
 }
 
 \dontrun{

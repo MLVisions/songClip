@@ -48,7 +48,7 @@ howlerVolumeToggleButton(howler_id)
 
 \item{seek_change}{Time (in seconds) to move forward/backward the track when clicked. Default is 10 seconds}
 
-\item{volume_change}{How much to change the volume by. Default is 10\\%.}
+\item{volume_change}{How much to change the volume by. Default is 10\%.}
 }
 \value{
 An HTML tag containing the audio button.
@@ -95,10 +95,12 @@ depending on whether or not the track is playing.
 \examples{
 if (interactive()) {
   library(shiny)
+  sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 
   ui <- fluidPage(
     tile = "howler.js Player",
-    howler(elementId = "howler", "audio/sound.mp3"),
+    howler(elementId = "howler", file.path("audio", sound_file)),
     howlerPreviousButton("howler"),
     howlerBackButton("howler"),
     howlerPlayPauseButton("howler"),

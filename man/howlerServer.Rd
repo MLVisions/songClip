@@ -53,21 +53,22 @@ will all be applied to the current track.
 \examples{
 if (interactive()) {
   library(shiny)
+  sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))
+  addResourcePath("audio", EXAMPLE_AUDIO_DIR)
 
-  tracks <- c("audio/track1.mp3", "audio/track2.mp3")
 
   ui <- fluidPage(
     title = "howler.js Player",
-    selectInput("track", "Select Track", basename(tracks)),
-    howler(elementId = "howler", tracks),
+    selectInput("track", "Select Track", basename(sound_files)),
+    howler(elementId = "howler", sound_files),
     howlerPlayPauseButton("howler")
   )
 
   server <- function(input, output) {
-    observeEvent(input$track, changeHowlerTrack("howler", input$track))
+    observeEvent(input$track, changeTrack("howler", input$track))
   }
 
-  runShiny(ui, server)
+  shinyApp(ui, server)
 }
 
 }
