@@ -87,3 +87,4 @@ howler(
 \seealso{
 \code{\link{howlerButton}}, \code{\link{howlerServer}}
 }
+\keyword{internal}

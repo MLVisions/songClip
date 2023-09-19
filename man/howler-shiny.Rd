@@ -27,3 +27,4 @@ An output or render function that enables the use of the widget within Shiny app
 Output and render functions for using howler within Shiny
 applications and interactive Rmd documents.
 }
+\keyword{internal}

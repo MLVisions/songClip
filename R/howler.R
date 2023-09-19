@@ -42,7 +42,7 @@
 #'
 #' @name howlerModule
 #' @rdname howlerModule
-#' @export
+#' @keywords internal
 howlerModuleUI <- function(id, files, ..., include_current_track = TRUE, width = "300px") {
   ns <- NS(id)
   howler_id <- ns("howler")
@@ -79,7 +79,7 @@ howlerModuleUI <- function(id, files, ..., include_current_track = TRUE, width =
 }
 
 #' @rdname howlerModule
-#' @export
+#' @keywords internal
 howlerBasicModuleUI <- function(id, files, ..., width = "300px") {
   if (length(files) > 1) stop("Only one file can be included in the basic module")
   # ns <- NS(id)
@@ -120,7 +120,7 @@ howlerBasicModuleUI <- function(id, files, ..., width = "300px") {
 }
 
 #' @rdname howlerModule
-#' @export
+#' @keywords internal
 howlerModuleServer <- function(id) {
   moduleServer(
     id,
@@ -210,7 +210,7 @@ howlerModuleServer <- function(id) {
 #' @import htmlwidgets
 #' @import shiny
 #'
-#' @export
+#' @keywords internal
 howler <- function(tracks, options = list(), track_formats = NULL,
                    auto_continue = FALSE, auto_loop = FALSE, seek_ping_rate = 1000, elementId = NULL) {
 
@@ -270,13 +270,13 @@ howler <- function(tracks, options = list(), track_formats = NULL,
 #' An output or render function that enables the use of the widget within Shiny applications.
 #'
 #' @name howler-shiny
-#' @export
+#' @keywords internal
 howlerOutput <- function(outputId) {
   htmlwidgets::shinyWidgetOutput(outputId, 'howler', package = 'songClip')
 }
 
 #' @rdname howler-shiny
-#' @export
+#' @keywords internal
 renderHowler <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) } # force quoted
   htmlwidgets::shinyRenderWidget(expr, howlerOutput, env, quoted = TRUE)
@@ -367,7 +367,7 @@ widget_html.howler <- function(id, style, class, ...) {
 #' }
 #'
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerButton <- function(howler_id, button_type = HOWLER_BUTTON_TYPES, ...) {
   button_type <- match.arg(button_type)
 
@@ -382,19 +382,19 @@ howlerButton <- function(howler_id, button_type = HOWLER_BUTTON_TYPES, ...) {
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerPlayButton <- function(howler_id) {
   howlerButton(howler_id, "play", shiny::icon("play"))
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerPauseButton <- function(howler_id) {
   howlerButton(howler_id, "pause", shiny::icon("pause"))
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerPlayPauseButton <- function(howler_id) {
   btn <- howlerButton(howler_id, "play_pause", shiny::icon("play"))
   btn$attribs$`aria-label` <- "play"
@@ -403,7 +403,7 @@ howlerPlayPauseButton <- function(howler_id) {
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerStopButton <- function(howler_id) {
   howlerButton(howler_id, "stop", shiny::icon("stop"))
 }
@@ -411,25 +411,25 @@ howlerStopButton <- function(howler_id) {
 #' @param seek_change Time (in seconds) to move forward/backward the track when clicked. Default is 10 seconds
 #'
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerBackButton <- function(howler_id, seek_change = 10) {
   howlerButton(howler_id, "back", shiny::icon("backward"), `data-seek-change` = -abs(seek_change))
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerForwardButton <- function(howler_id, seek_change = 10) {
   howlerButton(howler_id, "forward", shiny::icon("forward"), `data-seek-change` = seek_change)
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerPreviousButton <- function(howler_id) {
   howlerButton(howler_id, "previous", shiny::icon("step-backward"))
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerNextButton <- function(howler_id) {
   howlerButton(howler_id, "next", shiny::icon("step-forward"))
 }
@@ -437,19 +437,19 @@ howlerNextButton <- function(howler_id) {
 #' @param volume_change How much to change the volume by. Default is 10\%.
 #'
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerVolumeUpButton <- function(howler_id, volume_change = 0.1) {
   howlerButton(howler_id, "volumeup", shiny::icon("volume-up"), `data-volume-change` = volume_change)
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerVolumeDownButton <- function(howler_id, volume_change = 0.1) {
   howlerButton(howler_id, "volumedown", shiny::icon("volume-down"), `data-volume-change` = volume_change)
 }
 
 #' @rdname howlerButton
-#' @export
+#' @keywords internal
 howlerVolumeToggleButton <- function(howler_id) {
   howlerButton(howler_id, "volumetoggle", shiny::icon("volume-up"))
 }
@@ -500,19 +500,19 @@ HOWLER_BUTTON_TYPES <- c(
 #' }
 #'
 #' @rdname howler_meta
-#' @export
+#' @keywords internal
 howlerCurrentTrack <- function(id, ...) {
   div(class = "howler-current-track", `data-howler` = id, ...)
 }
 
 #' @rdname howler_meta
-#' @export
+#' @keywords internal
 howlerSeekTime <- function(id, ...) {
   span(class = "howler-seek", `data-howler` = id, ...)
 }
 
 #' @rdname howler_meta
-#' @export
+#' @keywords internal
 howlerDurationTime <- function(id, ...) {
   span(class = "howler-duration", `data-howler` = id, ...)
 }
@@ -564,7 +564,7 @@ howlerDurationTime <- function(id, ...) {
 #'
 #' @name howlerServer
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 changeTrack <- function(id, track, session = getDefaultReactiveDomain()) {
   message_name <- paste0("changeHowlerTrack_", session$ns(id))
   session$sendCustomMessage(message_name, track)
@@ -573,7 +573,7 @@ changeTrack <- function(id, track, session = getDefaultReactiveDomain()) {
 #' @param play_track Logical, should the new track be played on addition?
 #'
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 addTrack <- function(id, track, play_track = FALSE, session = getDefaultReactiveDomain()) {
   if (is.null(names(track))) {
     track_name <- vapply(
@@ -596,28 +596,28 @@ addTrack <- function(id, track, play_track = FALSE, session = getDefaultReactive
 }
 
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 playHowl <- function(id, session = getDefaultReactiveDomain()) {
   message_name <- paste0("playHowler_", session$ns(id))
   session$sendCustomMessage(message_name, id)
 }
 
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 pauseHowl <- function(id, session = getDefaultReactiveDomain()) {
   message_name <- paste0("pauseHowler_", session$ns(id))
   session$sendCustomMessage(message_name, id)
 }
 
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 togglePlayHowl <- function(id, session = getDefaultReactiveDomain()) {
   message_name <- paste0("togglePlayHowler_", session$ns(id))
   session$sendCustomMessage(message_name, id)
 }
 
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 stopHowl <- function(id, session = getDefaultReactiveDomain()) {
   message_name <- paste0("stopHowler_", session$ns(id))
   session$sendCustomMessage(message_name, id)
@@ -625,7 +625,7 @@ stopHowl <- function(id, session = getDefaultReactiveDomain()) {
 
 #' @param seek Time (in seconds) to set the position of the track
 #' @rdname howlerServer
-#' @export
+#' @keywords internal
 seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
   message_name <- paste0("seekHowler_", session$ns(id))
   session$sendCustomMessage(message_name, as.numeric(seek))
@@ -671,7 +671,7 @@ seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
 #'   shinyApp(ui, server)
 #' }
 #'
-#' @export
+#' @keywords internal
 howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
   if (volume < 0 || volume > 1) {
     stop("Volume must be between 0 and 1")
@@ -719,7 +719,7 @@ howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
 #'   shinyApp(ui, server)
 #' }
 #'
-#' @export
+#' @keywords internal
 howlerSeekSlider <- function(id) {
   tags$input(
     class = "howler-seek-slider",
