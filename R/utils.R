@@ -31,3 +31,22 @@ dev_warning <- function(warn_msg){
     )
   )
 }
+
+
+#' Format seconds as `{minutes:seconds}`
+#'
+#' @param time time in seconds
+#'
+#' @examples
+#'
+#' format_seconds(80)
+#'
+#' @return character string formatted as `{minutes:seconds}`
+#' @keywords internal
+format_seconds <- function(time){
+  sprintf(
+    "%02d:%02.0f",
+    time %/% 60,
+    time %% 60
+  )
+}

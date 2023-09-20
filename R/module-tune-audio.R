@@ -114,7 +114,9 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
 
 
-    # Cropping, Looping, & Speed ----------------------------------------------
+
+    # Audio playback control --------------------------------------------------
+
 
     audio_select <- reactive(input$audio_select)
 

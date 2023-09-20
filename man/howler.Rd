@@ -25,13 +25,14 @@ list instead, with each list item containing each extension of the sound.}
 play in. Must be the same length as tracks}
 
 \item{auto_continue}{If there are multiple files, would you like to auto play the next file after the current
-one has finished? Defaults to \code{TRUE}}
+one has finished? Defaults to \code{FALSE}}
 
 \item{auto_loop}{Once all files have been played, would you like to restart playing the playlist?
 Defaults to \code{FALSE}}
 
-\item{seek_ping_rate}{Number of milliseconds between each update of \verb{input$\\\{id\\\}_seek} while playing. Default is
-set to 1000. If set to 0, then \verb{input$\\\{id\\\}_seek} will not exist.}
+\item{seek_ping_rate}{Number of milliseconds between each update of \verb{input$\{id\}_seek} while playing. Default is
+set to 1000. If set to 0, then \verb{input$\{id\}_seek} will not exist. Decreasing this number too much could increase
+the cross-talk between the server and client to the point where significant lags occur.}
 
 \item{elementId}{HTML id tag to be given to the howler player element}
 }
@@ -42,7 +43,8 @@ On the server side there will be up to four additional objects available as inpu
 \describe{
 \item{\code{\{id\}_playing}}{A logical value as to whether or not the \code{howler} is playing audio}
 \item{\code{\{id\}_track}}{Basename of the file currently loaded}
-\item{\code{\{id\}_seek}}{(If \code{seek_ping_rate > 0}) the current time (in seconds) of the track loaded}
+\item{\code{\{id\}_seek}}{(If \code{seek_ping_rate > 0}) the current time (in seconds) of the track loaded.
+Returns a named list.}
 \item{\code{\{id\}_duration}}{The duration (in seconds) of the track loaded}
 }
 }

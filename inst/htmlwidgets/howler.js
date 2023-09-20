@@ -303,17 +303,31 @@ HTMLWidgets.widget({
           options.onend = function() {
             $(`.howler-play_pause-button[data-howler=${el.id}] i`).removeClass("fa-pause").addClass("fa-play");
 
-            if (tracks.length > 1) {
-              selectNextTrack();
+            // Reset slider at end of the song (doesnt work currently)
+            // resetting may actually not be desirable for cropping reasons
+            var atEnd = Math.floor(sound.seek()) == Math.floor(sound.duration()) && sound.seek() > 0;
+            if (seek_slider.length && atEnd) {
+              sound.seek(Number(0));
+              seek_slider.attr("value", 0);
             }
 
-            var play_track;
-            if (current_track === 0) {
-              play_track = auto_loop;
-            } else {
-              play_track = auto_continue;
+            // dont start the next song when one finishes
+            // ideally this would be a function argument, but hard code for now
+            var nextTrack = false;
+
+            if (nextTrack) {
+              if (tracks.length > 1) {
+                selectNextTrack();
+              }
+
+              var play_track;
+              if (current_track === 0) {
+                play_track = auto_loop;
+              } else {
+                play_track = auto_continue;
+              }
+              startNewTrack(play_track);
             }
-            startNewTrack(play_track);
           };
         }
 

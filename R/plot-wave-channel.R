@@ -35,14 +35,18 @@
 #' \dontrun{
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
-#' plot_wave_audio(audio_obj)
+#' plot_wave_audio(audio_obj, format = "base")
 #'
 #' plot_wave_audio(audio_obj, type = "right")
 #'
 #' plot_wave_audio(audio_obj, type = "stereo")
 #'
-#' # Experimental
-#' plot_wave_audio(audio_obj, format = "fancy")
+#' # step-wise
+#' wave_channel <- process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
+#'
+#' plot_wave_channel_fancy(audio_data = wave_channel$audio_data, audio_params = wave_channel$params)
+#'
+#' # Add tracker
 #'
 #' pl_plotly <- plot_wave_audio(audio_obj, format = "fancy") %>%
 #'     add_play_tracker_line(0.3)
@@ -167,7 +171,8 @@ plot_wave_audio <- function(audio_obj,
           source = source,
           hollow = hollow,
           ylab = ylab_i, ylim = ylim,
-          plot_title = NULL, xlab = xlab
+          plot_title = NULL, xlab = xlab,
+          range_slider = range_slider # used for margin
         )
       })
 
@@ -219,7 +224,8 @@ plot_wave_audio <- function(audio_obj,
         source = source,
         hollow = hollow,
         ylab = ylab, ylim = ylim,
-        plot_title = plot_title, xlab = xlab
+        plot_title = plot_title, xlab = xlab,
+        range_slider = range_slider # used for margin
       )
     }
   }
@@ -245,18 +251,19 @@ plot_wave_audio <- function(audio_obj,
         line = (if(use_stereo) 5 else 2.5)
       )
     }else{
-      # For some reason, the margins are interpreted differently when run in
-      # a shiny environment
-      y_shift <- ifelse(shiny::isRunning(), -0.6, -0.25)
-      # adjust for range slider
-      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.5, y_shift)
+      # Set starting location (top of plot)
+      y_shift <- -0.2
+      # Adjust for range slider
+      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.32, y_shift)
+      # Adjust for shiny environment
+      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.37, y_shift)
 
       pl <- pl %>% plotly::layout(
         annotations = list(
           x = 1, y = y_shift, text = caption_txt,
           showarrow = F, xref='paper', yref='paper',
           xanchor='right', yanchor='auto', xshift=0, yshift=0,
-          font=list(size=13)
+          font = list(size=12)
         )
       )
     }
@@ -276,8 +283,7 @@ plot_wave_audio <- function(audio_obj,
 
 #' New plotting method
 #'
-#' @inheritParams plot_wave_channel_base
-#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow
+#' @inheritParams plot_wave_audio
 #'
 #' @rdname plot_wave_audio
 #' @keywords internal
@@ -285,15 +291,16 @@ plot_wave_channel_fancy <- function(audio_data,
                                     audio_params,
                                     source = NULL,
                                     ylim = NULL,
-                                    xlab = NULL,
-                                    ylab = NULL,
+                                    xlab = "Time",
+                                    ylab = "Audio Channel",
                                     plot_title = NULL,
                                     axes = TRUE,
                                     hollow = FALSE,
                                     show_y_axis = FALSE,
                                     line_color = "#ADD8E6",
                                     ft_color = "lightgrey",
-                                    bg_color = "#252525"
+                                    bg_color = "#252525",
+                                    range_slider = TRUE
 ){
 
   n_points <- length(unique(audio_data$x))
@@ -306,23 +313,35 @@ plot_wave_channel_fancy <- function(audio_data,
     dplyr::mutate(x = .data$x/60) %>%
     dplyr::group_by(!!sym(group))
 
+  # Convert x-axis to {minutes:seconds}
+  x_breaks <- unname(round(quantile(pl_data$x, probs = seq(0, 1, 0.2)), 3))
+  x_breaks_fmt <- format_seconds(x_breaks * 60)
+
   # font and styling
   t1 <- list(size = 15, color = ft_color)
   y_tick_vals <- if(isTRUE(show_y_axis)) ylim else NULL
   # Add unit if unchanged xlab and time
-  if(xlab == audio_params$xunit && xlab == "Time"){
+  if(!is.null(xlab) && xlab == audio_params$xunit && xlab == "Time"){
     xlab <- paste(xlab, "(minutes)")
+  }
+
+  # set margin
+  slider_adjust <- ifelse(isTRUE(range_slider), 10, 40)
+  margin <- if(shiny::isRunning()){
+    list(pad = 30, b = 55 + slider_adjust)
+  }else{
+    list(pad = 30, b = 80 + slider_adjust)
   }
 
   # Core plot
   pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y, source = source) %>%
-    plotly::add_lines( color = I(line_color))
+    plotly::add_lines(color = I(line_color))
 
   # Format
   pl %>%
     plotly::layout(
       yaxis = list(
-        range = ylim*2,
+        range = ylim*1.1, # increase data padding by 10%
         fixedrange = TRUE, title = ylab,
         tickvals = y_tick_vals,
         zerolinecolor = "black",
@@ -330,14 +349,17 @@ plot_wave_channel_fancy <- function(audio_data,
       ),
       xaxis = list(
         title = xlab,
-        range = duration
+        range = duration,
+        tickvals = x_breaks,
+        ticktext = x_breaks_fmt,
+        tickmode = "array"
       ),
       # styling
       font = t1,
       paper_bgcolor = bg_color,
       plot_bgcolor = bg_color,
       # margin
-      margin = list(pad = 30, b = 130, t = 80),
+      margin = margin,
       # Legend
       showlegend = FALSE
     ) %>% config_plotly(edit_shapes = FALSE)
@@ -488,14 +510,28 @@ add_crop_lines <- function(pl_plotly, audio_params, color = "#0BDA51"){
 
 #' Add vertical line to plotly object to track current play time
 #'
-#' @param pl_plotly a `plotly` object
+#' @param pl_plotly a `plotly` object. Only one of `proxy`, `pl_plotly` should be supplied.
+#' @param proxy a `plotly::plotlyProxy` object used for updating the location of the tracker.
+#'        Only one of `proxy`, `pl_plotly` should be supplied.
 #' @param x_val x-axis coordinate for placing the vertical line.
 #' @param color color of line
+#' @param shapeId id of the shape to be tracked. Required for updating the location.
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
-add_play_tracker_line <- function(pl_plotly, x_val = 0, color = "red", shapeId = "redTrackerLine"){
-  pl_plotly %>% plotly::layout(
-    shapes = list(
+add_play_tracker_line <- function(
+    pl_plotly = NULL,
+    proxy = NULL,
+    x_val = 0,
+    color = "red",
+    shapeId = "redTrackerLine"
+    ){
+
+  # TODO: add support for 'stereo' types
+
+  # Function for creating vertical tracker line
+  make_tracker_shape <- function(x_val, color, shapeId){
+    list(
       # vertical line
       list(
         type = "line",
@@ -506,5 +542,19 @@ add_play_tracker_line <- function(pl_plotly, x_val = 0, color = "red", shapeId =
         name = shapeId
       )
     )
-  )
+  }
+
+  # Make shapes
+  shapes <- make_tracker_shape(x_val, color, shapeId)
+
+  if(!is.null(pl_plotly) && inherits(pl_plotly, "plotly")){
+    # add tracker line to `plotly` object
+    pl_plotly %>% plotly::layout(shapes = shapes)
+  }else if(!is.null(proxy)){
+    # update tracker line in `renderPlotly` object
+    plotly::plotlyProxyInvoke(proxy, "relayout", list(shapes = shapes))
+  }else{
+    stop("Only one of `proxy`, `pl_plotly` should be supplied. Make sure you passed the right object")
+  }
+
 }

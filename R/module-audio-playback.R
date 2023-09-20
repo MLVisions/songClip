@@ -8,10 +8,6 @@ audio_playpack_ui <- function(id) {
   ns <- NS(id)
 
   tagList(
-    # tags$head(
-    #   # Tracker JS
-    #   tags$script(src = file.path(src_name, "js", "updatePlayTracker.js")),
-    # ),
     br(),
     fluidRow(
       style = "background-color: #252525; padding-bottom: 1em;
@@ -25,11 +21,7 @@ audio_playpack_ui <- function(id) {
           uiOutput(ns("audio_playback_controls"))
         )
       ),
-      plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87"),
-      # Tracker input (not visible)
-      conditionalPanel(1==2, ns = ns, {
-        textInput(ns("seek_time"), label = NULL)
-      })
+      plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
     )
   )
 }
@@ -138,82 +130,25 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       audio_plot <- reactive({
         audio_obj <- shiny::req(audio_obj())
         assign("audio_obj", audio_obj, envir = .GlobalEnv)
-        # update value of tracker on client side
-        tracker <- isolate(.rv$seek)/60 # or input$howler_seek for always 0
-        plot_wave_audio(audio_obj) %>% add_play_tracker_line(x_val = tracker)
+        # update value of tracker on client side (always start at 0 for new audio object)
+        plot_wave_audio(audio_obj) %>% add_play_tracker_line(x_val = 0)
       })
 
+      # Rendered audio inspection plot
       output$audio_plot <- plotly::renderPlotly({
-        audio_plot() #%>% htmlwidgets::onRender(
-        #   tracker_js(plot_id = "audio_plot", ns = ns("")),
-        #   data = input$howler_seek
-        # )
+        audio_plot()
       })
 
 
+      # Update playback line tracker location on client side
       observeEvent(input$howler_seek, {
-        seekValue <- input$howler_seek
-
-        # Get a reference to your Plotly chart using plotlyProxy
-        plotlyProxy("audio_plot", session, deferUntilFlush = FALSE) %>%
-          # Use plotlyProxyInvoke to update the red line's position
-          plotlyProxyInvoke(
-            "relayout",
-            list(
-              shapes = list(
-                list(
-                  x0 = seekValue,
-                  x1 = seekValue,
-                  name = "redTrackerLine"  # Specify the shape ID
-                )
-              )
-            )
-          )
+        seek_value <- input$howler_seek/60
+        # Get proxy reference
+        proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = FALSE)
+        # Update the red line's position
+        add_play_tracker_line(proxy = proxy, x_val = seek_value)
       })
 
-      # observeEvent(input$howler_seek, {
-      #   browser()
-      #   jsCode <- sprintf("updateRedLinePosition(document.getElementById('audio_plot'), %s);", input$howler_seek)
-      #   shinyjs::runjs(jsCode)
-      # })
-
-      # observeEvent(input$howler_seek, {
-      #   seekValue <- input$howler_seek
-      #
-      #   # Get proxy reference
-      #   proxy <- plotly::plotlyProxy("audio_plot", session, deferUntilFlush = FALSE)
-      #
-      #   browser()
-      #   # Find the shape index for the red line
-      #   shapeIndex <- which(sapply(proxy$getShapes(), function(shape) {
-      #     shape$type == "line" && shape$line$color == "red"
-      #   }))
-      #
-      #   # Update the x0 and x1 attributes of the red line shape
-      #   if (length(shapeIndex) > 0) {
-      #     plotlyProxyInvoke(
-      #       proxy, "relayout",
-      #       list(
-      #         shapes = list(list(
-      #           x0 = seekValue,
-      #           x1 = seekValue
-      #         )),
-      #         indices = shapeIndex
-      #       ))
-      #   }
-      # })
-
-      # observeEvent(input$howler_seek, {
-      #   # TODO: figure out a way to add the tracker on the client side (too many updates)
-      #   # may be able to do something like this:
-      #   # https://stackoverflow.com/questions/54822671/r-plotly-how-to-observe-whether-a-trace-is-hidden-or-shown-through-legend-click/54825337#54825337
-      #   # https://stackoverflow.com/questions/50138568/removing-traces-by-name-using-plotlyproxy-or-accessing-output-schema-in-reactiv/53831080#53831080
-      #   # in both, they make use of `htmlwidgets::onRender`. To do this completely on the client side
-      #   # however, we will need a function that passes the the id of the howler object to
-      #   # get the seek information stored in `input$howler_seek`
-      #   tracker <- shiny::req(input$howler_seek)/60
-      #   plotly::plotlyProxy("audio_plot", session)
-      # })
 
       return(
         list(
@@ -225,35 +160,3 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
   )
 }
 
-
-
-#' This is how we will update the plot line; we *may* need another method for attaining
-#' the seek information/storing it on the client side
-tracker_js <- function(plot_id = "audio_plot", ns = "module_id"){
-  # use {{howler_id}} and {{ns}} to access howler object
-  # pull `seek` info and store as variable
-  # potentially make use of `howlerSeekSlider`
-
-  # This is placeholder JS that does not do what we need yet
-  js <- glue::glue("
-      function(el, x) {
-        var plotlyElement = document.getElementById('{{ns}}-{{plot_id}}');
-        var seekValue = x;
-
-        // Find the red line shape by its name or index
-        var shapeIndex = 1; // Set this to the index of your red line shape
-        var shapes = plotlyElement.layout.shapes;
-
-        // Update the x0 and x1 attributes of the red line shape
-        if (shapeIndex !== null && shapes[shapeIndex]) {
-          shapes[shapeIndex].x0 = seekValue;
-          shapes[shapeIndex].x1 = seekValue;
-
-          // Update the Plotly chart
-          Plotly.update(plotlyElement);
-        }
-      }
-", .open = "{{", .close = "}}")
-
-  return(js)
-}
