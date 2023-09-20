@@ -22,35 +22,35 @@
 #' @param ylab label for y-axis. Will be determined if not set.
 #'
 #' @details
-#' plot_wave_channel and plot_wave_audio were inspired by
-#' tuneR's plotting method:
-#' https://github.com/cran/tuneR/blob/master/R/plot-Wave.R
-#' We want more control, the ability to plot the average (versus left and right),
-#' and an interactive plot
+#' `plot_wave_channel_base` and `process_wave_channel` were inspired by
+#' `tuneR`'s plotting method for `wave` files:
+#' `https://github.com/cran/tuneR/blob/master/R/plot-Wave.R`
+#'
+#' We want more control over the visual, the ability to plot the different wave channels,
+#' and for the plot to be interactive, so this code had to be pulled out and refactored.
+#' `plot_wave_channel_fancy` uses `plotly` to create a much nicer plot with additional
+#' features.
 #'
 #' Not sure if `source` will be supported for `stereo` types
 #'
 #'
 #' @examples
-#' \dontrun{
+#' # Read in audio file with `tuneR`
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
-#' plot_wave_audio(audio_obj, format = "base")
-#'
+#' # Plot variations
+#' plot_wave_audio(audio_obj)
+#' plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 #' plot_wave_audio(audio_obj, type = "right")
-#'
 #' plot_wave_audio(audio_obj, type = "stereo")
+#' plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
 #'
-#' # step-wise
-#' wave_channel <- process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
-#'
-#' plot_wave_channel_fancy(audio_data = wave_channel$audio_data, audio_params = wave_channel$params)
-#'
-#' # Add tracker
-#'
-#' pl_plotly <- plot_wave_audio(audio_obj, format = "fancy") %>%
-#'     add_play_tracker_line(0.3)
-#' }
+#' # step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
+#' wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+#' plot_wave_channel_fancy(
+#'     audio_data = wave_channel$audio_data,
+#'     audio_params = wave_channel$params
+#' )
 #'
 #'
 #' @importFrom graphics par title mtext segments axis axTicks
@@ -508,16 +508,28 @@ add_crop_lines <- function(pl_plotly, audio_params, color = "#0BDA51"){
   )
 }
 
-#' Add vertical line to plotly object to track current play time
+#' Add vertical line to `plotly` object to track current play time
+#'
+#' Add vertical line to `plotly` returned from \code{\link{plot_wave_audio}}, to track
+#' current play time. This function can also be used to update its underlying data inside
+#' a shiny app by supplying a \code{\link{plotlyProxy}} object instead of `pl_plotly`.
 #'
 #' @param pl_plotly a `plotly` object. Only one of `proxy`, `pl_plotly` should be supplied.
-#' @param proxy a `plotly::plotlyProxy` object used for updating the location of the tracker.
+#' @param proxy a \code{\link{plotlyProxy}} object used for updating the location of the tracker.
 #'        Only one of `proxy`, `pl_plotly` should be supplied.
 #' @param x_val x-axis coordinate for placing the vertical line.
 #' @param color color of line
 #' @param shapeId id of the shape to be tracked. Required for updating the location.
 #'
-#' @rdname plot_wave_audio
+#' @examples
+#' # Read in audio file with `tuneR`
+#' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
+#'
+#' # Add tracker
+#' pl_plotly <- plot_wave_audio(audio_obj) %>%
+#'     add_play_tracker_line(0.3)
+#'
+#'
 #' @keywords internal
 add_play_tracker_line <- function(
     pl_plotly = NULL,

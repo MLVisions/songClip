@@ -5,7 +5,6 @@
 \alias{plot_wave_channel_fancy}
 \alias{plot_wave_channel_base}
 \alias{process_wave_channel}
-\alias{add_play_tracker_line}
 \title{Plot wave channels of audio file}
 \usage{
 plot_wave_audio(
@@ -54,14 +53,6 @@ plot_wave_channel_base(
 )
 
 process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
-
-add_play_tracker_line(
-  pl_plotly = NULL,
-  proxy = NULL,
-  x_val = 0,
-  color = "red",
-  shapeId = "redTrackerLine"
-)
 }
 \arguments{
 \item{audio_obj}{a \code{tuneR} audio object.}
@@ -102,17 +93,6 @@ about the audio file.}
 \item{axes}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add axes to the plot}
 
 \item{center}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, center the plot}
-
-\item{pl_plotly}{a \code{plotly} object. Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
-
-\item{proxy}{a \code{plotly::plotlyProxy} object used for updating the location of the tracker.
-Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
-
-\item{x_val}{x-axis coordinate for placing the vertical line.}
-
-\item{color}{color of line}
-
-\item{shapeId}{id of the shape to be tracked. Required for updating the location.}
 }
 \value{
 a \code{plotly} object if \code{format = "fancy"}. Otherwise \code{NULL} invisibly
@@ -125,38 +105,36 @@ New plotting method
 Original plotting method
 
 Process Wave channel
-
-Add vertical line to plotly object to track current play time
 }
 \details{
-plot_wave_channel and plot_wave_audio were inspired by
-tuneR's plotting method:
-https://github.com/cran/tuneR/blob/master/R/plot-Wave.R
-We want more control, the ability to plot the average (versus left and right),
-and an interactive plot
+\code{plot_wave_channel_base} and \code{process_wave_channel} were inspired by
+\code{tuneR}'s plotting method for \code{wave} files:
+\verb{https://github.com/cran/tuneR/blob/master/R/plot-Wave.R}
+
+We want more control over the visual, the ability to plot the different wave channels,
+and for the plot to be interactive, so this code had to be pulled out and refactored.
+\code{plot_wave_channel_fancy} uses \code{plotly} to create a much nicer plot with additional
+features.
 
 Not sure if \code{source} will be supported for \code{stereo} types
 }
 \examples{
-\dontrun{
+# Read in audio file with `tuneR`
 audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
-plot_wave_audio(audio_obj, format = "base")
-
+# Plot variations
+plot_wave_audio(audio_obj)
+plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 plot_wave_audio(audio_obj, type = "right")
-
 plot_wave_audio(audio_obj, type = "stereo")
+plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
 
-# step-wise
-wave_channel <- process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
-
-plot_wave_channel_fancy(audio_data = wave_channel$audio_data, audio_params = wave_channel$params)
-
-# Add tracker
-
-pl_plotly <- plot_wave_audio(audio_obj, format = "fancy") \%>\%
-    add_play_tracker_line(0.3)
-}
+# step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
+wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+plot_wave_channel_fancy(
+    audio_data = wave_channel$audio_data,
+    audio_params = wave_channel$params
+)
 
 
 }

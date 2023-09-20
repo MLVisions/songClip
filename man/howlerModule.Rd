@@ -23,7 +23,7 @@ formats of the same file are kept in each element of the list.}
 
 \item{include_current_track}{Logical, should the current track be included in the UI of the module?}
 
-\item{width}{Width (in pixels) of the player. Defaults to 400px.}
+\item{width}{Width (in pixels) of the player. Defaults to 300px.}
 }
 \value{
 The UI will provide a player with a play/pause button, previous and next buttons, duration information

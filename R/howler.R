@@ -1,19 +1,32 @@
 
-
-
+#' Make howler UI for use in \code{\link{audio_playpack_ui}}
+#'
+#' @param files Files that will be used in the player.
+#' @param howler_id ID to correspond to the howler object and its related buttons.
+#' @param seek_ping_rate Number of milliseconds between each update of `input${id}_seek` while playing. Default is
+#' set to 1000. If set to 0, then `input${id}_seek` will not exist. Decreasing this number too much could increase
+#' the cross-talk between the server and client to the point where significant lags occur.
+#' @param include_current_track Logical, should the current track be included in the UI of the module?
+#' @param width Width (in pixels) of the player. Defaults to 300px.
+#'
+#' @keywords internal
 make_howler_ui <- function(
     files,
     howler_id = "howler",
-    options = list(),
+    seek_ping_rate = 100,
     include_current_track = TRUE,
     width = "300px",
+    options = list(),
     ...
 ){
+
+  # TODO: define new div classes for improved styling (dont delete old ones)
 
   div(
     class = "howler-module",
     style = paste0("width:", width, ";"),
-    howler(elementId = howler_id, tracks = files, auto_continue = FALSE, options = options, ...),
+    howler(elementId = howler_id, tracks = files, auto_continue = FALSE,
+           seek_ping_rate = seek_ping_rate, options = options, ...),
     div(
       class = "howler-module-container",
       if (include_current_track) howlerCurrentTrack(howler_id),
@@ -57,7 +70,7 @@ make_howler_ui <- function(
 #' formats of the same file are kept in each element of the list.
 #' @param ... Further arguments to send to \code{\link{howler}}
 #' @param include_current_track Logical, should the current track be included in the UI of the module?
-#' @param width Width (in pixels) of the player. Defaults to 400px.
+#' @param width Width (in pixels) of the player. Defaults to 300px.
 #'
 #' @return
 #' The UI will provide a player with a play/pause button, previous and next buttons, duration information

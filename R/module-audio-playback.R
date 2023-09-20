@@ -1,7 +1,7 @@
 # Module UI ---------------------------------------------------------------
 
-#' Create shiny module for saving youtube videos as audio files
-#' @describeIn download_audio_ui Create module UI for saving youtube videos as audio files
+#' Create shiny module for altering the playback of an audio track
+#' @describeIn audio_playpack_ui Create module UI for altering the playback of an audio track
 #'
 #' @keywords internal
 audio_playpack_ui <- function(id) {
@@ -29,7 +29,7 @@ audio_playpack_ui <- function(id) {
 
 # Module Server -----------------------------------------------------------
 
-#' @describeIn download_audio_ui Create module server for saving youtube videos as audio files
+#' @describeIn audio_playpack_ui Create module server for altering the playback of an audio track
 #'
 #'
 #' @keywords internal
