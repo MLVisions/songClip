@@ -11,7 +11,12 @@
 \alias{seekHowl}
 \title{Update howler.js Server-Side}
 \usage{
-changeTrack(id, track, session = getDefaultReactiveDomain())
+changeTrack(
+  id,
+  track,
+  play_track = FALSE,
+  session = getDefaultReactiveDomain()
+)
 
 addTrack(id, track, play_track = FALSE, session = getDefaultReactiveDomain())
 
@@ -31,9 +36,9 @@ seekHowl(id, seek, session = getDefaultReactiveDomain())
 \item{track}{Either the track name of the file to change to, or the index of the file to play.
 If the file is not included in the player nothing will happen.}
 
-\item{session}{Shiny session}
-
 \item{play_track}{Logical, should the new track be played on addition?}
+
+\item{session}{Shiny session}
 
 \item{seek}{Time (in seconds) to set the position of the track}
 }

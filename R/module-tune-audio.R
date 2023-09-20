@@ -146,11 +146,11 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
 
 setup_audio <- function(audio_path){
-  www_dir <- system.file("www", package = "songClip", mustWork = TRUE)
-  path_play <- file.path(www_dir, "play.wav")
+  # www_dir <- system.file("www", package = "songClip", mustWork = TRUE)
+  # path_play <- file.path(www_dir, "play.wav")
 
   audio_obj <- tuneR::readMP3(here::here(audio_path))
-  tuneR::writeWave(audio_obj, path_play)
+  # tuneR::writeWave(audio_obj, path_play)
 
   return(audio_obj)
 }

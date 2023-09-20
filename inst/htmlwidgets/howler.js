@@ -178,8 +178,9 @@ HTMLWidgets.widget({
         sound.seek(time);
       });
 
-      Shiny.addCustomMessageHandler(`changeHowlerTrack_${el.id}`, function(track) {
+      Shiny.addCustomMessageHandler(`changeHowlerTrack_${el.id}`, function(track_info) {
         sound.stop();
+        track = track_info.track;
         if (isNaN(track)) {
           current_track = track_names.indexOf(track);
           if (current_track === -1) {
@@ -190,6 +191,9 @@ HTMLWidgets.widget({
           current_track = Number(track) - 1;
         }
         startNewTrack();
+        if (!track_info.play) {
+          sound.stop();
+        }
       });
 
       Shiny.addCustomMessageHandler(`addHowlerTrack_${el.id}`, function(track_info) {

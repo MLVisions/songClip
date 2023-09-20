@@ -39,7 +39,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
     function(input, output, session) {
 
       ns <- session$ns
-      .rv <- reactiveValues()
+      .rv <- reactiveValues(playing = NULL, track = NULL, duration = NULL, seek = NULL)
 
       # TODO: figure out if this works when the package is installed
       observeEvent(audio_dir(), {
@@ -48,26 +48,15 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
 
       # Circular shift the order of the songs based on which one is selected
-      sorted_audio_files <- reactive({
-        sorted_choices <- shift_selected_song(
-          audio_select = shiny::req(audio_select()),
-          audio_choices = shiny::req(audio_choices())
-        )
-
-        file.path("SONGCLIP_audio_library", basename(sorted_choices))
+      audio_files <- reactive({
+        file.path("SONGCLIP_audio_library", shiny::req(audio_choices()$choice_name))
       })
 
 
 
       output$audio_playback_controls <- renderUI({
-        # call audio_obj to refresh the stored wav file
-        shiny::req(audio_obj())
-
-        audio_files <- shiny::req(sorted_audio_files())
-        audio_selected <- file.path("SONGCLIP_audio_library", shiny::req(audio_select()))
-
-        howlerBasicModuleUI("howler_ui", audio_selected)
-        # howlerModuleUI("howler_ui", audio_files,  include_current_track = TRUE)
+        audio_files <- shiny::req(audio_files())
+        make_howler_ui(audio_files, howler_id = ns("howler"))
         # This allows playback
         # tags$audio(
         #   src = file.path(src_name, "play.wav"), type = "audio/wav",
@@ -75,8 +64,19 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         # )
       })
 
-      track_song_info <- howlerModuleServer("howler_ui")
+      observeEvent(audio_select(), {
+        track_info <- reactiveValuesToList(.rv)
+        new_track <- shiny::req(audio_select())
+        changeTrack("howler", new_track)
+      })
 
+
+      observe({
+        .rv$playing = shiny::req(input$howler_playing)
+        .rv$track = shiny::req(input$howler_track)
+        .rv$duration = shiny::req(input$howler_duration)
+        .rv$seek = shiny::req(input$howler_seek)
+      })
 
 
       # Wave Channel Plot -------------------------------------------------------

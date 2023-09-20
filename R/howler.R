@@ -1,4 +1,48 @@
 
+
+
+make_howler_ui <- function(
+    files,
+    howler_id = "howler",
+    include_current_track = TRUE,
+    width = "300px",
+    ...
+){
+
+  div(
+    class = "howler-module",
+    style = paste0("width:", width, ";"),
+    howler(elementId = howler_id, tracks = files, ...),
+    div(
+      class = "howler-module-container",
+      if (include_current_track) howlerCurrentTrack(howler_id),
+      howlerSeekSlider(howler_id),
+      div(
+        class = "howler-module-settings",
+        div(
+          class = "howler-module-buttons",
+          if (length(files) > 1) howlerPreviousButton(howler_id),
+          howlerPlayPauseButton(howler_id),
+          if (length(files) > 1) howlerNextButton(howler_id)
+        ),
+        span(
+          class = "howler-module-duration",
+          howlerSeekTime(howler_id),
+          "/",
+          howlerDurationTime(howler_id)
+        ),
+        div(
+          class = "howler-module-volume",
+          howlerVolumeSlider(howler_id)
+        )
+      )
+    )
+  )
+}
+
+
+
+
 # Howler Module -----------------------------------------------------------
 
 #' Howler.js Module
@@ -581,9 +625,13 @@ howlerDurationTime <- function(id, ...) {
 #' @name howlerServer
 #' @rdname howlerServer
 #' @keywords internal
-changeTrack <- function(id, track, session = getDefaultReactiveDomain()) {
+changeTrack <- function(id, track, play_track = FALSE, session = getDefaultReactiveDomain()) {
   message_name <- paste0("changeHowlerTrack_", session$ns(id))
-  session$sendCustomMessage(message_name, track)
+  track_info <- list(
+    track = track,
+    play = play_track
+  )
+  session$sendCustomMessage(message_name, track_info)
 }
 
 #' @param play_track Logical, should the new track be played on addition?
