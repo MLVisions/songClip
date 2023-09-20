@@ -41,17 +41,24 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       ns <- session$ns
       .rv <- reactiveValues(playing = NULL, track = NULL, duration = NULL, seek = NULL)
 
+
+
+      # Setup audio files -------------------------------------------------------
+
+
       # TODO: figure out if this works when the package is installed
       observeEvent(audio_dir(), {
         addResourcePath("SONGCLIP_audio_library", shiny::req(audio_dir()))
       })
 
-
-      # Circular shift the order of the songs based on which one is selected
+      # audio paths relative to resource path
       audio_files <- reactive({
         file.path("SONGCLIP_audio_library", shiny::req(audio_choices()$choice_name))
       })
 
+
+
+      # Main howler UI ----------------------------------------------------------
 
 
       output$audio_playback_controls <- renderUI({
@@ -64,12 +71,6 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         # )
       })
 
-      observeEvent(audio_select(), {
-        track_info <- reactiveValuesToList(.rv)
-        new_track <- shiny::req(audio_select())
-        changeTrack("howler", new_track)
-      })
-
 
       observe({
         .rv$playing = shiny::req(input$howler_playing)
@@ -79,12 +80,43 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       })
 
 
+      # Track Changing ----------------------------------------------------------
+
+
+      # Update selected track when either A) a new file is selected, or B) the
+      # 'next'/'previous' buttons are clicked
+      selected_track <- reactiveVal("")
+
+      # Update when 'next'/'previous' buttons are clicked
+      observeEvent(list(.rv$track, input$howler_track), {
+        track_details <- input$howler_track
+        new_track <- basename(audio_files()[track_details$id])
+        selected_track(new_track)
+      })
+
+      # Update when new file is selected
+      observeEvent(audio_select(), {
+        new_track <- shiny::req(audio_select())
+        current_track <- shiny::req(selected_track())
+        # avoid running multiple times per track change
+        if(current_track != new_track){
+          selected_track(new_track)
+          changeTrack("howler", new_track)
+        }
+      })
+
+
+      observe({
+        track_info <- reactiveValuesToList(.rv)
+      })
+
+
       # Wave Channel Plot -------------------------------------------------------
 
 
       # Audio path
       audio_path <- reactive({
-        file.path(shiny::req(audio_dir()), shiny::req(audio_select()))
+        file.path(shiny::req(audio_dir()), shiny::req(selected_track()))
       })
 
       # Load Chosen audio object
@@ -105,25 +137,13 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         audio_plot()
       })
 
+      return(
+        list(
+          selected_track = reactive({selected_track()})
+        )
+      )
+
     }
   )
 }
 
-
-#' Circular shift the order of the songs based on which one is selected
-#'
-#' @param audio_select the `basename` of the file selected
-#' @param audio_choices vector of file paths
-shift_selected_song <- function(audio_select, audio_choices){
-
-  checkmate::assert_true(any(grepl(audio_select, audio_choices$choice_name)))
-
-  shifter <- function(x, n = 1) {
-    if (n == 0) x else c(tail(x, -n), head(x, n))
-  }
-
-  loc <- grep(audio_select, audio_choices$choice_name)
-  if(length(loc) > 1) loc <- loc[1]
-
-  shifter(audio_choices$choice, loc-1)
-}

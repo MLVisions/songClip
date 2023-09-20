@@ -124,6 +124,16 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
                                             audio_select = audio_select
     )
 
+    # update input$audio_select if track is changed via next/previous buttons.
+    observeEvent(audio_playpack$selected_track(), {
+      selected_track <- shiny::req(audio_playpack$selected_track())
+      if(selected_track != input$audio_select){
+        shinyWidgets::updatePickerInput(
+          session = session, "audio_select", selected = selected_track
+        )
+      }
+    })
+
 
     # Equalizer ---------------------------------------------------------------
 
