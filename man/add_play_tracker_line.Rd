@@ -4,10 +4,17 @@
 \alias{add_play_tracker_line}
 \title{Add vertical line to plotly object to track current play time}
 \usage{
-add_play_tracker_line(pl_plotly, color = "red")
+add_play_tracker_line(
+  pl_plotly,
+  x_val = 0,
+  color = "red",
+  shapeId = "redTrackerLine"
+)
 }
 \arguments{
 \item{pl_plotly}{a \code{plotly} object}
+
+\item{x_val}{x-axis coordinate for placing the vertical line.}
 
 \item{color}{color of line}
 }

@@ -185,7 +185,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
       showlegend = FALSE
     ) %>%
     stagger_eq_ribbon(data_pl = data_pl) %>%
-    config_plotly()
+    config_plotly(edit_shapes = TRUE)
 
   return(pl_plotly)
 }
@@ -246,9 +246,9 @@ update_equalizer_data <- function(eq_data, event_data){
 }
 
 
-config_plotly <- function(pl){
+config_plotly <- function(pl, edit_shapes = FALSE){
   pl %>% plotly::config(
-    edits = list(shapePosition = TRUE),
+    edits = list(shapePosition = edit_shapes),
     showTips = FALSE, displayModeBar = FALSE
   ) %>%
     plotly::style(hoverinfo = "none")

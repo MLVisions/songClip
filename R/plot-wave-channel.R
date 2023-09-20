@@ -43,6 +43,9 @@
 #'
 #' # Experimental
 #' plot_wave_audio(audio_obj, format = "fancy")
+#'
+#' pl_plotly <- plot_wave_audio(audio_obj, format = "fancy") %>%
+#'     add_play_tracker_line(0.3)
 #' }
 #'
 #'
@@ -57,6 +60,7 @@ plot_wave_audio <- function(audio_obj,
                             simplify = TRUE,
                             nr = 2500,
                             include_info = TRUE,
+                            range_slider = TRUE,
                             plot_title = NULL,
                             xunit = c("Time", "Samples"),
                             ylim = NULL,
@@ -220,6 +224,11 @@ plot_wave_audio <- function(audio_obj,
     }
   }
 
+  # Optionally add rangeslider
+  if(isTRUE(range_slider) && format == "fancy"){
+    pl <- pl %>% plotly::rangeslider()
+  }
+
   # Optionally Append Info
   if(isTRUE(include_info)){
     l <- length(audio_obj@left)
@@ -236,9 +245,12 @@ plot_wave_audio <- function(audio_obj,
         line = (if(use_stereo) 5 else 2.5)
       )
     }else{
-      # For some reason, the margins are intepreted differently when run in
+      # For some reason, the margins are interpreted differently when run in
       # a shiny environment
-      y_shift <- ifelse(shiny::isRunning(), -0.6, -0.3)
+      y_shift <- ifelse(shiny::isRunning(), -0.6, -0.25)
+      # adjust for range slider
+      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.5, y_shift)
+
       pl <- pl %>% plotly::layout(
         annotations = list(
           x = 1, y = y_shift, text = caption_txt,
@@ -267,6 +279,7 @@ plot_wave_audio <- function(audio_obj,
 #' @inheritParams plot_wave_channel_base
 #' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 plot_wave_channel_fancy <- function(audio_data,
                                     audio_params,
@@ -327,7 +340,7 @@ plot_wave_channel_fancy <- function(audio_data,
       margin = list(pad = 30, b = 130, t = 80),
       # Legend
       showlegend = FALSE
-    ) %>% config_plotly()
+    ) %>% config_plotly(edit_shapes = FALSE)
 }
 
 
@@ -340,6 +353,7 @@ plot_wave_channel_fancy <- function(audio_data,
 #' @param axes Logical (`TRUE`/`FALSE`). If `TRUE`, add axes to the plot
 #' @param center Logical (`TRUE`/`FALSE`). If `TRUE`, center the plot
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 plot_wave_channel_base <- function(audio_data,
                                    audio_params,
@@ -389,6 +403,7 @@ plot_wave_channel_base <- function(audio_data,
 #'
 #' @inheritParams plot_wave_audio
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 process_wave_channel <- function(audio_obj,
                                  xunit = "Time",
@@ -474,17 +489,22 @@ add_crop_lines <- function(pl_plotly, audio_params, color = "#0BDA51"){
 #' Add vertical line to plotly object to track current play time
 #'
 #' @param pl_plotly a `plotly` object
+#' @param x_val x-axis coordinate for placing the vertical line.
 #' @param color color of line
 #'
 #' @keywords internal
-add_play_tracker_line <- function(pl_plotly, color = "red"){
+add_play_tracker_line <- function(pl_plotly, x_val = 0, color = "red", shapeId = "redTrackerLine"){
   pl_plotly %>% plotly::layout(
     shapes = list(
       # vertical line
-      list(type = "line",
-           line = list(color = color),
-           x0 = 0, x1 = 0,
-           y0 = 0, y1 = 1, yref = "paper")
+      list(
+        type = "line",
+        line = list(color = color),
+        x0 = x_val, x1 = x_val,
+        y0 = 0, y1 = 1,
+        yref = "paper",
+        name = shapeId
+      )
     )
   )
 }

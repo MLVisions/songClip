@@ -2,6 +2,9 @@
 % Please edit documentation in R/plot-wave-channel.R
 \name{plot_wave_audio}
 \alias{plot_wave_audio}
+\alias{plot_wave_channel_fancy}
+\alias{plot_wave_channel_base}
+\alias{process_wave_channel}
 \title{Plot wave channels of audio file}
 \usage{
 plot_wave_audio(
@@ -13,12 +16,42 @@ plot_wave_audio(
   simplify = TRUE,
   nr = 2500,
   include_info = TRUE,
+  range_slider = TRUE,
   plot_title = NULL,
   xunit = c("Time", "Samples"),
   ylim = NULL,
   xlab = NULL,
   ylab = NULL
 )
+
+plot_wave_channel_fancy(
+  audio_data,
+  audio_params,
+  source = NULL,
+  ylim = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  plot_title = NULL,
+  axes = TRUE,
+  hollow = FALSE,
+  show_y_axis = FALSE,
+  line_color = "#ADD8E6",
+  ft_color = "lightgrey",
+  bg_color = "#252525"
+)
+
+plot_wave_channel_base(
+  audio_data,
+  audio_params,
+  ylim = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  plot_title = NULL,
+  axes = TRUE,
+  center = TRUE
+)
+
+process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
 }
 \arguments{
 \item{audio_obj}{a \code{tuneR} audio object.}
@@ -33,7 +66,7 @@ See \code{?plotly::event_data} for more details.}
 \item{format}{format type. \code{"fancy"} is experimental and will eventually be
 the main one used within the app.}
 
-\item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow. Only usable for \code{"fancy"} plots.}
+\item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow}
 
 \item{simplify}{Logical (\code{TRUE}/\code{FALSE}). Whether to simplify large audio files. Defaults to \code{TRUE}.}
 
@@ -51,12 +84,26 @@ about the audio file.}
 \item{xlab}{label for x-axis. Defaults to \code{xunit} if not set.}
 
 \item{ylab}{label for y-axis. Will be determined if not set.}
+
+\item{audio_data}{Audio data returned from \code{process_wave_channel}.}
+
+\item{audio_params}{List of audio parameters returned from \code{process_wave_channel}.}
+
+\item{axes}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add axes to the plot}
+
+\item{center}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, center the plot}
 }
 \value{
 a \code{plotly} object if \code{format = "fancy"}. Otherwise \code{NULL} invisibly
 }
 \description{
 Plot wave channels of audio file
+
+New plotting method
+
+Original plotting method
+
+Process Wave channel
 }
 \details{
 plot_wave_channel and plot_wave_audio were inspired by
@@ -79,7 +126,11 @@ plot_wave_audio(audio_obj, type = "stereo")
 
 # Experimental
 plot_wave_audio(audio_obj, format = "fancy")
+
+pl_plotly <- plot_wave_audio(audio_obj, format = "fancy") \%>\%
+    add_play_tracker_line(0.3)
 }
 
 
 }
+\keyword{internal}

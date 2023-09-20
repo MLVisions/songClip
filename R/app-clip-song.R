@@ -29,9 +29,13 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
       ),
       body = shinydashboard::dashboardBody(
         tags$head(
+          # css and js for header
           tags$style(HTML(cssHeader)),
           tags$script(HTML(jqueryHeader)),
           tags$style(HTML(noWrap_css)),
+          # Tracker JS
+          # tags$script(src = file.path(src_name, "js", "updatePlayTracker.js")),
+          # Styling
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "styles.css")),
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "roboto.css")),
         ),
