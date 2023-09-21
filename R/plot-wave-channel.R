@@ -255,9 +255,9 @@ plot_wave_audio <- function(audio_obj,
       # Set starting location (top of plot)
       y_shift <- -0.2
       # Adjust for range slider
-      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.2, y_shift)
+      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.15, y_shift)
       # Adjust for shiny environment
-      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.05, y_shift)
+      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.09, y_shift)
 
       pl <- pl %>% plotly::layout(
         annotations = list(
