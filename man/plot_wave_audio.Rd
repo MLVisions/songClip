@@ -12,11 +12,12 @@ plot_wave_audio(
   source = "wave_audio",
   type = c("left", "right", "stereo"),
   format = c("fancy", "base"),
-  hollow = FALSE,
-  simplify = TRUE,
-  nr = 2500,
   include_info = TRUE,
   range_slider = TRUE,
+  inner_plot = TRUE,
+  hollow = FALSE,
+  simplify = TRUE,
+  nr = 8000,
   plot_title = NULL,
   xunit = c("Time", "Samples"),
   ylim = NULL,
@@ -31,14 +32,15 @@ plot_wave_channel_fancy(
   ylim = NULL,
   xlab = "Time",
   ylab = "Audio Channel",
-  plot_title = NULL,
-  axes = TRUE,
   hollow = FALSE,
   show_y_axis = FALSE,
-  line_color = "#ADD8E6",
+  line_color = "#1b5fa6",
   ft_color = "lightgrey",
   bg_color = "#252525",
-  range_slider = TRUE
+  range_slider = TRUE,
+  inner_plot = TRUE,
+  inner_line_color1 = "#4d91c8",
+  inner_line_color2 = "#75b8ed"
 )
 
 plot_wave_channel_base(
@@ -67,14 +69,18 @@ See \code{?plotly::event_data} for more details.}
 \item{format}{format type. \code{"fancy"} is experimental and will eventually be
 the main one used within the app.}
 
+\item{include_info}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, append information
+about the audio file.}
+
+\item{range_slider}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add a \code{\link{rangeslider}}.}
+
+\item{inner_plot}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add an inner plot consisting of two lines.}
+
 \item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow. Only usable for \code{"fancy"} plots.}
 
 \item{simplify}{Logical (\code{TRUE}/\code{FALSE}). Whether to simplify large audio files. Defaults to \code{TRUE}.}
 
-\item{nr}{noise reduction. Only takes affect if \code{simplify = TRUE}.}
-
-\item{include_info}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, append information
-about the audio file.}
+\item{nr}{Number of lines to draw for simplified plots. Only takes affect if \code{simplify = TRUE}.}
 
 \item{plot_title}{a title for the plot (optional).}
 
@@ -89,6 +95,18 @@ about the audio file.}
 \item{audio_data}{Audio data returned from \code{process_wave_channel}.}
 
 \item{audio_params}{List of audio parameters returned from \code{process_wave_channel}.}
+
+\item{show_y_axis}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, show the y-axis (limits only).}
+
+\item{line_color}{line color}
+
+\item{ft_color}{font color}
+
+\item{bg_color}{background color}
+
+\item{inner_line_color1}{line color of inner line 1}
+
+\item{inner_line_color2}{line color of inner line 2 (smallest of the three)}
 
 \item{axes}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add axes to the plot}
 
@@ -137,5 +155,8 @@ plot_wave_channel_fancy(
 )
 
 
+}
+\seealso{
+\code{\link[=add_play_tracker_line]{add_play_tracker_line()}}
 }
 \keyword{internal}

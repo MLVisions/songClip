@@ -12,8 +12,10 @@
 #'
 #' @export
 clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
-
   options("songClip.audio_dir" = audio_dir)
+  op <- options(digits.secs = 6)
+  on.exit(options(op), add = TRUE)
+  # print(getOption("digits.secs"))
 
   ui <-
     shinydashboardPlus::dashboardPage(

@@ -39,14 +39,15 @@ dev_warning <- function(warn_msg){
 #'
 #' @examples
 #'
-#' format_seconds(80)
+#' format_seconds(80, as_date = FALSE)
 #'
 #' @return character string formatted as `{minutes:seconds}`
 #' @keywords internal
-format_seconds <- function(time){
-  sprintf(
-    "%02d:%02.0f",
-    time %/% 60,
-    time %% 60
-  )
+format_seconds <- function(time, as_date = TRUE){
+  if(isTRUE(as_date)){
+    as.POSIXct(time, origin = as.Date("1970-01-01"), tz='UTC',
+               format = "%Y-%m-%d %H:%M:%OS")
+  }else{
+    sprintf("%02d:%02.0f", time %/% 60, time %% 60)
+  }
 }

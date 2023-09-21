@@ -6,8 +6,9 @@
 \usage{
 add_play_tracker_line(
   pl_plotly = NULL,
-  proxy = NULL,
   x_val = 0,
+  proxy = NULL,
+  x_axis = c("numeric", "Date"),
   color = "red",
   shapeId = "redTrackerLine"
 )
@@ -15,10 +16,12 @@ add_play_tracker_line(
 \arguments{
 \item{pl_plotly}{a \code{plotly} object. Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
 
+\item{x_val}{x-axis coordinate for placing the vertical line.}
+
 \item{proxy}{a \code{\link{plotlyProxy}} object used for updating the location of the tracker.
 Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
 
-\item{x_val}{x-axis coordinate for placing the vertical line.}
+\item{x_axis}{which x-axis to add the tracker to.}
 
 \item{color}{color of line}
 
@@ -35,8 +38,10 @@ audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
 # Add tracker
 pl_plotly <- plot_wave_audio(audio_obj) \%>\%
-    add_play_tracker_line(0.3)
+    add_play_tracker_line(1) # 1 min (scale is in minutes)
 
+pl_plotly <- plot_wave_audio(audio_obj) \%>\%
+    add_play_tracker_line(60, x_axis = "Date") # 1 min (date formatting function takes in seconds)
 
 }
 \keyword{internal}

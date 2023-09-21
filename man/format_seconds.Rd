@@ -4,7 +4,7 @@
 \alias{format_seconds}
 \title{Format seconds as \code{{minutes:seconds}}}
 \usage{
-format_seconds(time)
+format_seconds(time, as_date = TRUE)
 }
 \arguments{
 \item{time}{time in seconds}
@@ -17,7 +17,7 @@ Format seconds as \code{{minutes:seconds}}
 }
 \examples{
 
-format_seconds(80)
+format_seconds(80, as_date = FALSE)
 
 }
 \keyword{internal}
