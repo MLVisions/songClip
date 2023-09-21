@@ -36,12 +36,19 @@ a shiny app by supplying a \code{\link{plotlyProxy}} object instead of \code{pl_
 # Read in audio file with `tuneR`
 audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
-# Add tracker
-pl_plotly <- plot_wave_audio(audio_obj) \%>\%
-    add_play_tracker_line(1) # 1 min (scale is in minutes)
+# Process wave file
+wave_channel <- process_wave_channel(audio_obj)
+pl_plotly <- plot_wave_channel_fancy(
+               audio_data = wave_channel$audio_data,
+               audio_params = wave_channel$params
+             )
 
-pl_plotly <- plot_wave_audio(audio_obj) \%>\%
-    add_play_tracker_line(60, x_axis = "Date") # 1 min (date formatting function takes in seconds)
+## Add tracker ##
+# 1 min (numeric scale is in minutes)
+pl_plotly \%>\% add_play_tracker_line(1)
+
+# 1 min (date formatting function takes in seconds)
+pl_plotly \%>\% add_play_tracker_line(60, x_axis = "Date")
 
 }
 \keyword{internal}

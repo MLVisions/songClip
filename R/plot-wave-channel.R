@@ -159,6 +159,12 @@ plot_wave_audio <- function(audio_obj,
 
       # Store plots as list of plotly objects
       plots <- purrr::pmap(inputs, function(audio_obj_i, ylab_i){
+        # Only add range_slider to one of the plots if set
+        index <- grep(ylab_i, unlist(inputs$ylab_i))
+        range_slider_i <- ifelse(
+          index == length(inputs$audio_obj_i), range_slider, FALSE
+        )
+
         wave_channel <- process_wave_channel(
           audio_obj_i,
           xunit = xunit,
@@ -172,11 +178,11 @@ plot_wave_audio <- function(audio_obj,
           source = source,
           hollow = hollow,
           ylab = ylab_i, xlab = xlab, ylim = ylim,
-          range_slider = range_slider # used for margin
+          range_slider = range_slider_i
         )
       })
 
-      # This wont work anymore
+      # Create subplot
       pl <- plotly::subplot(plots, shareY = TRUE, shareX = TRUE, nrows = 2)
     }
   }else{
@@ -224,15 +230,11 @@ plot_wave_audio <- function(audio_obj,
         source = source,
         hollow = hollow,
         ylab = ylab, xlab = xlab, ylim = ylim,
-        range_slider = range_slider # used for margin
+        range_slider = range_slider
       )
     }
   }
 
-  # Optionally add rangeslider
-  # if(isTRUE(range_slider) && format == "fancy"){
-  #   pl <- pl %>% plotly::rangeslider()
-  # }
 
   # Optionally Append Info
   if(isTRUE(include_info)){
@@ -251,18 +253,18 @@ plot_wave_audio <- function(audio_obj,
       )
     }else{
       # Set starting location (top of plot)
-      y_shift <- -0.25
+      y_shift <- -0.2
       # Adjust for range slider
-      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.4, y_shift)
+      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.2, y_shift)
       # Adjust for shiny environment
-      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.37, y_shift)
+      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.05, y_shift)
 
       pl <- pl %>% plotly::layout(
         annotations = list(
           x = 1, y = y_shift, text = caption_txt,
           showarrow = F, xref='paper', yref='paper',
           xanchor='right', yanchor='auto', xshift=0, yshift=0,
-          font = list(size=12)
+          font = list(size=11)
         )
       )
     }
@@ -323,8 +325,8 @@ plot_wave_channel_fancy <- function(audio_data,
     dplyr::mutate(
       x = .data$x/60,
       # Convert x-axis to {date:time} (date will be dropped later)
-      x_time = format_seconds(.data$x*60, as_date = TRUE),
-    ) %>%
+      x_time = format_seconds(.data$x*60, as_date = TRUE)
+      ) %>%
     dplyr::relocate("line_group", "y_point") %>%
     dplyr::group_by(!!sym(group))
 
@@ -340,36 +342,46 @@ plot_wave_channel_fancy <- function(audio_data,
   # set margin
   slider_adjust <- ifelse(isTRUE(range_slider), 10, 40)
   margin <- if(shiny::isRunning()){
-    list(pad = 30, b = 55 + slider_adjust)
+    list(b = 50 + slider_adjust, l = 80, r = 10)
   }else{
-    list(pad = 30, b = 80 + slider_adjust)
+    list(b = 80 + slider_adjust, l = 80, r = 10)
   }
 
   # Core plot
-  pl <- plotly::plot_ly(pl_data, x = ~x_time, y = ~y, source = source) %>%
+  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y, source = source) %>%
     plotly::add_lines(color = I(line_color))
+
+  # Add Inner plot (looks nicer)
+  if(isTRUE(inner_plot)){
+    pl_data_inner <- pl_data %>% dplyr::mutate(
+      y2 = .data$y/1.35,
+      y3 = .data$y/5.5
+    )
+    pl <- pl %>%
+      plotly::add_lines(data = pl_data_inner, y = ~y2, color = I(inner_line_color1)) %>%
+      plotly::add_lines(data = pl_data_inner, y = ~y3, color = I(inner_line_color2))
+  }
 
   # Secondary x-axis for using tracker (invisible trace)
   # Note: this was necessary because updating the tracker using a date scale would
   # only allow 1 second interval jumps (less smooth).
   # Only use range to plot less data, while still ensuring 1:1 overlaying scales.
-  pl <- pl %>% plotly::add_trace(x = ~range(x), y = ~range(y), xaxis = "x2", mode = "lines",
-                                 type = "scatter", color = I("black"), visible = FALSE)
+  pl_data2 <- tibble::tibble(
+    x = seq(range(pl_data$x)[1], range(pl_data$x)[2], length.out = 100),
+    y = seq(range(pl_data$y)[1], range(pl_data$y)[2], length.out = 100)
+  ) %>% dplyr::mutate(
+    # Convert x-axis to {date:time} (date will be dropped later)
+    x_time = format_seconds(.data$x*60, as_date = TRUE)
+  )
+  pl <- pl %>% plotly::add_lines(data = pl_data2, x = ~x_time, y=~y,
+                                 xaxis = "x2", color = I("transparent"),
+                                 visible = "legendonly")
 
-  # Add Inner plot (looks nicer)
-  if(isTRUE(inner_plot)){
-    pl_data2 <- pl_data %>% dplyr::mutate(
-      y2 = .data$y/1.35,
-      y3 = .data$y/5.5
-    )
-    pl <- pl %>%
-      plotly::add_lines(data = pl_data2, y = ~y2, color = I(inner_line_color1)) %>%
-      plotly::add_lines(data = pl_data2, y = ~y3, color = I(inner_line_color2))
-  }
 
   # Range slider
   rangeslider <- if(isTRUE(range_slider)){
-    list(visible = TRUE)
+    list(visible = TRUE, thickness = 0.125, range = range(pl_data$x_time),
+         yaxis = list(range = range(pl_data$y),rangemode = "fixed"))
   }else{
     FALSE
   }
@@ -388,17 +400,27 @@ plot_wave_channel_fancy <- function(audio_data,
       # main x-axis (Date)
       xaxis = list(
         title = xlab,
-        range = duration_min_date,
+        range = duration_min,
         side = "bottom",
+        anchor = "y",
+        showgrid  = FALSE,
+        showticklabels = FALSE,
         rangeslider = rangeslider,
-        # Format as {minutes:seconds}
-        tickformat="%M:%S" #  add \n(%L ms) to show milliseconds (looks ugly)
+        ticks = ""
       ),
       # secondary x-axis (numeric)
       xaxis2 = list(
-        range = duration_min,
+        type = "date",
+        range = duration_min_date,
         overlaying = "x",
-        side = "top"
+        anchor = "free",
+        position = 0.015,
+        side = "bottom",
+        showticklabels = TRUE,
+        ticks = "inside",
+        # ticklen = 10,
+        # Format as {minutes:seconds}
+        tickformat="%M:%S" #  add \n(%L ms) to show milliseconds (looks ugly)
       ),
       # styling
       font = t1,
@@ -548,12 +570,19 @@ process_wave_channel <- function(audio_obj,
 #' # Read in audio file with `tuneR`
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
-#' # Add tracker
-#' pl_plotly <- plot_wave_audio(audio_obj) %>%
-#'     add_play_tracker_line(1) # 1 min (scale is in minutes)
+#' # Process wave file
+#' wave_channel <- process_wave_channel(audio_obj)
+#' pl_plotly <- plot_wave_channel_fancy(
+#'                audio_data = wave_channel$audio_data,
+#'                audio_params = wave_channel$params
+#'              )
 #'
-#' pl_plotly <- plot_wave_audio(audio_obj) %>%
-#'     add_play_tracker_line(60, x_axis = "Date") # 1 min (date formatting function takes in seconds)
+#' ## Add tracker ##
+#' # 1 min (numeric scale is in minutes)
+#' pl_plotly %>% add_play_tracker_line(1)
+#'
+#' # 1 min (date formatting function takes in seconds)
+#' pl_plotly %>% add_play_tracker_line(60, x_axis = "Date")
 #'
 #' @keywords internal
 add_play_tracker_line <- function(
@@ -566,34 +595,33 @@ add_play_tracker_line <- function(
 ){
 
   x_axis <- match.arg(x_axis)
-  # TODO: add support for 'stereo' types
 
   # Function for creating vertical tracker line
-  make_tracker_shape <- function(x_val, color, shapeId, x_axis){
-    xref <- switch(x_axis, "Date" = "x1", "numeric" = "x2")
-
+  make_tracker_shape <- function(x_val, color, shapeId, xref){
     list(
       # vertical line
       list(
         type = "line",
         xref = xref,
+        yref = "paper",
         line = list(color = color),
         x0 = x_val, x1 = x_val,
-        y0 = 0, y1 = 1,
-        yref = "paper",
+        y0 = 0.05, y1 = 0.95,
         name = shapeId
       )
     )
   }
 
-  # Make shapes
+  # x-axis handling
   if(x_axis == "Date"){
     op <- options(digits.secs = 6)
     on.exit(options(op), add = TRUE)
     x_val <- format_seconds(x_val, as_date = TRUE)
   }
-  shapes <- make_tracker_shape(x_val, color, shapeId, x_axis = x_axis)
 
+  # Make shapes
+  xref <- switch(x_axis, "Date" = "x2", "numeric" = "x1")
+  shapes <- make_tracker_shape(x_val, color, shapeId, xref = xref)
 
   if(!is.null(pl_plotly) && inherits(pl_plotly, "plotly")){
     # add tracker line to `plotly` object

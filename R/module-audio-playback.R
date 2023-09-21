@@ -17,8 +17,18 @@ audio_playpack_ui <- function(id) {
         style = "margin-right: 0px; margin-left: 0px;",
         br(),
         column(
-          width = 4,
+          width = 6,
           uiOutput(ns("audio_playback_controls"))
+        ),
+        column(
+          width = 3, offset = 3,
+          shinyWidgets::pickerInput(
+            ns("channel_type"), tags$h4("Channel", style = "color:white;"),
+            options = shinyWidgets::pickerOptions(
+              container = "body", style = "btn-primary"),
+            choices = c("left", "right", "stereo"),
+            selected = "left", inline = TRUE, width = "fit"
+          )
         )
       ),
       plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87")
@@ -131,7 +141,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         audio_obj <- shiny::req(audio_obj())
         assign("audio_obj", audio_obj, envir = .GlobalEnv)
         # update value of tracker on client side (always start at 0 for new audio object)
-        plot_wave_audio(audio_obj) %>% add_play_tracker_line(x_val = 0)
+        plot_wave_audio(audio_obj, type = input$channel_type)
       })
 
       # Rendered audio inspection plot
