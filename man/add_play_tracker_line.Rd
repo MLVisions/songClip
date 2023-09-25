@@ -2,6 +2,7 @@
 % Please edit documentation in R/plot-wave-channel.R
 \name{add_play_tracker_line}
 \alias{add_play_tracker_line}
+\alias{toggle_loop_trackers}
 \title{Add vertical line to \code{plotly} object to track current play time}
 \usage{
 add_play_tracker_line(
@@ -11,6 +12,16 @@ add_play_tracker_line(
   x_axis = c("numeric", "Date"),
   color = "red",
   shapeId = "redTrackerLine"
+)
+
+toggle_loop_trackers(
+  pl_plotly = NULL,
+  toggle = TRUE,
+  proxy = NULL,
+  channel_type = c("left", "right", "stereo"),
+  x_range = c(0, 3.36),
+  y_val = -32768,
+  shapeId = "loopTrackers"
 )
 }
 \arguments{
@@ -23,14 +34,25 @@ Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
 
 \item{x_axis}{which x-axis to add the tracker to.}
 
-\item{color}{color of line}
+\item{color}{color of the play tracker line}
 
 \item{shapeId}{id of the shape to be tracked. Required for updating the location.}
+
+\item{toggle}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add loop trackers. If \code{FALSE},
+remove them if they exist.}
+
+\item{x_range}{starting x-axis values for the loop tracker}
+
+\item{y_val}{Y-axis value for the loop trackers. Should be the minimum of the
+y-axis range}
 }
 \description{
 Add vertical line to \code{plotly} returned from \code{\link{plot_wave_audio}}, to track
 current play time. This function can also be used to update its underlying data inside
 a shiny app by supplying a \code{\link{plotlyProxy}} object instead of \code{pl_plotly}.
+}
+\note{
+\code{add_play_tracker_line} will \emph{not} work with 'stereo' outputs of \code{\link{plot_wave_audio}}
 }
 \examples{
 # Read in audio file with `tuneR`
@@ -49,6 +71,9 @@ pl_plotly \%>\% add_play_tracker_line(1)
 
 # 1 min (date formatting function takes in seconds)
 pl_plotly \%>\% add_play_tracker_line(60, x_axis = "Date")
+
+## Add loop trackers ##
+pl_plotly \%>\% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
 
 }
 \keyword{internal}

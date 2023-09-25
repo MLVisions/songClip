@@ -17,7 +17,7 @@ plot_wave_audio(
   inner_plot = TRUE,
   hollow = FALSE,
   simplify = TRUE,
-  nr = 8000,
+  nr = 4000,
   plot_title = NULL,
   xunit = c("Time", "Samples"),
   ylim = NULL,

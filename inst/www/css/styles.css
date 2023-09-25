@@ -247,27 +247,29 @@ body {
 .btn-primary {
     background-color: #086A87;
     border-color: #086A87;
-    white-space: inherit;
 }
 
 .btn-info {
     background-color: #4AA2B1;
     border-color: #4AA2B1;
-    white-space: inherit;
 }
 
 .btn-success {
     background-color: #007319;
     border-color: #007319;
-    white-space: inherit;
 }
 
 .btn-warning {
     background-color: #E0E4CC;
     border-color: #E0E4CC;
     color: black;
-    white-space: inherit;
 }
+
+.btn-danger {
+    background-color: #626364;
+    border-color: #626364;
+}
+
 .btn-warning.active, .btn-warning:active, .open>.dropdown-toggle.btn-warning,
 .btn-warning:hover, .btn-warning:focus {
     color: #fff;
@@ -276,10 +278,7 @@ body {
     border-color: #626364;
 }
 
-.btn-danger {
-    background-color: #626364;
-    border-color: #626364;
-}
+
 .btn-danger.active, .btn-danger:active, .open>.dropdown-toggle.btn-danger,
 .btn-danger:hover, .btn-danger:focus {
     color: #fff;
