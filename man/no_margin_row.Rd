@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{no_margin_row}
 \alias{no_margin_row}
-\title{Substitute for \code{\link{fluidRow}} with no margins}
+\title{Substitute for \code{\link{fluidRow}} with no horizontal margins}
 \usage{
 no_margin_row(..., style = NULL, color = NULL, bg_color = NULL)
 }
@@ -16,8 +16,8 @@ no_margin_row(..., style = NULL, color = NULL, bg_color = NULL)
 \item{bg_color}{background color of the \code{fluidRow}.}
 }
 \description{
-Plotly behaves a little funky in \code{fluidRows}'s. Manually removing the left
-and right margins was the easiest method for removing the artificial horizontal
-scrollbars that get added.
+\code{plotly} behaves a little funky in \code{fluidRow}s, causing horizontal scrollbars to
+be added when they aren't necessary. Manually removing the left and right margins
+was the easiest method for removing these scrollbars.
 }
 \keyword{internal}

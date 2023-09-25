@@ -65,11 +65,11 @@ format_shift <- function(shift){
 
 
 
-#' Substitute for \code{\link{fluidRow}} with no margins
+#' Substitute for \code{\link{fluidRow}} with no horizontal margins
 #'
-#' Plotly behaves a little funky in `fluidRows`'s. Manually removing the left
-#' and right margins was the easiest method for removing the artificial horizontal
-#' scrollbars that get added.
+#' `plotly` behaves a little funky in `fluidRow`s, causing horizontal scrollbars to
+#' be added when they aren't necessary. Manually removing the left and right margins
+#' was the easiest method for removing these scrollbars.
 #'
 #' @param ... HTML tags
 #' @param style html formatted string to append to the `style` argument of a `fluidRow`.
