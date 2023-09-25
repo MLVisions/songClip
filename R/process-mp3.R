@@ -12,18 +12,6 @@ download_youtube <- function(url = "https://youtu.be/F8Zt3mYlOqU", filename = "t
 
 
 
-#' Plot the audio bins (looks cool)
-#'
-#' @param mp3_file file path to an MP3 file
-#'
-#' @details
-#' This takes a while for long videos
-plot_mp3 <- function(mp3_file){
-  pcm_data <- av::read_audio_bin(mp3_file)
-  plot(pcm_data, type = 'l')
-}
-
-
 #' Get duration of audio file
 #'
 #' @param audio_obj a `tuneR` audio object
