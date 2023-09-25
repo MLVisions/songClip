@@ -8,12 +8,11 @@ make_equalizer_ui <- function(id) {
   ns <- NS(id)
   tagList(
     br(),
-    fluidRow(
-      style = "background-color: #252525; padding-bottom: 1em;
-      margin-right: 0px; margin-left: 0px;",
+    no_margin_row(
+      bg_color = "#252525",
+      style = "padding-bottom: 1em;",
       plotly::plotlyOutput(ns("equalizer_plot"), height = "325px"),
-      fluidRow(
-        style = "margin-right: 0px; margin-left: 0px;",
+      no_margin_row(
         column(
           width = 2, offset = 10, align = "right",
           shinyWidgets::actionBttn(
@@ -312,13 +311,3 @@ stagger_eq_ribbon <- function(pl,
   return(pl)
 }
 
-
-
-format_freq <- function(freq){
-  freq <- round(freq)
-  ifelse(freq >= 1000, paste0(freq/1000, "KHz"), paste0(freq, "Hz"))
-}
-
-format_shift <- function(shift){
-  ifelse(shift >= 0, paste0("+",shift, "dB"), paste0(shift, "dB"))
-}

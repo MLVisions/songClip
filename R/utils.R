@@ -51,3 +51,44 @@ format_seconds <- function(time, as_date = TRUE){
     sprintf("%02d:%02.0f", time %/% 60, time %% 60)
   }
 }
+
+
+format_freq <- function(freq){
+  freq <- round(freq)
+  ifelse(freq >= 1000, paste0(freq/1000, "KHz"), paste0(freq, "Hz"))
+}
+
+
+format_shift <- function(shift){
+  ifelse(shift >= 0, paste0("+",shift, "dB"), paste0(shift, "dB"))
+}
+
+
+
+#' Substitute for \code{\link{fluidRow}} with no margins
+#'
+#' Plotly behaves a little funky in `fluidRows`'s. Manually removing the left
+#' and right margins was the easiest method for removing the artificial horizontal
+#' scrollbars that get added.
+#'
+#' @param ... HTML tags
+#' @param style html formatted string to append to the `style` argument of a `fluidRow`.
+#' @param color font color of the `fluidRow`.
+#' @param bg_color background color of the `fluidRow`.
+#'
+#' @keywords internal
+no_margin_row <- function(..., style = NULL, color = NULL, bg_color = NULL){
+  style <- if(is.null(style)){
+    glue::glue("margin-right: 0px; margin-left: 0px;")
+  }else{
+    glue::glue("margin-right: 0px; margin-left: 0px; {style};")
+  }
+
+  if(!is.null(color)) style <- glue::glue("{style} color: {color};")
+  if(!is.null(bg_color)) style <- glue::glue("{style} background-color: {bg_color};")
+
+  fluidRow(
+    style = style,
+    ...
+  )
+}

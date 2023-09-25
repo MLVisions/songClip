@@ -9,12 +9,11 @@ audio_playpack_ui <- function(id) {
 
   tagList(
     br(),
-    fluidRow(
-      style = "background-color: #252525; padding-bottom: 1em;
-                margin-right: 0px; margin-left: 0px;",
+    no_margin_row(
+      bg_color = "#252525",
+      style = "padding-bottom: 1em;",
       # Inputs
-      fluidRow(
-        style = "margin-right: 0px; margin-left: 0px;",
+      no_margin_row(
         br(),
         column(
           width = 6,
@@ -79,8 +78,8 @@ audio_playpack_ui <- function(id) {
         )
       ),
       plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87"),
-      fluidRow(
-        style = "margin-right: 0px; margin-left: 0px; color: white;",
+      no_margin_row(
+        color = "white",
         column(
           width = 10, offset = 1,
           conditionalPanel("input.create_loop", ns = ns, {
@@ -92,11 +91,11 @@ audio_playpack_ui <- function(id) {
               )
             )
           }),
-          conditionalPanel("input.create_loop", ns = ns, {
+          conditionalPanel("input.crop_audio", ns = ns, {
             tagList(
               h3("Editing: Crop Audio"),
               sliderInput(
-                ns("loop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
+                ns("crop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
                 timeFormat = "%M:%S (%L ms)", dragRange = TRUE
               )
             )
@@ -334,4 +333,5 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
     }
   )
 }
+
 
