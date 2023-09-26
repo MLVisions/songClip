@@ -14,6 +14,7 @@ audio_playpack_ui <- function(id) {
       style = "padding-bottom: 1em;",
       # Inputs
       no_margin_row(
+        color = "black",
         br(),
         column(
           width = 6,
@@ -137,13 +138,17 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
       ns <- session$ns
       .rv <- reactiveValues(playing = NULL, track = NULL, duration = NULL, seek = NULL)
-      .rv_editing <- reactiveValues(create_loop = FALSE, crop_audio = FALSE)
+      .rv_editing <- reactiveValues(create_loop = FALSE, crop_audio = FALSE, reset_edit = NULL)
       .rv_loop <- reactiveValues(start = 0, end = 60)
 
       # Editing
-      observeEvent(list(input$enable_edits, input$edit_type),{
+      observeEvent(list(input$enable_edits, input$edit_type, input$show_info),{
+        # Reactive values to prevent editing until ready
         .rv_editing$create_loop <- input$enable_edits && input$edit_type == "create_loop"
         .rv_editing$crop_audio <- input$enable_edits && input$edit_type == "crop_audio"
+        # Reactive value to trigger positional updates to looping and cropping trackers
+        # TODO: (B) Try to remove input$show_info. See TODO (A) for more details.
+        .rv_editing$reset_edit <- list(input$edit_type, input$enable_edits, input$show_info)
       }, priority = 4)
 
 
@@ -166,8 +171,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
       output$audio_playback_controls <- renderUI({
         audio_files <- shiny::req(audio_files())
-        make_howler_ui(audio_files, howler_id = ns("howler"),
-                       seek_ping_rate = 100)
+        make_howler_ui(audio_files, howler_id = ns("howler"), seek_ping_rate = 100)
         # This allows playback
         # tags$audio(
         #   src = file.path(src_name, "play.wav"), type = "audio/wav",
@@ -264,7 +268,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
       # Reset some settings on new object -or- channel type
       observeEvent(list(audio_obj(), input$channel_type, input$show_info), {
-        # TODO: Instead of this, it should just be resetting the slider and
+        # TODO: (A) Instead of this, it should just be resetting the slider and
         # shapes. This has been difficult with stereo types, so this a placeholder
         # solution. Also need linking via shape name to work.
         shinyWidgets::updateSwitchInput(session, "enable_edits", value = FALSE)
@@ -296,7 +300,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       ### Looping ###
 
       # Add shapes for creating loop on client side
-      observeEvent(list(input$edit_type, input$enable_edits, input$show_info), {
+      observeEvent(.rv_editing$reset_edit, {
         # Get proxy reference
         proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
         channel_type <- shiny::req(input$channel_type)

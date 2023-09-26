@@ -97,10 +97,10 @@ body {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     background-color: #086A87;
-        padding: 7px 10px;
+    padding: 7px 10px;
     border-bottom: 1px solid #086A87;
     color: #ffffff;
-        font-size: 16px;
+    font-size: 16px;
 }
 .navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
     max-height: 1200px;
@@ -122,9 +122,9 @@ body {
 
 .main-footer {
     background: #ecf0f5;
-        padding: 15px;
+    padding: 15px;
     color: #444;
-        border-top: 1px solid #d2d6de;
+    border-top: 1px solid #d2d6de;
 }
 
 .sweet-alert {
@@ -797,3 +797,32 @@ label > input[type='checkbox']:checked + *::after {
    -ms-transform: rotate(-45deg);
    transform: rotate(-45deg);
 }
+
+
+/* For bslib::navset_card_pill */
+/* Default color */
+.nav-pills > li > a {
+    border-radius: 0px;
+    border-top: 3px solid transparent;
+    color: white;
+    padding: 5px 15px;
+}
+/* Hovering */
+.nav>li>a:active, .nav>li>a:focus, .nav>li>a:hover {
+    color: white;
+    background: #086A87;
+}
+
+/* Selected tab */
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+    border-top-color: #086A87;
+    color: white;
+    background-color: #252525;
+}
+
+/* menu dropdown when clicked*/
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+    background-color: #086A87;
+    border-color: #086A87;
+}
+

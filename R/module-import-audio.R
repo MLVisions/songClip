@@ -30,12 +30,21 @@ import_audio_ui <- function(id,
       collapsible = collapsible,
       collapsed = collapsed,
       status = status,
-      h3("Select the folder that contains all your audio files"),
-      h5("You will then choose which files to import from a list."),
-      shinyFiles::shinyDirButton(ns("audio_dir"), label = title, title = title),
-      br(),
-      h5("Audio library currently set to:"),
-      verbatimTextOutput(ns("dir_selected"), placeholder = TRUE)
+      # background = "#252525",
+      easy_row(
+        style = "padding: 0px;",
+        # bg_color = "#252525",
+        color = "black",
+        column(
+          width = 12,
+          h3("Select the folder that contains all your audio files"),
+          h5("You will then choose which files to import from a list."),
+          shinyFiles::shinyDirButton(ns("audio_dir"), label = title, title = title),
+          br(),
+          h5("Audio library currently set to:"),
+          verbatimTextOutput(ns("dir_selected"), placeholder = TRUE)
+        )
+      )
     )
   )
 }

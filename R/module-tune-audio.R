@@ -10,23 +10,26 @@ tune_audio_ui <- function(id){
   ns <- shiny::NS(id)
 
   tagList(
-    shinydashboardPlus::box(
-      title = "Tune Audio",
-      solidHeader = TRUE,
-      width = 12,
-      collapsible = FALSE,
-      collapsed = FALSE,
-      status = "primary",
+    # shinydashboardPlus::box(
+    #   title = "Tune Audio",
+    #   solidHeader = TRUE,
+    #   width = 12,
+    #   collapsible = FALSE,
+    #   collapsed = FALSE,
+    #   status = "primary",
       fluidRow(
         column(
           width = 12,
-          shinyWidgets::pickerInput(ns("audio_select"), "Select an audio file", choices = c()),
+          shinyWidgets::pickerInput(
+            ns("audio_select"), "Select an audio file", choices = c(),
+            options = shinyWidgets::pickerOptions(
+              container = "body", style = "btn-primary")),
           bslib::navset_card_pill(
             placement = "above",
             ### Cropping, looping, and speed ###
             bslib::nav_panel(
               # TODO: make better title for this
-              title = "Cropping, Looping, & Speed",
+              title = "Playback",
               audio_playpack_ui(ns("audio_playback"))
             ),
             ### Equalizer ###
@@ -67,7 +70,7 @@ tune_audio_ui <- function(id){
         )
       )
     )
-  )
+  # )
 }
 
 

@@ -87,8 +87,22 @@ no_margin_row <- function(..., style = NULL, color = NULL, bg_color = NULL){
   if(!is.null(color)) style <- glue::glue("{style} color: {color};")
   if(!is.null(bg_color)) style <- glue::glue("{style} background-color: {bg_color};")
 
-  fluidRow(
+  shiny::fluidRow(
     style = style,
     ...
   )
 }
+
+
+easy_row <- function(..., style = NULL, color = NULL, bg_color = NULL){
+  style <- if(is.null(style)) "" else glue::glue("{style};")
+
+  if(!is.null(color)) style <- glue::glue("{style} color: {color};")
+  if(!is.null(bg_color)) style <- glue::glue("{style} background-color: {bg_color};")
+
+  shiny::fluidRow(
+    style = style,
+    ...
+  )
+}
+

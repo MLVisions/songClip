@@ -38,6 +38,9 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
           # Styling
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "styles.css")),
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "roboto.css")),
+          tags$style(HTML(".content-wrapper, .right-side {
+                          color: white; background-color:#086A87;
+                          box-shadow: inset 0px 110px 120px 2px #000000;}"))
         ),
         shinydashboard::tabItems(
           shinydashboard::tabItem("tab_download",
