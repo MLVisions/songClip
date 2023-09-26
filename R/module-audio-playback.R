@@ -41,7 +41,8 @@ audio_playpack_ui <- function(id) {
                 selected = "left", inline = TRUE, width = "fit"
               ),
               shinyWidgets::awesomeCheckbox(
-                ns("show_info"), "Append information about the audio file", value = TRUE
+                ns("show_info"), "Append information about the audio file",
+                value = FALSE
               )
             )
           )
