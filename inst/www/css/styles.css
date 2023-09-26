@@ -802,7 +802,6 @@ label > input[type='checkbox']:checked + *::after {
 /* For bslib::navset_card_pill */
 /* Default color */
 .nav-pills > li > a {
-    border-radius: 0px;
     border-top: 3px solid transparent;
     color: white;
     padding: 5px 15px;
@@ -812,17 +811,35 @@ label > input[type='checkbox']:checked + *::after {
     color: white;
     background: #086A87;
 }
-
 /* Selected tab */
 .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
     border-top-color: #086A87;
     color: white;
     background-color: #252525;
 }
-
 /* menu dropdown when clicked*/
 .nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
     background-color: #086A87;
     border-color: #086A87;
 }
 
+
+/* For bslib::navset_tab*/
+/* Default color */
+.nav-tabs > li > a {
+    border-top: 3px solid transparent;
+    color: lightslategrey;
+    padding: 5px 15px;
+}
+/* Selected tab */
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    color: white;
+    background-color: #086A87;
+    border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent;
+}
+
+
+/* Misc */
+.shiny-input-container:not(.shiny-input-container-inline) {
+    width: revert;
+}

@@ -44,8 +44,7 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
         ),
         shinydashboard::tabItems(
           shinydashboard::tabItem("tab_download",
-                                  import_audio_ui("import_audio"),
-                                  download_audio_ui("download_audio")
+                                  import_audio_ui("import_audio")
           ),
           shinydashboard::tabItem("tab_clipsong",
                                   tune_audio_ui("tune_audio")
@@ -58,9 +57,6 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
 
   server <- function(input, output, session) {
-
-    # TODO: This should be a nested module (inside import_audio_server)
-    dwnld_audio <- download_audio_server("download_audio")
 
     imported_audio <- import_audio_server("import_audio", audio_dir = getOption("songClip.audio_dir"))
 

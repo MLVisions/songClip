@@ -77,32 +77,60 @@ format_shift <- function(shift){
 #' @param bg_color background color of the `fluidRow`.
 #'
 #' @keywords internal
-no_margin_row <- function(..., style = NULL, color = NULL, bg_color = NULL){
+no_margin_row <- function(
+    ...,
+    easy_col = FALSE,
+    align = c("left", "right", "center", "justify"),
+    style = NULL,
+    color = NULL,
+    bg_color = NULL
+){
   style <- if(is.null(style)){
     glue::glue("margin-right: 0px; margin-left: 0px;")
   }else{
     glue::glue("margin-right: 0px; margin-left: 0px; {style};")
   }
 
-  if(!is.null(color)) style <- glue::glue("{style} color: {color};")
-  if(!is.null(bg_color)) style <- glue::glue("{style} background-color: {bg_color};")
-
-  shiny::fluidRow(
+  easy_row(
+    ...,
+    easy_col = easy_col,
+    align = align,
     style = style,
-    ...
+    color = color,
+    bg_color = bg_color
   )
 }
 
 
-easy_row <- function(..., style = NULL, color = NULL, bg_color = NULL){
+easy_row <- function(
+    ...,
+    easy_col = FALSE,
+    align = c("left", "right", "center", "justify"),
+    style = NULL,
+    color = NULL,
+    bg_color = NULL
+){
+
+  align <- match.arg(align)
   style <- if(is.null(style)) "" else glue::glue("{style};")
 
   if(!is.null(color)) style <- glue::glue("{style} color: {color};")
   if(!is.null(bg_color)) style <- glue::glue("{style} background-color: {bg_color};")
 
-  shiny::fluidRow(
-    style = style,
-    ...
-  )
+  if(isTRUE(easy_col)){
+    shiny::fluidRow(
+      style = style,
+      shiny::column(
+        width = 12,
+        align = align,
+        ...
+      )
+    )
+  }else{
+    shiny::fluidRow(
+      style = style,
+      ...
+    )
+  }
 }
 

@@ -10,67 +10,67 @@ tune_audio_ui <- function(id){
   ns <- shiny::NS(id)
 
   tagList(
-    # shinydashboardPlus::box(
-    #   title = "Tune Audio",
-    #   solidHeader = TRUE,
-    #   width = 12,
-    #   collapsible = FALSE,
-    #   collapsed = FALSE,
-    #   status = "primary",
-      fluidRow(
-        column(
-          width = 12,
-          shinyWidgets::pickerInput(
-            ns("audio_select"), "Select an audio file", choices = c(),
-            options = shinyWidgets::pickerOptions(
-              container = "body", style = "btn-primary")),
-          bslib::navset_card_pill(
-            placement = "above",
-            ### Cropping, looping, and speed ###
-            bslib::nav_panel(
-              # TODO: make better title for this
-              title = "Playback",
-              audio_playpack_ui(ns("audio_playback"))
-            ),
-            ### Equalizer ###
-            bslib::nav_panel(
-              title = "Equalizer",
-              # also add labels for adjusting Trebble, Bass, etc.
-              make_equalizer_ui(ns("equalizer"))
-            ),
-            bslib::nav_spacer(),
-            bslib::nav_menu(
-              title = "Options",
-              align = "right",
-              bslib::nav_panel(
-                title = "Save Audio as MP3", icon = icon("music"),
-                h3("Save tuned audio as a new MP3 file")
-                # TODO: make module (simple) for saving editted video out as MP3
-                # - I dont think this will include equalizer settings (I think those will
-                #   happen *over* the audio file, rather than actually modifying the file itself),
-                #   however those settings could more easily be cached in the other module.
-              ),
-              bslib::nav_panel(
-                title = "Cache Settings", icon = icon("list-check"),
-                # TODO: move text to separate file
-                # TODO: make module for saving settings out as a yaml, mapped to file path.
-                # We cant save settings across R sessions, but there is a work around:
-                # - User will have to choose a directory to store saved yamls.
-                # - They will have to set this directory every time, as there is no persistent
-                #   storage across R sessions.
-                # - Upon loading the directory, we can read in all yamls and perform some checks.
-                # - There can be multiple cached scenarios saved per song. This loading should be fast.
-                # TODO: make UI for setting caching directory on load
-                h3("Save the current tuning settings for this song"),
-                p("Upon loading this song in the future (must be in the same file location),
+    fluidRow(
+      column(
+        width = 4,
+        shinyWidgets::pickerInput(
+          ns("audio_select"), "Select an audio file", choices = c(),
+          options = shinyWidgets::pickerOptions(
+            container = "body", style = "btn-primary"))
+      )
+    ),
+    br(),
+    easy_row(
+      easy_col = TRUE,
+      bslib::navset_card_pill(
+        placement = "above",
+        ### Playback ###
+        bslib::nav_panel(
+          # TODO: make better title for this
+          title = "Playback",
+          audio_playpack_ui(ns("audio_playback"))
+        ),
+        ### Equalizer ###
+        bslib::nav_panel(
+          title = "Equalizer",
+          # also add labels for adjusting Trebble, Bass, etc.
+          make_equalizer_ui(ns("equalizer"))
+        ),
+        bslib::nav_spacer(),
+        bslib::nav_menu(
+          title = "Options",
+          align = "right",
+          bslib::nav_panel(
+            title = "YouTube to MP3", icon = icon("download"),
+            download_audio_ui(ns("download_audio"))
+          ),
+          bslib::nav_panel(
+            title = "Save Audio as MP3", icon = icon("music"),
+            h3("Save tuned audio as a new MP3 file")
+            # TODO: make module (simple) for saving editted video out as MP3
+            # - I dont think this will include equalizer settings (I think those will
+            #   happen *over* the audio file, rather than actually modifying the file itself),
+            #   however those settings could more easily be cached in the other module.
+          ),
+          bslib::nav_panel(
+            title = "Cache Settings", icon = icon("list-check"),
+            # TODO: move text to separate file
+            # TODO: make module for saving settings out as a yaml, mapped to file path.
+            # We cant save settings across R sessions, but there is a work around:
+            # - User will have to choose a directory to store saved yamls.
+            # - They will have to set this directory every time, as there is no persistent
+            #   storage across R sessions.
+            # - Upon loading the directory, we can read in all yamls and perform some checks.
+            # - There can be multiple cached scenarios saved per song. This loading should be fast.
+            # TODO: make UI for setting caching directory on load
+            h3("Save the current tuning settings for this song"),
+            p("Upon loading this song in the future (must be in the same file location),
                   you will be able to choose this scenario.")
-              )
-            )
           )
         )
       )
     )
-  # )
+  )
 }
 
 
@@ -87,6 +87,11 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
     ns <- session$ns
     .rv <- reactiveValues()
+
+
+
+    # Set up audio library and choices ----------------------------------------
+
 
     # TODO: use shinyjs to disable play button if tuneR::getWavPlayer() is not set
     # Add alert and potentially allow user to search for it (low priority)
@@ -114,10 +119,6 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     })
 
 
-
-
-
-
     # Audio playback control --------------------------------------------------
 
 
@@ -142,12 +143,19 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
 
     # Equalizer ---------------------------------------------------------------
 
+
     equalizer <- make_equalizer_server("equalizer")
     equalizer_data <- reactive({equalizer$eq_data()})
 
     observe({
       eq_data <- shiny::req(equalizer_data())
     })
+
+
+    # Convert & Download YouTube to MP3 ---------------------------------------
+
+    # TODO: This should be a nested module (inside import_audio_server)
+    dwnld_audio <- download_audio_server("download_audio")
 
 
     return(
