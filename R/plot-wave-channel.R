@@ -329,6 +329,8 @@ plot_wave_channel_fancy <- function(audio_data,
 
   # font and styling
   t1 <- list(size = 15, color = ft_color)
+  ty <- list(size = 14, color = ft_color)
+  tx <- list(size = 18, color = ft_color)
   y_tick_vals <- if(isTRUE(show_y_axis)) ylim else NULL
   # Add unit if unchanged xlab and time
   if(!is.null(xlab) && xlab == audio_params$xunit && xlab == "Time"){
@@ -338,9 +340,9 @@ plot_wave_channel_fancy <- function(audio_data,
   # set margin
   slider_adjust <- ifelse(isTRUE(range_slider), 10, 40)
   margin <- if(shiny::isRunning()){
-    list(b = 50 + slider_adjust, l = 80, r = 10)
+    list(b = 50 + slider_adjust, l = 70, r = 10)
   }else{
-    list(b = 80 + slider_adjust, l = 80, r = 10)
+    list(b = 80 + slider_adjust, l = 70, r = 10)
   }
 
   # Core plot
@@ -387,15 +389,16 @@ plot_wave_channel_fancy <- function(audio_data,
     plotly::layout(
       # y-axis
       yaxis = list(
+        title = list(text = ylab, font = ty),
         range = ylim*1.1, # increase data padding by 10%
-        fixedrange = TRUE, title = ylab,
+        fixedrange = TRUE,
         tickvals = y_tick_vals,
         zerolinecolor = "black",
-        tickfont = list(size = 18)
+        tickfont = list(size = 15)
       ),
       # main x-axis (Date)
       xaxis = list(
-        title = xlab,
+        title = list(text = xlab, font = tx),
         range = duration_min,
         side = "bottom",
         anchor = "y",
@@ -413,6 +416,7 @@ plot_wave_channel_fancy <- function(audio_data,
         position = 0.015,
         side = "bottom",
         showticklabels = TRUE,
+        tickfont = list(size = 12),
         ticks = "inside",
         # ticklen = 10,
         # Format as {minutes:seconds}

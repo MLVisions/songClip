@@ -20,59 +20,73 @@ audio_playpack_ui <- function(id) {
           uiOutput(ns("audio_playback_controls"))
         ),
         column(
-          width = 3, offset = 3,
+          width = 2, offset = 2,
           shinyWidgets::dropdown(
-            label = "Editing Tools",
+            label = "View",
+            width = "230px",
+            right = TRUE,
+            icon = icon("eye", verify_fa = FALSE),
+            status = "primary",
+            h4("View"), hr(),
+            shinyWidgets::pickerInput(
+              ns("channel_type"), "Wave Channel:",
+              options = shinyWidgets::pickerOptions(
+                container = "body", style = "btn-primary"),
+              choices = list("Single Channel" = c("Left"="left", "Right"="right"),
+                             "Multiple Channels"= c("Stereo" = "stereo")),
+              selected = "left", inline = TRUE, width = "fit"
+            ),
+            shinyWidgets::awesomeCheckbox(
+              ns("show_info"), "Append information about the audio file", value = TRUE
+            )
+          )
+        ),
+        column(
+          width = 2,
+          shinyWidgets::dropdown(
+            label = "Edit",
             width = "260px",
             right = TRUE,
-            icon = icon("gear"),
+            icon = icon("pen-to-square", verify_fa = FALSE),
             status = "primary",
+            h4("Editing"), hr(),
             fluidRow(
               column(
-                width = 12, align = "right",
-                shinyWidgets::pickerInput(
-                  ns("channel_type"), "Wave Channel:",
-                  options = shinyWidgets::pickerOptions(
-                    container = "body", style = "btn-primary"),
-                  choices = list("Single Channel" = c("Left"="left", "Right"="right"),
-                                 "Multiple Channels"= c("Stereo" = "stereo")),
-                  selected = "left", inline = TRUE, width = "fit"
-                )
-              )
-            ),
-            hr(),
-            h4("Editing Tools"),
-            shinyWidgets::switchInput(
-              ns("create_loop"), label = tags$span(
-                "Create Loop",
-                icon("arrows-spin", verify_fa = FALSE),
-                style = "display:inline-block;"
-              ),
-              width = "220px", inline = TRUE,
-              labelWidth = 180,
-              onStatus = "success"
-            ),
-            conditionalPanel("input.create_loop", ns = ns, {
-              fluidRow(
-                style = "padding-left: 15px;",
-                column(
-                  width = 12,
-                  shinyWidgets::awesomeCheckbox(
-                    ns("dynamic_loop"), "Reset on adjustment",
-                    value = FALSE
+                width = 12, align = "center",
+                shinyWidgets::switchInput(
+                  ns("enable_edits"), label = tags$span(
+                    "Enable Editing",
+                    icon("pen-to-square", verify_fa = FALSE)
+                  ),
+                  width = "240px", inline = TRUE, value = FALSE,
+                  labelWidth = 220, onStatus = "success"
+                ),
+                conditionalPanel("input.enable_edits", ns = ns, {
+                  shinyWidgets::radioGroupButtons(
+                    ns("edit_type"), label = NULL, justified = TRUE,
+                    choices = c('create_loop', 'crop_audio') %>%
+                      stats::setNames(
+                        c(
+                          glue::glue("{tags$span('Create Loop ', icon('arrows-spin'))}"),
+                          glue::glue("{tags$span('Crop Audio ', icon('crop-simple'))}")
+                        ) %>% gsub("\\n\\s+", "", .) %>% gsub("\n", "", .)
+                      )
                   )
-                )
+                }),
+                conditionalPanel(
+                  "input.enable_edits && input.edit_type == 'create_loop'", ns = ns, {
+                    fluidRow(
+                      style = "padding-left: 15px;",
+                      column(
+                        width = 12,
+                        shinyWidgets::awesomeCheckbox(
+                          ns("dynamic_loop"), "Reset on adjustment",
+                          value = FALSE
+                        )
+                      )
+                    )
+                  })
               )
-            }),
-            shinyWidgets::switchInput(
-              ns("crop_audio"), label = tags$span(
-                "Crop Audio",
-                icon("crop-simple", verify_fa = FALSE),
-                style = "display:inline-block;"
-              ),
-              width = "220px", inline = TRUE,
-              labelWidth = 180,
-              onStatus = "success"
             )
           )
         )
@@ -82,16 +96,17 @@ audio_playpack_ui <- function(id) {
         color = "white",
         column(
           width = 10, offset = 1,
-          conditionalPanel("input.create_loop", ns = ns, {
-            tagList(
-              h3("Editing: Create a loop"),
-              sliderInput(
-                ns("loop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
-                timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+          conditionalPanel(
+            "input.enable_edits && input.edit_type == 'create_loop'", ns = ns, {
+              tagList(
+                h3("Editing: Create a loop"),
+                sliderInput(
+                  ns("loop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
+                  timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+                )
               )
-            )
-          }),
-          conditionalPanel("input.crop_audio", ns = ns, {
+            }),
+          conditionalPanel("input.enable_edits && input.edit_type == 'crop_audio'", ns = ns, {
             tagList(
               h3("Editing: Crop Audio"),
               sliderInput(
@@ -118,13 +133,21 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
     id,
     function(input, output, session) {
 
+      # Set up environment variables --------------------------------------------
+
       ns <- session$ns
       .rv <- reactiveValues(playing = NULL, track = NULL, duration = NULL, seek = NULL)
+      .rv_editing <- reactiveValues(create_loop = FALSE, crop_audio = FALSE)
       .rv_loop <- reactiveValues(start = 0, end = 60)
 
+      # Editing
+      observeEvent(list(input$enable_edits, input$edit_type),{
+        .rv_editing$create_loop <- input$enable_edits && input$edit_type == "create_loop"
+        .rv_editing$crop_audio <- input$enable_edits && input$edit_type == "crop_audio"
+      }, priority = 4)
 
 
-      # Setup audio files -------------------------------------------------------
+      # Set up audio files ------------------------------------------------------
 
 
       # TODO: figure out if this works when the package is installed
@@ -136,7 +159,6 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       audio_files <- reactive({
         file.path("SONGCLIP_audio_library", shiny::req(audio_choices()$choice_name))
       })
-
 
 
       # Main howler UI ----------------------------------------------------------
@@ -187,7 +209,6 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         }
       })
 
-
       observe({
         track_info <- reactiveValuesToList(.rv)
       })
@@ -212,7 +233,8 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         audio_obj <- shiny::req(audio_obj())
         assign("audio_obj", audio_obj, envir = .GlobalEnv)
         # update value of tracker on client side (always start at 0 for new audio object)
-        plot_wave_audio(audio_obj, type = input$channel_type, source = "wave_audio")
+        plot_wave_audio(audio_obj, type = input$channel_type,
+                        source = "wave_audio", include_info = input$show_info)
       })
 
       # Rendered audio inspection plot
@@ -220,29 +242,33 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         audio_plot()
       })
 
-
-      # Reset settings on new object
+      # Reset some settings on new object - slightly bugged
       observeEvent(audio_obj(), {
         # Reset playback
         seekHowl("howler", 0)
       }, priority = 4)
 
-      # Reset settings on new object -or- editing toggles
-      observeEvent(list(audio_obj(), input$create_loop), {
+      # Reset some settings on new object -or- editing toggles
+      observeEvent(list(audio_obj(), input$edit_type), {
         duration <- get_audio_dur(shiny::req(audio_obj()))
         dur_fmt <- format_seconds(duration)
         updateSliderInput(session, "loop_range", value = dur_fmt,
                           timeFormat = "%M:%S (%L ms)",
-                          min = min(dur_fmt), max = max(dur_fmt), step = 0.5)
+                          min = min(dur_fmt), max = max(dur_fmt), step = 0.25)
+        updateSliderInput(session, "crop_range", value = dur_fmt,
+                          timeFormat = "%M:%S (%L ms)",
+                          min = min(dur_fmt), max = max(dur_fmt), step = 0.25)
         .rv_loop$start <- min(duration)
         .rv_loop$end <- max(duration)
       }, priority = 3)
 
-      # Reset settings on new object -or- channel type
-      observeEvent(list(audio_obj(), input$channel_type), {
-        shinyWidgets::updateSwitchInput(session, "create_loop", value = FALSE)
+      # Reset some settings on new object -or- channel type
+      observeEvent(list(audio_obj(), input$channel_type, input$show_info), {
+        # TODO: Instead of this, it should just be resetting the slider and
+        # shapes. This has been difficult with stereo types, so this a placeholder
+        # solution. Also need linking via shape name to work.
+        shinyWidgets::updateSwitchInput(session, "enable_edits", value = FALSE)
       }, priority = 3)
-
 
 
       # Proxy Updates -----------------------------------------------------------
@@ -262,7 +288,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         # Set tolerance (sec) for loop (should be larger than `seek_ping_rate`)
         tol <- 1.1e-1
         x_range <- as.numeric(input$loop_range)
-        if(isTRUE(input$create_loop) && (abs(seek_value - x_range[2]) <= tol)){
+        if(isTRUE(.rv_editing$create_loop) && (abs(seek_value - x_range[2]) <= tol)){
           seekHowl("howler", x_range[1])
         }
       })
@@ -270,12 +296,12 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       ### Looping ###
 
       # Add shapes for creating loop on client side
-      observeEvent(input$create_loop, {
+      observeEvent(list(input$edit_type, input$enable_edits, input$show_info), {
         # Get proxy reference
         proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
         channel_type <- shiny::req(input$channel_type)
 
-        if(isTRUE(input$create_loop)){
+        if(isTRUE(.rv_editing$create_loop)){
           # Create loop (in seconds)
           x_range <- get_audio_dur(shiny::req(audio_obj()))/60
           y_val <- min(get_audio_limits(shiny::req(audio_obj())))
@@ -292,7 +318,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
       # Updating loop trackers
       observeEvent(input$loop_range, {
-        if(isTRUE(input$create_loop)){
+        if(isTRUE(.rv_editing$create_loop)){
           # Get proxy reference
           proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
           channel_type <- shiny::req(input$channel_type)
@@ -313,7 +339,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       # Update playback when start time is moved or `dynamic_loop` is set
       observeEvent(.rv_loop$start, {
         reset_loop <- input$dynamic_loop || isFALSE(input$howler_playing)
-        if(isTRUE(input$create_loop) && reset_loop){
+        if(isTRUE(.rv_editing$create_loop) && reset_loop){
           # Get proxy reference
           proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
           channel_type <- shiny::req(input$channel_type)
