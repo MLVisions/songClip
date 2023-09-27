@@ -241,9 +241,20 @@ body {
     color: #000000;
 }
 
+/* Default button theme */
+.btn-default {
+    background-color: #086A87;
+    color: white;
+    border-color: #8c8c8c;
+}
+.btn-default.focus, .btn-default:focus, .btn-default:hover {
+    color: white;
+    box-shadow: inset 0px 2px 30px 2px #000000;
+    background-color: #086A87;
+    border-color: #ddd;
+}
 
-
-/* shinydashboard button themes */
+/* shinydashboard/shinyWidget button themes */
 .btn-primary {
     background-color: #086A87;
     border-color: #086A87;
@@ -315,39 +326,39 @@ body {
 }
 
 /* shinyWidgets prettySwitch (primary) */
-/* These couldnt be overwritten. Adding a div(., class= 'mertrumrg') around a prettySwitch is necessary */
-div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-primary:before {
+/* These couldnt be overwritten. Adding a div(., class= 'songClip') around a prettySwitch is necessary */
+div.songClip .pretty.p-switch.p-fill input:checked~.state.p-primary:before {
     background-color: #086A87!important;
 }
-div.metrumrg .pretty.p-switch input:checked~.state.p-primary:before {
+div.songClip .pretty.p-switch input:checked~.state.p-primary:before {
     border-color: #086A87;
 }
 /* shinyWidgets prettySwitch (info) */
-div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-info:before {
+div.songClip .pretty.p-switch.p-fill input:checked~.state.p-info:before {
     background-color: #4AA2B1!important;
 }
-div.metrumrg .pretty.p-switch input:checked~.state.p-info:before {
+div.songClip .pretty.p-switch input:checked~.state.p-info:before {
     border-color: #4AA2B1;
 }
 /* shinyWidgets prettySwitch (success) */
-.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-success:before {
+.songClip .pretty.p-switch.p-fill input:checked~.state.p-success:before {
     background-color: #007319!important;
 }
-div.metrumrg .pretty.p-switch input:checked~.state.p-success:before {
+div.songClip .pretty.p-switch input:checked~.state.p-success:before {
     border-color: #007319;
 }
 /* shinyWidgets prettySwitch (warning) */
-div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-warning:before {
+div.songClip .pretty.p-switch.p-fill input:checked~.state.p-warning:before {
     background-color: #E0E4CC!important;
 }
-div.metrumrg .pretty.p-switch input:checked~.state.p-warning:before {
+div.songClip .pretty.p-switch input:checked~.state.p-warning:before {
     border-color: #E0E4CC;
 }
 /* shinyWidgets prettySwitch (danger) */
-div.metrumrg .pretty.p-switch.p-fill input:checked~.state.p-danger:before {
+div.songClip .pretty.p-switch.p-fill input:checked~.state.p-danger:before {
     background-color: #626364!important;
 }
-div.metrumrg .pretty.p-switch input:checked~.state.p-danger:before {
+div.songClip .pretty.p-switch input:checked~.state.p-danger:before {
     border-color: #626364;
 }
 
@@ -804,7 +815,7 @@ label > input[type='checkbox']:checked + *::after {
 .nav-pills > li > a {
     border-top: 3px solid transparent;
     color: white;
-    padding: 5px 15px;
+    padding: 10px 15px 10px 15px;
 }
 /* Hovering */
 .nav>li>a:active, .nav>li>a:focus, .nav>li>a:hover {
@@ -842,4 +853,69 @@ label > input[type='checkbox']:checked + *::after {
 /* Misc */
 .shiny-input-container:not(.shiny-input-container-inline) {
     width: revert;
+}
+
+/* Folder paths */
+.folder-path {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  color: #086A87;
+  background-color: #f9f9f9; /* Light gray background color */
+  padding: 10px 15px;
+  border: 2px solid #086A87;
+  border-radius: 10px; /* Rounded corners */
+  display: inline-block;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  text-decoration: none; /* Remove underlines if used as a link */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.folder-path-small {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #086A87;
+  background-color: #f9f9f9;
+  padding: 1px 5px 1px 5px;
+  border: 2px solid #086A87;
+  border-radius: 10px;
+  display: inline-block;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.folder-path:hover, .folder-path-small:hover {
+  background-color: #086A87;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* shinyWidgets Dropdown */
+.sw-dropdown-in {
+    padding: 10px 25px;
+    margin: 0px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+/* Shadow wrapper */
+.shadow-wrapper {
+    box-shadow: inset 0px 50px 70px 2px #000000;
+    color: white;
+    background-color: #086A87;
+}
+
+.shadow-wrapper-outer {
+    box-shadow: 0px 50px 70px 2px #000000;
+    color: white;
+    background-color: #086A87;
+}
+
+/* Cool hr */
+.custom-hr {
+  height: 3px;
+  background: linear-gradient(to right, transparent, #FFD700, #FFA500, #FFD700, transparent);
+  border: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 20px 0;
 }

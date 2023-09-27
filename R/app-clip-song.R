@@ -25,12 +25,15 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
       sidebar = shinydashboardPlus::dashboardSidebar(
         collapsed = TRUE,
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Set Audio Library", tabName = "tab_download", icon = icon("download")),
           shinydashboard::menuItem("Tune Audio", tabName = "tab_clipsong", icon = icon("scissors"))
         )
       ),
       body = shinydashboard::dashboardBody(
         tags$head(
+          # nice closing message
+          shinydisconnect::disconnectMessage(
+            text = "App has Disconnected. Try refreshing if this was unexpected."
+          ),
           # css and js for header
           tags$style(HTML(cssHeader)),
           tags$script(HTML(jqueryHeader)),
@@ -43,9 +46,6 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
                           box-shadow: inset 0px 110px 120px 2px #000000;}"))
         ),
         shinydashboard::tabItems(
-          shinydashboard::tabItem("tab_download",
-                                  import_audio_ui("import_audio")
-          ),
           shinydashboard::tabItem("tab_clipsong",
                                   tune_audio_ui("tune_audio")
           )
@@ -58,12 +58,8 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
 
   server <- function(input, output, session) {
 
-    imported_audio <- import_audio_server("import_audio", audio_dir = getOption("songClip.audio_dir"))
+    tune_audio_server("tune_audio", audio_dir_init = getOption("songClip.audio_dir"))
 
-    tune_audio_server("tune_audio",
-                      audio_choices = imported_audio$audio_choices,
-                      audio_dir = imported_audio$audio_dir
-                      )
   }
 
   app <- shiny::shinyApp(ui, server)

@@ -13,13 +13,17 @@ tune_audio_ui <- function(id){
     fluidRow(
       column(
         width = 4,
+        import_audio_ui(ns("import_audio"))
+      ),
+      column(
+        width = 4,
         shinyWidgets::pickerInput(
-          ns("audio_select"), "Select an audio file", choices = c(),
+          ns("audio_select"), "Current Track", choices = c(),
           options = shinyWidgets::pickerOptions(
             container = "body", style = "btn-primary"))
       )
     ),
-    br(),
+    tags$hr(class = "custom-hr"),
     easy_row(
       easy_col = TRUE,
       bslib::navset_card_pill(
@@ -78,23 +82,23 @@ tune_audio_ui <- function(id){
 
 #' @describeIn tune_audio_ui Create module server for tuning an audio file
 #'
-#' @param audio_choices reactive list of audio files and their parameters
-#' @param audio_dir reactive audio directory (selected)
+#' @param audio_dir_init initial audio directory
 #'
 #' @keywords internal
-tune_audio_server <- function(id, audio_choices, audio_dir) {
+tune_audio_server <- function(id, audio_dir_init) {
   moduleServer(id, function(input, output, session) {
 
     ns <- session$ns
     .rv <- reactiveValues()
 
 
-
     # Set up audio library and choices ----------------------------------------
 
+    imported_audio <- import_audio_server("import_audio", audio_dir = audio_dir_init)
 
     # TODO: use shinyjs to disable play button if tuneR::getWavPlayer() is not set
-    # Add alert and potentially allow user to search for it (low priority)
+    # and local audio player is being used. Add alert and potentially allow user to
+    # search for it (low priority)
     observe({
       audio_player_set <-
         !is.null(tuneR::getWavPlayer()) &&
@@ -107,8 +111,8 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     })
 
     # Set audio choices with their info based on audio library
-    observeEvent(audio_choices(), {
-      audio_choices <- shiny::req(audio_choices())
+    observeEvent(imported_audio$audio_choices(), {
+      audio_choices <- shiny::req(imported_audio$audio_choices())
       # Update Choices
       shinyWidgets::updatePickerInput(
         session = session, "audio_select", choices = audio_choices$choice_name,
@@ -125,8 +129,8 @@ tune_audio_server <- function(id, audio_choices, audio_dir) {
     audio_select <- reactive(input$audio_select)
 
     audio_playpack <- audio_playpack_server("audio_playback",
-                                            audio_choices = audio_choices,
-                                            audio_dir = audio_dir,
+                                            audio_choices = imported_audio$audio_choices,
+                                            audio_dir = imported_audio$audio_dir,
                                             audio_select = audio_select
     )
 

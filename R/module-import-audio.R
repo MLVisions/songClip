@@ -17,30 +17,32 @@
 #' @keywords internal
 import_audio_ui <- function(id,
                             title = "Select a folder containing audio files",
-                            box_title = "Set Audio Library",
-                            collapsible = FALSE,
-                            collapsed = FALSE,
-                            status = "primary") {
+                            box_title = "Set Audio Library") {
   ns <- NS(id)
   tagList(
-    shinydashboardPlus::box(
-      title = box_title,
-      solidHeader = TRUE,
-      width = 12,
-      collapsible = collapsible,
-      collapsed = collapsed,
-      status = status,
-      # background = "#252525",
-      easy_row(
-        easy_col = TRUE,
-        # bg_color = "#252525",
-        color = "black",
-        h3("Select the folder that contains all your audio files"),
-        h5("You will then choose which files to import from a list."),
-        shinyFiles::shinyDirButton(ns("audio_dir"), label = title, title = title),
-        br(),
-        h5("Audio library currently set to:"),
-        verbatimTextOutput(ns("dir_selected"), placeholder = TRUE)
+    easy_row(
+      easy_col = TRUE,
+      color = "white",
+      htmlOutput(ns("dir_selected_rel")),
+      br(),
+      shinyWidgets::dropdown(
+        label = "Set Audio Library",
+        easy_row(
+          easy_col = TRUE,
+          bg_color = "#086A87",
+          color = "white",
+          style = "box-shadow: inset 0px 50px 50px 2px #000000;",
+          h3("Set Audio Library"),
+          h5("Select the folder that contains all your audio files"),
+          shinyFiles::shinyDirButton(
+            ns("audio_dir"), label = "Choose Directory",
+            title = "Select a folder containing your audio files"
+          ),
+          br(),
+          h5("Audio library currently set to:"),
+          htmlOutput(ns("dir_selected")),
+          br()
+        )
       )
     )
   )
@@ -74,8 +76,13 @@ import_audio_server <- function(id,
 
     global <- reactiveValues(audio_dir = audio_dir, audio_choices = NULL)
 
-    output$dir_selected <- renderText({
-      global$audio_dir
+    output$dir_selected <- renderUI({
+      HTML(paste0("<span class='folder-path-small'>", global$audio_dir, "</span>"))
+    })
+
+    output$dir_selected_rel <- renderUI({
+      path_rel <- fs::path_rel(global$audio_dir, "~")
+      HTML(paste0("Audio library: <span class='folder-path-small'>", path_rel, "</span>"))
     })
 
     observeEvent(input$audio_dir, {
