@@ -25,7 +25,7 @@ audio_playpack_ui <- function(id) {
           width = 2, offset = 2, align = "right",
           shinyWidgets::dropdown(
             label = "View",
-            width = "230px",
+            width = "240px",
             right = TRUE,
             icon = icon("eye", verify_fa = FALSE),
             status = "primary",
