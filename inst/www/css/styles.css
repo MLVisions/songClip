@@ -895,12 +895,13 @@ label > input[type='checkbox']:checked + *::after {
     padding: 10px 25px;
     margin: 0px;
     background-color: black;
+    color: white;
     border-radius: 10px;
 }
 
 /* Shadow wrapper */
 .shadow-wrapper {
-    box-shadow: inset 0px 50px 70px 2px #000000;
+    box-shadow: inset 0px 50px 50px 2px #000000;
     color: white;
     background-color: #086A87;
 }

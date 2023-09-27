@@ -30,8 +30,9 @@ audio_playpack_ui <- function(id) {
             icon = icon("eye", verify_fa = FALSE),
             status = "primary",
             easy_row(
-              easy_col = TRUE, align = "left",
-              h4("View"), hr(),
+              easy_col = TRUE, align = "left", class = "shadow-wrapper",
+              h4("View"),
+              tags$hr(class = "custom-hr"),
               shinyWidgets::pickerInput(
                 ns("channel_type"), "Wave Channel:",
                 options = shinyWidgets::pickerOptions(
@@ -51,49 +52,54 @@ audio_playpack_ui <- function(id) {
           width = 2, align = "right",
           shinyWidgets::dropdown(
             label = "Edit",
-            width = "260px",
+            width = "280px",
             right = TRUE,
             icon = icon("pen-to-square", verify_fa = FALSE),
             status = "primary",
             easy_row(
-              easy_col = TRUE, align = "left",
-              h4("Editing"), hr()
-            ),
-            easy_row(
-              easy_col = TRUE, align = "center",
-              shinyWidgets::switchInput(
-                ns("enable_edits"), label = tags$span(
-                  "Enable Editing",
-                  icon("pen-to-square", verify_fa = FALSE)
-                ),
-                width = "240px", inline = TRUE, value = FALSE,
-                labelWidth = 220, onStatus = "success"
+              class = "shadow-wrapper",
+              easy_col = TRUE,
+              easy_row(
+                easy_col = TRUE, align = "left",
+                h4("Editing"),
+                tags$hr(class = "custom-hr")
               ),
-              conditionalPanel("input.enable_edits", ns = ns, {
-                shinyWidgets::radioGroupButtons(
-                  ns("edit_type"), label = NULL, justified = TRUE,
-                  choices = c('create_loop', 'crop_audio') %>%
-                    stats::setNames(
-                      c(
-                        glue::glue("{tags$span('Create Loop ', icon('arrows-spin'))}"),
-                        glue::glue("{tags$span('Crop Audio ', icon('crop-simple'))}")
-                      ) %>% gsub("\\n\\s+", "", .) %>% gsub("\n", "", .)
-                    )
-                )
-              }),
-              conditionalPanel(
-                "input.enable_edits && input.edit_type == 'create_loop'", ns = ns, {
-                  fluidRow(
-                    style = "padding-left: 15px;",
-                    column(
-                      width = 12,
-                      shinyWidgets::awesomeCheckbox(
-                        ns("dynamic_loop"), "Reset on adjustment",
-                        value = FALSE
+              easy_row(
+                easy_col = TRUE, align = "center",
+                shinyWidgets::switchInput(
+                  ns("enable_edits"), label = tags$span(
+                    "Enable Editing",
+                    icon("pen-to-square", verify_fa = FALSE)
+                  ),
+                  width = "240px", inline = TRUE, value = FALSE,
+                  labelWidth = 220, onStatus = "success"
+                ),
+                conditionalPanel("input.enable_edits", ns = ns, {
+                  shinyWidgets::radioGroupButtons(
+                    ns("edit_type"), label = NULL, justified = TRUE,
+                    choices = c('create_loop', 'crop_audio') %>%
+                      stats::setNames(
+                        c(
+                          glue::glue("{tags$span('Create Loop ', icon('arrows-spin'))}"),
+                          glue::glue("{tags$span('Crop Audio ', icon('crop-simple'))}")
+                        ) %>% gsub("\\n\\s+", "", .) %>% gsub("\n", "", .)
+                      )
+                  )
+                }),
+                conditionalPanel(
+                  "input.enable_edits && input.edit_type == 'create_loop'", ns = ns, {
+                    fluidRow(
+                      style = "padding-left: 15px;",
+                      column(
+                        width = 12,
+                        shinyWidgets::awesomeCheckbox(
+                          ns("dynamic_loop"), "Reset on adjustment",
+                          value = FALSE
+                        )
                       )
                     )
-                  )
-                })
+                  })
+              )
             )
           )
         )

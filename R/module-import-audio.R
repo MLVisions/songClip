@@ -32,7 +32,7 @@ import_audio_ui <- function(id,
           easy_col = TRUE,
           bg_color = "#086A87",
           color = "white",
-          style = "box-shadow: inset 0px 50px 50px 2px #000000;",
+          class = "shadow-wrapper",
           h3("Set Audio Library"),
           h5("Select the folder that contains all your audio files"),
           shinyFiles::shinyDirButton(

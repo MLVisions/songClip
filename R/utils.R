@@ -112,6 +112,7 @@ easy_row <- function(
     easy_col = FALSE,
     align = c("left", "right", "center", "justify"),
     style = NULL,
+    class = NULL,
     color = NULL,
     bg_color = NULL
 ){
@@ -125,6 +126,7 @@ easy_row <- function(
   if(isTRUE(easy_col)){
     shiny::fluidRow(
       style = style,
+      class = class,
       shiny::column(
         width = 12,
         align = align,
