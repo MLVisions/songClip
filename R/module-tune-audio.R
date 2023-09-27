@@ -13,14 +13,14 @@ tune_audio_ui <- function(id){
     fluidRow(
       column(
         width = 4,
-        import_audio_ui(ns("import_audio"))
-      ),
-      column(
-        width = 4,
         shinyWidgets::pickerInput(
           ns("audio_select"), "Current Track", choices = c(),
           options = shinyWidgets::pickerOptions(
             container = "body", style = "btn-primary"))
+      ),
+      column(
+        width = 4, offset = 4, align = "right",
+        import_audio_ui(ns("import_audio"))
       )
     ),
     tags$hr(class = "custom-hr"),

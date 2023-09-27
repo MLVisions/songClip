@@ -26,7 +26,8 @@ import_audio_ui <- function(id,
       htmlOutput(ns("dir_selected_rel")),
       br(),
       shinyWidgets::dropdown(
-        label = "Set Audio Library",
+        label = "Set Library",
+        right = TRUE,
         easy_row(
           easy_col = TRUE,
           bg_color = "#086A87",

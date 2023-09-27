@@ -8,10 +8,7 @@
 import_audio_ui(
   id,
   title = "Select a folder containing audio files",
-  box_title = "Set Audio Library",
-  collapsible = FALSE,
-  collapsed = FALSE,
-  status = "primary"
+  box_title = "Set Audio Library"
 )
 
 import_audio_server(id, audio_dir = NULL, title = "Starting Directory")
@@ -23,13 +20,13 @@ import_audio_server(id, audio_dir = NULL, title = "Starting Directory")
 
 \item{box_title}{label of the first \code{shinydashboardPlus::box}}
 
-\item{collapsible}{whether the module can be collapsed/hidden}
-
-\item{collapsed}{whether the module should start off as collapsed}
+\item{audio_dir}{an initial audio directory}
 
 \item{status}{the color of the box. See \code{shinydashboardPlus::box} status}
 
-\item{audio_dir}{an initial audio directory}
+\item{collapsible}{whether the module can be collapsed/hidden}
+
+\item{collapsed}{whether the module should start off as collapsed}
 }
 \description{
 Create shiny module for choosing an audio directory and selecting which files to import

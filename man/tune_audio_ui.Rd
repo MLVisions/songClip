@@ -7,12 +7,10 @@
 \usage{
 tune_audio_ui(id)
 
-tune_audio_server(id, audio_choices, audio_dir)
+tune_audio_server(id, audio_dir_init)
 }
 \arguments{
-\item{audio_choices}{reactive list of audio files and their parameters}
-
-\item{audio_dir}{reactive audio directory (selected)}
+\item{audio_dir_init}{initial audio directory}
 }
 \description{
 Create shiny module for tuning an audio file
