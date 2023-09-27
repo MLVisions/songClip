@@ -12,7 +12,7 @@ plot_wave_audio(
   source = "wave_audio",
   type = c("left", "right", "stereo"),
   format = c("fancy", "base"),
-  include_info = TRUE,
+  include_info = FALSE,
   range_slider = TRUE,
   inner_plot = TRUE,
   hollow = FALSE,

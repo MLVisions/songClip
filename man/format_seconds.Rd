@@ -4,10 +4,13 @@
 \alias{format_seconds}
 \title{Format seconds as \code{{minutes:seconds}}}
 \usage{
-format_seconds(time, as_date = TRUE)
+format_seconds(time, as_date = TRUE, as_char = FALSE)
 }
 \arguments{
 \item{time}{time in seconds}
+
+\item{as_char}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, coerce date to character
+string.}
 }
 \value{
 character string formatted as \code{{minutes:seconds}}

@@ -4,7 +4,14 @@
 \alias{no_margin_row}
 \title{Substitute for \code{\link{fluidRow}} with no horizontal margins}
 \usage{
-no_margin_row(..., style = NULL, color = NULL, bg_color = NULL)
+no_margin_row(
+  ...,
+  easy_col = FALSE,
+  align = c("left", "right", "center", "justify"),
+  style = NULL,
+  color = NULL,
+  bg_color = NULL
+)
 }
 \arguments{
 \item{...}{HTML tags}

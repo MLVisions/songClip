@@ -9,7 +9,6 @@ add_play_tracker_line(
   pl_plotly = NULL,
   x_val = 0,
   proxy = NULL,
-  x_axis = c("numeric", "Date"),
   color = "red",
   shapeId = "redTrackerLine"
 )
@@ -17,22 +16,21 @@ add_play_tracker_line(
 toggle_loop_trackers(
   pl_plotly = NULL,
   toggle = TRUE,
+  update = FALSE,
   proxy = NULL,
   channel_type = c("left", "right", "stereo"),
-  x_range = c(0, 3.36),
-  y_val = -32768,
+  x_range = c(0, 1),
+  y_val = 0,
   shapeId = "loopTrackers"
 )
 }
 \arguments{
 \item{pl_plotly}{a \code{plotly} object. Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
 
-\item{x_val}{x-axis coordinate for placing the vertical line.}
+\item{x_val}{x-axis coordinate for placing the vertical line (in seconds).}
 
 \item{proxy}{a \code{\link{plotlyProxy}} object used for updating the location of the tracker.
 Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
-
-\item{x_axis}{which x-axis to add the tracker to.}
 
 \item{color}{color of the play tracker line}
 
@@ -41,7 +39,7 @@ Only one of \code{proxy}, \code{pl_plotly} should be supplied.}
 \item{toggle}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add loop trackers. If \code{FALSE},
 remove them if they exist.}
 
-\item{x_range}{starting x-axis values for the loop tracker}
+\item{x_range}{starting x-axis values for the loop tracker (minutes)}
 
 \item{y_val}{Y-axis value for the loop trackers. Should be the minimum of the
 y-axis range}
@@ -50,9 +48,6 @@ y-axis range}
 Add vertical line to \code{plotly} returned from \code{\link{plot_wave_audio}}, to track
 current play time. This function can also be used to update its underlying data inside
 a shiny app by supplying a \code{\link{plotlyProxy}} object instead of \code{pl_plotly}.
-}
-\note{
-\code{add_play_tracker_line} will \emph{not} work with 'stereo' outputs of \code{\link{plot_wave_audio}}
 }
 \examples{
 # Read in audio file with `tuneR`
@@ -69,11 +64,12 @@ pl_plotly <- plot_wave_channel_fancy(
 # 1 min (numeric scale is in minutes)
 pl_plotly \%>\% add_play_tracker_line(1)
 
-# 1 min (date formatting function takes in seconds)
-pl_plotly \%>\% add_play_tracker_line(60, x_axis = "Date")
 
 ## Add loop trackers ##
 pl_plotly \%>\% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
 
+}
+\seealso{
+plot_wave_audio
 }
 \keyword{internal}

@@ -36,6 +36,8 @@ dev_warning <- function(warn_msg){
 #' Format seconds as `{minutes:seconds}`
 #'
 #' @param time time in seconds
+#' @param as_char Logical (`TRUE`/`FALSE`). If `TRUE`, coerce date to character
+#'        string.
 #'
 #' @examples
 #'
@@ -43,10 +45,13 @@ dev_warning <- function(warn_msg){
 #'
 #' @return character string formatted as `{minutes:seconds}`
 #' @keywords internal
-format_seconds <- function(time, as_date = TRUE){
+format_seconds <- function(time, as_date = TRUE, as_char = FALSE){
   if(isTRUE(as_date)){
-    as.POSIXct(time, origin = as.Date("1970-01-01"), tz='UTC',
+    op <- options(digits.secs = 6)
+    on.exit(options(op), add = TRUE)
+    date <- as.POSIXct(time, origin = as.Date("1970-01-01"), tz='UTC',
                format = "%Y-%m-%d %H:%M:%OS")
+    if(as_char) as.character(date) else date
   }else{
     sprintf("%02d:%02.0f", time %/% 60, time %% 60)
   }

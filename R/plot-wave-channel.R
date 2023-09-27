@@ -60,7 +60,7 @@ plot_wave_audio <- function(audio_obj,
                             source = "wave_audio",
                             type = c("left", "right", "stereo"),
                             format = c("fancy", "base"),
-                            include_info = TRUE,
+                            include_info = FALSE,
                             range_slider = TRUE,
                             inner_plot = TRUE,
                             hollow = FALSE,
@@ -346,7 +346,7 @@ plot_wave_channel_fancy <- function(audio_data,
   }
 
   # Core plot
-  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y, source = source) %>%
+  pl <- plotly::plot_ly(pl_data, x = ~x_time, y = ~y, source = source) %>%
     plotly::add_lines(color = I(line_color))
 
   # Add Inner plot (looks nicer)
@@ -360,26 +360,11 @@ plot_wave_channel_fancy <- function(audio_data,
       plotly::add_lines(data = pl_data_inner, y = ~y3, color = I(inner_line_color2))
   }
 
-  # Secondary x-axis for using tracker (invisible trace)
-  # Note: this was necessary because updating the tracker using a date scale would
-  # only allow 1 second interval jumps (less smooth).
-  # Only use range to plot less data, while still ensuring 1:1 overlaying scales.
-  pl_data2 <- tibble::tibble(
-    x = seq(range(pl_data$x)[1], range(pl_data$x)[2], length.out = 100),
-    y = seq(range(pl_data$y)[1], range(pl_data$y)[2], length.out = 100)
-  ) %>% dplyr::mutate(
-    # Convert x-axis to {date:time} (date will be dropped later)
-    x_time = format_seconds(.data$x*60, as_date = TRUE)
-  )
-  pl <- pl %>% plotly::add_lines(data = pl_data2, x = ~x_time, y=~y,
-                                 xaxis = "x2", color = I("transparent"),
-                                 visible = "legendonly")
-
 
   # Range slider
   rangeslider <- if(isTRUE(range_slider)){
     list(visible = TRUE, thickness = 0.125, range = range(pl_data$x_time),
-         yaxis = list(range = range(pl_data$y),rangemode = "fixed"))
+         yaxis = list(range = range(pl_data$y), rangemode = "fixed"))
   }else{
     FALSE
   }
@@ -396,29 +381,17 @@ plot_wave_channel_fancy <- function(audio_data,
         zerolinecolor = "black",
         tickfont = list(size = 15)
       ),
-      # main x-axis (Date)
+      # main x-axis (date)
       xaxis = list(
         title = list(text = xlab, font = tx),
-        range = duration_min,
-        side = "bottom",
-        anchor = "y",
-        showgrid  = FALSE,
-        showticklabels = FALSE,
-        rangeslider = rangeslider,
-        ticks = ""
-      ),
-      # secondary x-axis (numeric)
-      xaxis2 = list(
         type = "date",
         range = duration_min_date,
-        overlaying = "x",
-        anchor = "free",
-        position = 0.015,
         side = "bottom",
+        anchor = "y",
+        showgrid  = TRUE,
         showticklabels = TRUE,
+        rangeslider = rangeslider,
         tickfont = list(size = 12),
-        ticks = "inside",
-        # ticklen = 10,
         # Format as {minutes:seconds}
         tickformat="%M:%S" #  add \n(%L ms) to show milliseconds (looks ugly)
       ),
@@ -559,15 +532,13 @@ process_wave_channel <- function(audio_obj,
 #' a shiny app by supplying a \code{\link{plotlyProxy}} object instead of `pl_plotly`.
 #'
 #' @param pl_plotly a `plotly` object. Only one of `proxy`, `pl_plotly` should be supplied.
-#' @param x_val x-axis coordinate for placing the vertical line.
+#' @param x_val x-axis coordinate for placing the vertical line (in seconds).
 #' @param proxy a \code{\link{plotlyProxy}} object used for updating the location of the tracker.
 #'        Only one of `proxy`, `pl_plotly` should be supplied.
-#' @param x_axis which x-axis to add the tracker to.
 #' @param color color of the play tracker line
 #' @param shapeId id of the shape to be tracked. Required for updating the location.
 #'
-#' @note
-#' `add_play_tracker_line` will *not* work with 'stereo' outputs of \code{\link{plot_wave_audio}}
+#' @seealso plot_wave_audio
 #'
 #'
 #' @examples
@@ -585,8 +556,6 @@ process_wave_channel <- function(audio_obj,
 #' # 1 min (numeric scale is in minutes)
 #' pl_plotly %>% add_play_tracker_line(1)
 #'
-#' # 1 min (date formatting function takes in seconds)
-#' pl_plotly %>% add_play_tracker_line(60, x_axis = "Date")
 #'
 #' ## Add loop trackers ##
 #' pl_plotly %>% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
@@ -596,20 +565,17 @@ add_play_tracker_line <- function(
     pl_plotly = NULL,
     x_val = 0,
     proxy = NULL,
-    x_axis = c("numeric", "Date"),
     color = "red",
     shapeId = "redTrackerLine"
 ){
 
-  x_axis <- match.arg(x_axis)
-
   # Function for creating vertical tracker line
-  make_tracker_shape <- function(x_val, color, shapeId, xref){
+  make_tracker_shape <- function(x_val, color, shapeId){
     list(
       # vertical line
       list(
         type = "line",
-        xref = xref,
+        xref = "x1",
         yref = "paper",
         line = list(color = color),
         x0 = x_val, x1 = x_val,
@@ -620,15 +586,10 @@ add_play_tracker_line <- function(
   }
 
   # x-axis handling
-  if(x_axis == "Date"){
-    op <- options(digits.secs = 6)
-    on.exit(options(op), add = TRUE)
-    x_val <- format_seconds(x_val, as_date = TRUE)
-  }
+  x_val <- format_seconds(x_val, as_date = TRUE, as_char = TRUE)
 
   # Make shapes
-  xref <- switch(x_axis, "Date" = "x2", "numeric" = "x1")
-  shapes <- make_tracker_shape(x_val, color, shapeId, xref = xref)
+  shapes <- make_tracker_shape(x_val, color, shapeId)
 
   if(!is.null(pl_plotly) && inherits(pl_plotly, "plotly")){
     # add tracker line to `plotly` object
@@ -646,7 +607,7 @@ add_play_tracker_line <- function(
 #'
 #' @param toggle Logical (`TRUE`/`FALSE`). If `TRUE`, add loop trackers. If `FALSE`,
 #'        remove them if they exist.
-#' @param x_range starting x-axis values for the loop tracker
+#' @param x_range starting x-axis values for the loop tracker (minutes)
 #' @param y_val Y-axis value for the loop trackers. Should be the minimum of the
 #'        y-axis range
 #'
@@ -654,31 +615,42 @@ add_play_tracker_line <- function(
 toggle_loop_trackers <- function(
     pl_plotly = NULL,
     toggle = TRUE,
+    update = FALSE,
     proxy = NULL,
     channel_type = c("left", "right", "stereo"),
-    x_range = c(0, 3.36),
-    y_val = -32768,
+    x_range = c(0, 1),
+    y_val = 0,
     shapeId = "loopTrackers"
 ){
 
   is_valid_plotly <- !is.null(pl_plotly) && inherits(pl_plotly, "plotly")
   channel_type <- match.arg(channel_type)
 
+  rm_trackers_plotly <- function(pl_plotly, shapeId){
+    # remove tracker attribute
+    attrs <- purrr::keep(pl_plotly$x$attrs, function(attr){
+      is.null(attr$name) || attr$name != shapeId
+    })
+    pl_plotly$x$attrs <- attrs
+    return(pl_plotly)
+  }
+
+  rm_trackers_proxy <- function(proxy){
+    # Remove last trace from proxy
+    # TODO: find a way to reference shapeId, or guarantee the tracker
+    # is the last trace somehow.
+    plotly::plotlyProxyInvoke(proxy, "deleteTraces", list(as.integer(-1)))
+  }
+
   if(isFALSE(toggle)){
+    # Disable loop trackers
     if(isTRUE(is_valid_plotly)){
-      # remove tracker attribute
-      attrs <- purrr::keep(pl_plotly$x$attrs, function(attr){
-        is.null(attr$name) || attr$name != shapeId
-      })
-      pl_plotly$x$attrs <- attrs
-      return(pl_plotly)
+      rm_trackers_plotly(pl_plotly, shapeId)
     }else{
-      # Remove trace from proxy
-      # TODO: find a way to reference shapeId
-      trace <- ifelse(channel_type != "stereo", 4, 7)
-      plotly::plotlyProxyInvoke(proxy, "deleteTraces", list(as.integer(trace)))
+      rm_trackers_proxy(proxy)
     }
   }else{
+    # Add or modify loop trackers
     checkmate::assert_numeric(x_range, len = 2)
     checkmate::assert_numeric(y_val, len = 1)
 
@@ -686,23 +658,36 @@ toggle_loop_trackers <- function(
     y_val_pl <- ifelse(shiny::isRunning(), y_val*0.8, y_val*1.1)
     y_val_pl <- ifelse(channel_type != "stereo", y_val_pl, y_val_pl*0.8)
 
-    loop_data <- tibble::tibble(x = x_range, y = rep(y_val_pl, 2))
+    loop_data <- tibble::tibble(
+      x = x_range,
+      x_time = format_seconds(x_range*60, as_date = TRUE, as_char = TRUE),
+      y = rep(y_val_pl, 2)
+    )
 
     # Make shapes
     markers <- list(symbol = "arrow-up", size = 30, color = c("green", "red"))
     y_axis <- ifelse(channel_type != "stereo", "y1", "y2")
 
+    # Handle updating
+    if(isTRUE(update)){
+      if(isTRUE(is_valid_plotly)){
+        rm_trackers_plotly(pl_plotly, shapeId)
+      }else{
+        rm_trackers_proxy(proxy)
+      }
+    }
+
     if(isTRUE(is_valid_plotly)){
       # add loop trackers to `plotly` object
-      pl_plotly <- pl_plotly %>% plotly::add_markers(
-        data = loop_data, marker = markers, name = shapeId,
+      pl_plotly %>% plotly::add_markers(
+        data = loop_data, x = ~ as.POSIXct(x_time), y = ~y,
+        marker = markers, name = shapeId,
         xaxis = "x1", yaxis = y_axis, hoverinfo = "none"
       )
-      return(pl_plotly)
     }else{
-      # add or update loop trackers in `renderPlotly` object
+      # add loop trackers in `renderPlotly` object
       plotly::plotlyProxyInvoke(proxy, "addTraces", list(list(
-        x = loop_data$x,
+        x = loop_data$x_time,
         y = loop_data$y,
         xaxis = "x1",
         yaxis = y_axis,

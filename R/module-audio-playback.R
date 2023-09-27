@@ -292,7 +292,7 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
         # Get proxy reference
         proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = FALSE)
         # Update the red line's position (in minutes)
-        add_play_tracker_line(proxy = proxy, x_val = seek_value/60)
+        add_play_tracker_line(proxy = proxy, x_val = seek_value)
 
         # Loop handling
         # Set tolerance (sec) for loop (should be larger than `seek_ping_rate`)
@@ -330,35 +330,30 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       observeEvent(input$loop_range, {
         if(isTRUE(.rv_editing$create_loop)){
           # Get proxy reference
-          proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
+          proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = FALSE)
           channel_type <- shiny::req(input$channel_type)
 
-          # Move loop (in seconds) - delete the old one for now
-          toggle_loop_trackers(proxy = proxy, toggle = FALSE,
-                               channel_type = channel_type)
-          x_range <- as.numeric(input$loop_range)
+          # Move loop (in minutes) - deletes the old one
+          x_range <- as.numeric(input$loop_range)/60
           y_val <- min(get_audio_limits(shiny::req(audio_obj())))
-          toggle_loop_trackers(proxy = proxy, toggle = TRUE,
+          toggle_loop_trackers(proxy = proxy, toggle = TRUE, update = TRUE,
                                channel_type = channel_type,
-                               x_range = x_range/60, y_val = y_val)
+                               x_range = x_range, y_val = y_val)
           .rv_loop$start <- min(x_range)
           .rv_loop$end <- max(x_range)
         }
       }, priority = 1)
 
-      # Update playback when start time is moved or `dynamic_loop` is set
+      # Update playback when start time is moved if:
+      # audio is not playing -or- `dynamic_loop` is set
       observeEvent(.rv_loop$start, {
         reset_loop <- input$dynamic_loop || isFALSE(input$howler_playing)
         if(isTRUE(.rv_editing$create_loop) && reset_loop){
-          # Get proxy reference
-          proxy <-  plotly::plotlyProxy("audio_plot", session, deferUntilFlush = TRUE)
-          channel_type <- shiny::req(input$channel_type)
           # Update play tracking to start at beginning of loop
           x_range <- as.numeric(input$loop_range)
           seekHowl("howler", x_range[1])
         }
       })
-
 
       return(
         list(
