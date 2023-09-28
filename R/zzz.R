@@ -1,6 +1,5 @@
 
-# TODO: revisit if this is preferable over .onLoad for some checks
-# potentially loading python packages?
+
 .onAttach <- function(libname, pkgname) {
   # Make sure python is installed:
   py_installed <- python_is_installed()
@@ -22,5 +21,18 @@
     } else {
       packageStartupMessage("miniconda is required for this Package. You should run `reticulate::install_miniconda()` before proceeding")
     }
+  }
+
+  # TODO: potentially load required python packages
+
+  # Check audio player is set
+  wav_player <- set_audio_player()
+  if (!is.null(wav_player)) {
+    packageStartupMessage(glue::glue("Detected Audio Player: '{wav_player}'"))
+    processx::process$new("say", args = c("-v", "Daniel", "'Loading Package. Welcome to songClip.'"))
+  }else{
+    cli::cli_div(theme = list(span.emph = list(color = "red"), span.code = list(color = "blue")))
+    cli::cli_warn(c("!" = "{.emph Could not find audio player}. Some features may be disabled.",
+                    ">" = "You can set the path to your local audio player via {.code tuneR::setWavPlayer('path/to/player')}"))
   }
 }

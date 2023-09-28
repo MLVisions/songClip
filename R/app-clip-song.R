@@ -20,7 +20,30 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
   ui <-
     shinydashboardPlus::dashboardPage(
       header = shinydashboardPlus::dashboardHeader(
-        title = "Audio Tuner"
+        title = "Audio Tuner",
+        # Right UI
+        shinydashboard::dropdownMenu(
+          type = "notifications",
+          headerText = strong("Text to Speech"),
+          icon = icon("microphone-lines"),
+          badgeStatus = NULL,
+          tags$li(
+            br(),
+            fluidRow(
+              column(
+                width = 10, offset = 1, align = "center",
+                textInput(
+                  "text_to_speech", label = NULL, placeholder = "Type something..."
+                ),
+                shinyWidgets::actionBttn(
+                  "speak_btn", "Speak", size = "md",
+                  style = "bordered", color = "primary", icon = icon("comment")
+                )
+              )
+            ),
+            br()
+          )
+        )
       ),
       sidebar = shinydashboardPlus::dashboardSidebar(
         collapsed = TRUE,
@@ -30,6 +53,8 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
       ),
       body = shinydashboard::dashboardBody(
         tags$head(
+          # Set up shinyjs
+          shinyjs::useShinyjs(),
           # nice closing message
           shinydisconnect::disconnectMessage(
             text = "App has Disconnected. Try refreshing if this was unexpected."
@@ -51,13 +76,36 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
           )
         )
       ),
-      controlbar = shinydashboardPlus::dashboardControlbar(),
       title = "DashboardPage"
     )
 
 
   server <- function(input, output, session) {
 
+    # TODO: use shinyjs to disable widgets requiring a local audio player if
+    # tuneR::getWavPlayer() is not set. Add alert and potentially allow user to
+    # search for it (low priority)
+    observe({
+      audio_player_set <-
+        !is.null(tuneR::getWavPlayer()) &&
+        nzchar(tuneR::getWavPlayer()) &&
+        fs::file_exists(tuneR::getWavPlayer())
+
+      if(isFALSE(audio_player_set)){
+        shinyjs::hide("speak_btn")
+        shinyjs::disable("text_to_speech")
+      }
+    })
+
+    # Text to speech
+    observeEvent(input$speak_btn, {
+      to_speak <- shiny::req(input$text_to_speech)
+      processx::process$new(
+        "say", args = c("-v", "Daniel", glue::glue("'{to_speak}'"))
+      )
+    })
+
+    # Core app
     tune_audio_server("tune_audio", audio_dir_init = getOption("songClip.audio_dir"))
 
   }

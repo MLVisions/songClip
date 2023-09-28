@@ -96,20 +96,6 @@ tune_audio_server <- function(id, audio_dir_init) {
 
     imported_audio <- import_audio_server("import_audio", audio_dir = audio_dir_init)
 
-    # TODO: use shinyjs to disable play button if tuneR::getWavPlayer() is not set
-    # and local audio player is being used. Add alert and potentially allow user to
-    # search for it (low priority)
-    observe({
-      audio_player_set <-
-        !is.null(tuneR::getWavPlayer()) &&
-        nzchar(tuneR::getWavPlayer()) &&
-        fs::file_exists(tuneR::getWavPlayer())
-
-      if(isFALSE(audio_player_set)){
-        # shinyjs::disable()
-      }
-    })
-
     # Set audio choices with their info based on audio library
     observeEvent(imported_audio$audio_choices(), {
       audio_choices <- shiny::req(imported_audio$audio_choices())

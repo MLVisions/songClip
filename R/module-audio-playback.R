@@ -13,6 +13,8 @@ audio_playpack_ui <- function(id) {
       bg_color = "#252525",
       easy_col = TRUE,
       style = "padding-bottom: 1em;",
+      # TODO: make this work with plotly objects (fade into background)
+      # style = "background: linear-gradient(to right, transparent, #252525, #252525, #252525, transparent);",
       # Inputs
       no_margin_row(
         color = "black",

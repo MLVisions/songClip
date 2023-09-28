@@ -9,18 +9,8 @@ utils::globalVariables(".rs.invokeShinyWindowExternal")
 utils::globalVariables(".data")
 
 
-.onLoad <- function(libname, pkgname){
+# .onLoad <- function(libname, pkgname){}
 
-  # Check audio player is set
-  wav_player <- set_audio_player()
-  if (!is.null(wav_player)) {
-    packageStartupMessage(glue::glue("Detected Audio Player: '{wav_player}'"))
-  }else{
-    cli::cli_div(theme = list(span.emph = list(color = "red"), span.code = list(color = "blue")))
-    cli::cli_warn(c("!" = "{.emph Could not find audio player}",
-                    ">" = "Please set the path to your audio player via {.code tuneR::setWavPlayer('path/to/player')}"))
-  }
-}
 
 #' Adds the content of www to src_name for use in the shiny app
 #'

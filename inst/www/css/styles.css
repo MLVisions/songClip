@@ -859,34 +859,34 @@ label > input[type='checkbox']:checked + *::after {
 .folder-path {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 18px;
-  color: #086A87;
-  background-color: #f9f9f9; /* Light gray background color */
+  color: #fff;
+  background-color: #086A87;
   padding: 10px 15px;
   border: 2px solid #086A87;
   border-radius: 10px; /* Rounded corners */
   display: inline-block;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Shadow effect */
   text-decoration: none; /* Remove underlines if used as a link */
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.4s, color 0.4s;
 }
 
 .folder-path-small {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
-  color: #086A87;
-  background-color: #f9f9f9;
+  color: #fff;
+  background-color: #086A87;
   padding: 1px 5px 1px 5px;
   border: 2px solid #086A87;
   border-radius: 10px;
   display: inline-block;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   text-decoration: none;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.4s, color 0.4s;
 }
 
 .folder-path:hover, .folder-path-small:hover {
-  background-color: #086A87;
-  color: #fff;
+  background-color: #f9f9f9; /* Light gray background color */
+  color: #086A87;
   text-decoration: none;
 }
 
