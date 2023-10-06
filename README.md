@@ -5,9 +5,14 @@
 
 ## Running the app
 
-You can run the app by running `songClip::clip_song()`. You can specify
-an initial audio library, as well as decide whether you want to run the
-app in a browser or not (defaulting to the `Rstudio` Viewer).
+You can run the app by running the following lines. You can specify an
+initial audio library, as well as decide whether you want to run the app
+in a browser or not (defaulting to the `Rstudio` Viewer).
+
+``` r
+library(songClip)
+clip_song(audio_dir = "~/Desktop/audio_library/", browser = TRUE)
+```
 
 ## Current Features
 
@@ -61,7 +66,9 @@ git clone git@github.com:MLVisions/songClip.git
 
 Run one the following to download all the packages:
 
-1.  If you have `pkgr` installed, run the following in your terminal:
+1.  If you have
+    <a href='https://github.com/metrumresearchgroup/pkgr' target='_blank' rel='noopener noreferrer'>pkgr</a>
+    installed, run the following in your terminal:
 
     ``` bash
     pkgr install

@@ -50,7 +50,7 @@ format_seconds <- function(time, as_date = TRUE, as_char = FALSE){
     op <- options(digits.secs = 6)
     on.exit(options(op), add = TRUE)
     date <- as.POSIXct(time, origin = as.Date("1970-01-01"), tz='UTC',
-               format = "%Y-%m-%d %H:%M:%OS")
+                       format = "%Y-%m-%d %H:%M:%OS")
     if(as_char) as.character(date) else date
   }else{
     sprintf("%02d:%02.0f", time %/% 60, time %% 60)
@@ -154,3 +154,12 @@ easy_row <- function(
   }
 }
 
+
+
+make_link <- function(text, url){
+  link <- glue::glue("<a href='{url}'
+             target='_blank' rel='noopener noreferrer'>{text}</a>") %>%
+    as.character() %>% gsub("\n", " ", .)
+
+  htmltools::HTML(link)
+}
