@@ -1,7 +1,6 @@
 /* Volume Slider */
-input[type=range].FFA500 {
-  width: 7rem;
-  place-self: center;
+input[type=range].howler-volume-slider {
+  width: 12rem;
 }
 
 /* Seek Slider */
