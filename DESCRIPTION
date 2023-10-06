@@ -4,14 +4,15 @@ Version: 0.0.0.9000
 Authors@R: 
     c(
       person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", role = c("aut", "cre")),
-      person(given = "Krzysztof", family = "Mazur", email = "krzysztofm321@gmail.com", role = c("aut"))
+      person(given = "Krzysztof", family = "Mazur", email = "krzysztofm321@gmail.com", role = c("aut")),
+      person("Ashley", "Baldry", email = "arbaldry91@gmail.com", role = "aut", comment = "foundation of howler widget"),
+      person("James", "Simpson", role = "aut", comment = "Creator of howler.js")
     )
 Description: R package (with python dependencies) for cropping & tuning songs.
 License: MIT + file LICENSE
 Depends:
     R (>= 3.5),
 Imports: 
-    audio,
     av,
     bslib,
     cli (>= 3.3.0),
@@ -23,17 +24,21 @@ Imports:
     grDevices,
     here,
     htmltools,
+    htmlwidgets,
     magrittr (>= 2.0.3),
     purrr,
     plotly (>= 4.9.2),
+    processx,
     readr,
     reticulate,
     rlang,
     shiny (>= 1.6.0),
+    shinyalert,
     shinycssloaders,
     shinydashboard,
     shinydashboardPlus (>= 2.0.0),
-    shinyFiles,
+    shinydisconnect,
+    shinyFiles (>= 0.9.0),
     shinyjs,
     shinyWidgets,
     signal,

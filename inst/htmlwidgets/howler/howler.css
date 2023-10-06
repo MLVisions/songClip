@@ -1,0 +1,182 @@
+/* Volume Slider */
+input[type=range].FFA500 {
+  width: 7rem;
+  place-self: center;
+}
+
+/* Seek Slider */
+input[type=range].howler-seek-slider {
+  place-self: center;
+}
+
+
+.howler-module-container .howler-current-track {
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding-bottom: 0.5rem;
+  margin-top: -0.5rem;
+}
+
+.howler-module-container input[type=range] {
+  height: 0.4rem;
+  cursor: pointer;
+}
+
+.howler-module-container input[type=range].howler-seek-slider {
+  margin: 5px 0 12px 0;
+}
+
+.howler-module-settings {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  height: 20px;
+}
+
+.howler-module-volume {
+  display: flex;
+  align-items: stretch;
+}
+
+/* .howler-module with Blue Background */
+.howler-module {
+  border-radius: 2rem;
+  background-color: #252525; /* Blue background color */
+  padding: 1.5rem 1rem;
+}
+
+.howler-basic-module {
+  border-radius: 3rem;
+}
+
+/* .howler-module .howler-button */
+.howler-module .howler-button {
+  border: 0;
+  border-radius: 50%;
+  padding: 0.4rem 0.6rem;
+  color: #111111;
+  background-color: #FFA500; /* Yellow-Orange background color */
+}
+
+/* .howler-module .howler-button Hover*/
+.howler-module .howler-button:hover {
+  border-radius: 50%;
+  background-color: #FFD700; /* Lighter Yellow-Orange background color on hover */
+}
+
+.howler-module-buttons {
+  font-size: 1.1rem;
+}
+
+.howler-module .howler-module-buttons .howler-button {
+  padding: 0.4rem 0.8rem;
+  vertical-align: text-top;
+}
+
+.howler-module .howler-module-duration {
+  flex-direction: row;
+  display: flex;
+  place-content: center;
+  min-width: 100px;
+}
+
+.howler-module .howler-module-duration span {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.howler-basic-module .howler-module-seek {
+  padding-top: 0.6rem;
+}
+
+.howler-module .howler-volumetoggle-button {
+  font-size: 1.4rem;
+  margin-right: 0.5em;
+}
+
+/* .howler-module Volume Slider Transition */
+.howler-basic-module .howler-module-volume .howler-volume-slider {
+  transform: scale(0);
+  transition: 0.2s;
+  width: 0;
+}
+
+/* .howler-module Volume Container Hover */
+.howler-basic-module .howler-module-volume:hover,
+.howler-basic-module .howler-module-volume:focus-within {
+  background-color: #FFA500;
+  border-radius: 1.5rem;
+  padding: 0.2rem 0.2rem;
+  display: inline-flex;
+  z-index: 10;
+}
+
+/* .howler-module Volume Slider Hover */
+.howler-basic-module .howler-module-volume:hover .howler-button,
+.howler-basic-module .howler-module-volume:focus-within .howler-button {
+  background-color: #FFD700;
+}
+
+.howler-basic-module .howler-module-volume:hover .howler-volume-slider,
+.howler-basic-module .howler-module-volume:focus-within .howler-volume-slider {
+  transform: scale(1);
+  transition: 0.2s;
+  width: 6rem;
+  margin-left: 1rem;
+}
+
+
+/* Slider settings - gradient background defined in howler.js*/
+.howler-module-container input[type=range] {
+  -webkit-appearance: none;
+  border: solid 1px #F0A500;
+  border-radius: 14px;
+  height: 5px;
+  margin-top: 0.65em;
+}
+
+.howler-module-container input[type=range]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+}
+
+.howler-module-container input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  transform: scale(0);
+  transition: 0.1s;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: #FFD700;
+  margin-top: -1px;
+}
+
+.howler-module-container input[type=range]:hover::-webkit-slider-thumb,
+.howler-module-container input[type=range]:active::-webkit-slider-thumb {
+  transform: scale(0.8);
+  transition: 0.1s;
+}
+
+.howler-module-container input[type=range]::-moz-range-track {
+  background-color: #F0A500;
+  border: #F0A500 1px solid;
+  border-radius: 3px;
+}
+
+.howler-module-container input[type=range]::-moz-range-progress {
+  background-color: #F0A500;
+}
+
+.howler-module-container input[type=range]::-moz-range-thumb {
+  transform: scale(0);
+  transition: 0.1s;
+  padding: 0;
+  background-color: #F0A500;
+}
+
+.howler-module-container input[type=range]:hover::-moz-range-thumb,
+.howler-module-container input[type=range]:active::-moz-range-thumb {
+  transform: scale(0.8);
+  transition: 0.1s;
+}
+

@@ -2,6 +2,9 @@
 % Please edit documentation in R/plot-wave-channel.R
 \name{plot_wave_audio}
 \alias{plot_wave_audio}
+\alias{plot_wave_channel_fancy}
+\alias{plot_wave_channel_base}
+\alias{process_wave_channel}
 \title{Plot wave channels of audio file}
 \usage{
 plot_wave_audio(
@@ -9,16 +12,49 @@ plot_wave_audio(
   source = "wave_audio",
   type = c("left", "right", "stereo"),
   format = c("fancy", "base"),
+  include_info = FALSE,
+  range_slider = TRUE,
+  inner_plot = TRUE,
   hollow = FALSE,
   simplify = TRUE,
-  nr = 2500,
-  include_info = TRUE,
+  nr = 4000,
   plot_title = NULL,
   xunit = c("Time", "Samples"),
   ylim = NULL,
   xlab = NULL,
   ylab = NULL
 )
+
+plot_wave_channel_fancy(
+  audio_data,
+  audio_params,
+  source = NULL,
+  ylim = NULL,
+  xlab = "Time",
+  ylab = "Audio Channel",
+  hollow = FALSE,
+  show_y_axis = FALSE,
+  line_color = "#1b5fa6",
+  ft_color = "lightgrey",
+  bg_color = "#252525",
+  range_slider = TRUE,
+  inner_plot = TRUE,
+  inner_line_color1 = "#4d91c8",
+  inner_line_color2 = "#75b8ed"
+)
+
+plot_wave_channel_base(
+  audio_data,
+  audio_params,
+  ylim = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  plot_title = NULL,
+  axes = TRUE,
+  center = TRUE
+)
+
+process_wave_channel(audio_obj, xunit = "Time", simplify = TRUE, nr = 2500)
 }
 \arguments{
 \item{audio_obj}{a \code{tuneR} audio object.}
@@ -33,14 +69,18 @@ See \code{?plotly::event_data} for more details.}
 \item{format}{format type. \code{"fancy"} is experimental and will eventually be
 the main one used within the app.}
 
+\item{include_info}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, append information
+about the audio file.}
+
+\item{range_slider}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add a \code{\link{rangeslider}}.}
+
+\item{inner_plot}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add an inner plot consisting of two lines.}
+
 \item{hollow}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, make the plot hollow. Only usable for \code{"fancy"} plots.}
 
 \item{simplify}{Logical (\code{TRUE}/\code{FALSE}). Whether to simplify large audio files. Defaults to \code{TRUE}.}
 
-\item{nr}{noise reduction. Only takes affect if \code{simplify = TRUE}.}
-
-\item{include_info}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, append information
-about the audio file.}
+\item{nr}{Number of lines to draw for simplified plots. Only takes affect if \code{simplify = TRUE}.}
 
 \item{plot_title}{a title for the plot (optional).}
 
@@ -51,35 +91,74 @@ about the audio file.}
 \item{xlab}{label for x-axis. Defaults to \code{xunit} if not set.}
 
 \item{ylab}{label for y-axis. Will be determined if not set.}
+
+\item{audio_data}{Audio data returned from \code{process_wave_channel}.}
+
+\item{audio_params}{List of audio parameters returned from \code{process_wave_channel}.}
+
+\item{show_y_axis}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, show the y-axis (limits only).}
+
+\item{line_color}{line color}
+
+\item{ft_color}{font color}
+
+\item{bg_color}{background color}
+
+\item{inner_line_color1}{line color of inner line 1}
+
+\item{inner_line_color2}{line color of inner line 2 (smallest of the three)}
+
+\item{axes}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, add axes to the plot}
+
+\item{center}{Logical (\code{TRUE}/\code{FALSE}). If \code{TRUE}, center the plot}
 }
 \value{
 a \code{plotly} object if \code{format = "fancy"}. Otherwise \code{NULL} invisibly
 }
 \description{
 Plot wave channels of audio file
+
+New plotting method
+
+Original plotting method
+
+Process Wave channel
 }
 \details{
-plot_wave_channel and plot_wave_audio were inspired by
-tuneR's plotting method:
-https://github.com/cran/tuneR/blob/master/R/plot-Wave.R
-We want more control, the ability to plot the average (versus left and right),
-and an interactive plot
+\code{plot_wave_channel_base} and \code{process_wave_channel} were inspired by
+\code{tuneR}'s plotting method for \code{wave} files:
+\verb{https://github.com/cran/tuneR/blob/master/R/plot-Wave.R}
+
+We want more control over the visual, the ability to plot the different wave channels,
+and for the plot to be interactive, so this code had to be pulled out and refactored.
+\code{plot_wave_channel_fancy} uses \code{plotly} to create a much nicer plot with additional
+features.
 
 Not sure if \code{source} will be supported for \code{stereo} types
 }
 \examples{
+
 \dontrun{
+# Read in audio file with `tuneR`
 audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
+# Plot variations
 plot_wave_audio(audio_obj)
-
+plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 plot_wave_audio(audio_obj, type = "right")
-
 plot_wave_audio(audio_obj, type = "stereo")
+plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
 
-# Experimental
-plot_wave_audio(audio_obj, format = "fancy")
+# step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
+wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+plot_wave_channel_fancy(
+    audio_data = wave_channel$audio_data,
+    audio_params = wave_channel$params
+)
 }
 
-
 }
+\seealso{
+\code{\link[=add_play_tracker_line]{add_play_tracker_line()}}
+}
+\keyword{internal}

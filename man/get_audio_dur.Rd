@@ -2,17 +2,24 @@
 % Please edit documentation in R/process-mp3.R
 \name{get_audio_dur}
 \alias{get_audio_dur}
-\title{Get duration of audio file}
+\alias{get_audio_limits}
+\title{Get duration and limits of audio file}
 \usage{
 get_audio_dur(audio_obj)
+
+get_audio_limits(audio_obj)
 }
 \arguments{
 \item{audio_obj}{a \code{tuneR} audio object}
 }
 \value{
 a vector of \code{c(0, duration)}
+
+a vector y-axis limits
 }
 \description{
-Get duration of audio file
+Get duration and limits of audio file
+
+Get y-axis limits of audio wave channel
 }
 \keyword{internal}

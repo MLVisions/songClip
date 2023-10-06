@@ -12,19 +12,7 @@ download_youtube <- function(url = "https://youtu.be/F8Zt3mYlOqU", filename = "t
 
 
 
-#' Plot the audio bins (looks cool)
-#'
-#' @param mp3_file file path to an MP3 file
-#'
-#' @details
-#' This takes a while for long videos
-plot_mp3 <- function(mp3_file){
-  pcm_data <- av::read_audio_bin(mp3_file)
-  plot(pcm_data, type = 'l')
-}
-
-
-#' Get duration of audio file
+#' Get duration and limits of audio file
 #'
 #' @param audio_obj a `tuneR` audio object
 #'
@@ -41,6 +29,22 @@ get_audio_dur <- function(audio_obj){
   return(c(0, duration))
 }
 
+
+#' Get y-axis limits of audio wave channel
+#' @rdname get_audio_dur
+#'
+#'
+#' @returns a vector y-axis limits
+#' @keywords internal
+get_audio_limits <- function(audio_obj){
+  ylim <- range(audio_obj@left, audio_obj@right)
+  if(audio_obj@bit == 8)
+    ylim <- c(-1, 1) * max(abs(ylim - 127)) + 127
+  else
+    ylim <- c(-1, 1) * max(abs(ylim))
+
+  return(ylim)
+}
 
 
 #' Crop mp3 file to specified limits

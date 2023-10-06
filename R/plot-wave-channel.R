@@ -10,11 +10,11 @@
 #' @param type channel to plot. One of `c("left", "right", "stereo")`.
 #' @param format format type. `"fancy"` is experimental and will eventually be
 #'        the main one used within the app.
-#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow. Only usable for `"fancy"` plots.
-#' @param simplify Logical (`TRUE`/`FALSE`). Whether to simplify large audio files. Defaults to `TRUE`.
-#' @param nr noise reduction. Only takes affect if `simplify = TRUE`.
 #' @param include_info Logical (`TRUE`/`FALSE`). If `TRUE`, append information
 #'        about the audio file.
+#' @param range_slider Logical (`TRUE`/`FALSE`). If `TRUE`, add a \code{\link{rangeslider}}.
+#' @param simplify Logical (`TRUE`/`FALSE`). Whether to simplify large audio files. Defaults to `TRUE`.
+#' @param nr Number of lines to draw for simplified plots. Only takes affect if `simplify = TRUE`.
 #' @param plot_title a title for the plot (optional).
 #' @param xunit unit for x-axis. One of `c("Time", "Samples")`.
 #' @param ylim y-limit. Will be determined if not set.
@@ -22,29 +22,38 @@
 #' @param ylab label for y-axis. Will be determined if not set.
 #'
 #' @details
-#' plot_wave_channel and plot_wave_audio were inspired by
-#' tuneR's plotting method:
-#' https://github.com/cran/tuneR/blob/master/R/plot-Wave.R
-#' We want more control, the ability to plot the average (versus left and right),
-#' and an interactive plot
+#' `plot_wave_channel_base` and `process_wave_channel` were inspired by
+#' `tuneR`'s plotting method for `wave` files:
+#' `https://github.com/cran/tuneR/blob/master/R/plot-Wave.R`
+#'
+#' We want more control over the visual, the ability to plot the different wave channels,
+#' and for the plot to be interactive, so this code had to be pulled out and refactored.
+#' `plot_wave_channel_fancy` uses `plotly` to create a much nicer plot with additional
+#' features.
 #'
 #' Not sure if `source` will be supported for `stereo` types
 #'
-#'
+#' @seealso [add_play_tracker_line()]
 #' @examples
+#'
 #' \dontrun{
+#' # Read in audio file with `tuneR`
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
+#' # Plot variations
 #' plot_wave_audio(audio_obj)
-#'
+#' plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 #' plot_wave_audio(audio_obj, type = "right")
-#'
 #' plot_wave_audio(audio_obj, type = "stereo")
+#' plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
 #'
-#' # Experimental
-#' plot_wave_audio(audio_obj, format = "fancy")
+#' # step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
+#' wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+#' plot_wave_channel_fancy(
+#'     audio_data = wave_channel$audio_data,
+#'     audio_params = wave_channel$params
+#' )
 #' }
-#'
 #'
 #' @importFrom graphics par title mtext segments axis axTicks
 #' @return a `plotly` object if `format = "fancy"`. Otherwise `NULL` invisibly
@@ -53,10 +62,12 @@ plot_wave_audio <- function(audio_obj,
                             source = "wave_audio",
                             type = c("left", "right", "stereo"),
                             format = c("fancy", "base"),
+                            include_info = FALSE,
+                            range_slider = TRUE,
+                            inner_plot = TRUE,
                             hollow = FALSE,
                             simplify = TRUE,
-                            nr = 2500,
-                            include_info = TRUE,
+                            nr = 4000,
                             plot_title = NULL,
                             xunit = c("Time", "Samples"),
                             ylim = NULL,
@@ -88,11 +99,7 @@ plot_wave_audio <- function(audio_obj,
 
   # ylim
   if(is.null(ylim)){
-    ylim <- range(audio_obj@left, audio_obj@right)
-    if(audio_obj@bit == 8)
-      ylim <- c(-1, 1) * max(abs(ylim - 127)) + 127
-    else
-      ylim <- c(-1, 1) * max(abs(ylim))
+    ylim <- get_audio_limits(audio_obj)
   }
 
   ### Multiple Audio Channels ###
@@ -150,6 +157,12 @@ plot_wave_audio <- function(audio_obj,
 
       # Store plots as list of plotly objects
       plots <- purrr::pmap(inputs, function(audio_obj_i, ylab_i){
+        # Only add range_slider to one of the plots if set
+        index <- grep(ylab_i, unlist(inputs$ylab_i))
+        range_slider_i <- ifelse(
+          index == length(inputs$audio_obj_i), range_slider, FALSE
+        )
+
         wave_channel <- process_wave_channel(
           audio_obj_i,
           xunit = xunit,
@@ -162,12 +175,12 @@ plot_wave_audio <- function(audio_obj,
           audio_params = wave_channel$params,
           source = source,
           hollow = hollow,
-          ylab = ylab_i, ylim = ylim,
-          plot_title = NULL, xlab = xlab
+          ylab = ylab_i, xlab = xlab, ylim = ylim,
+          range_slider = range_slider_i
         )
       })
 
-      # This wont work anymore
+      # Create subplot
       pl <- plotly::subplot(plots, shareY = TRUE, shareX = TRUE, nrows = 2)
     }
   }else{
@@ -214,11 +227,12 @@ plot_wave_audio <- function(audio_obj,
         audio_params = wave_channel$params,
         source = source,
         hollow = hollow,
-        ylab = ylab, ylim = ylim,
-        plot_title = plot_title, xlab = xlab
+        ylab = ylab, xlab = xlab, ylim = ylim,
+        range_slider = range_slider
       )
     }
   }
+
 
   # Optionally Append Info
   if(isTRUE(include_info)){
@@ -236,15 +250,19 @@ plot_wave_audio <- function(audio_obj,
         line = (if(use_stereo) 5 else 2.5)
       )
     }else{
-      # For some reason, the margins are intepreted differently when run in
-      # a shiny environment
-      y_shift <- ifelse(shiny::isRunning(), -0.6, -0.3)
+      # Set starting location (bottom of plot)
+      y_shift <- -0.2
+      # Adjust for range slider
+      y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.15, y_shift)
+      # Adjust for shiny environment
+      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.09, y_shift)
+
       pl <- pl %>% plotly::layout(
         annotations = list(
           x = 1, y = y_shift, text = caption_txt,
           showarrow = F, xref='paper', yref='paper',
           xanchor='right', yanchor='auto', xshift=0, yshift=0,
-          font=list(size=13)
+          font = list(size=11)
         )
       )
     }
@@ -264,70 +282,130 @@ plot_wave_audio <- function(audio_obj,
 
 #' New plotting method
 #'
-#' @inheritParams plot_wave_channel_base
-#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow
+#' @param audio_data Audio data returned from `process_wave_channel`.
+#' @param audio_params List of audio parameters returned from `process_wave_channel`.
+#' @param line_color line color
+#' @param ft_color font color
+#' @param bg_color background color
+#' @param inner_plot Logical (`TRUE`/`FALSE`). If `TRUE`, add an inner plot consisting of two lines.
+#' @param hollow Logical (`TRUE`/`FALSE`). If `TRUE`, make the plot hollow. Only usable for `"fancy"` plots.
+#' @param inner_line_color1 line color of inner line 1
+#' @param inner_line_color2 line color of inner line 2 (smallest of the three)
+#' @param show_y_axis Logical (`TRUE`/`FALSE`). If `TRUE`, show the y-axis (limits only).
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 plot_wave_channel_fancy <- function(audio_data,
                                     audio_params,
                                     source = NULL,
                                     ylim = NULL,
-                                    xlab = NULL,
-                                    ylab = NULL,
-                                    plot_title = NULL,
-                                    axes = TRUE,
+                                    xlab = "Time",
+                                    ylab = "Audio Channel",
                                     hollow = FALSE,
                                     show_y_axis = FALSE,
-                                    line_color = "#ADD8E6",
+                                    line_color = "#1b5fa6",
                                     ft_color = "lightgrey",
-                                    bg_color = "#252525"
+                                    bg_color = "#252525",
+                                    range_slider = TRUE,
+                                    inner_plot = TRUE,
+                                    inner_line_color1 = "#4d91c8",
+                                    inner_line_color2 = "#75b8ed"
 ){
 
-  n_points <- length(unique(audio_data$x))
-  duration <- audio_params$duration/60 # convert to minutes
+  # Durations for fixing the x-axes
+  duration_min <- audio_params$duration/60
+  duration_min_date <- format_seconds(audio_params$duration, as_date = TRUE)
 
   # Group data
   group <- ifelse(isTRUE(hollow), "y_point", "line_group")
   pl_data <- audio_data %>%
     # convert to minutes
-    dplyr::mutate(x = .data$x/60) %>%
+    dplyr::mutate(
+      x = .data$x/60,
+      # Convert x-axis to {date:time} (date will be dropped later)
+      x_time = format_seconds(.data$x*60, as_date = TRUE)
+    ) %>%
+    dplyr::relocate("line_group", "y_point") %>%
     dplyr::group_by(!!sym(group))
+
 
   # font and styling
   t1 <- list(size = 15, color = ft_color)
+  ty <- list(size = 14, color = ft_color)
+  tx <- list(size = 18, color = ft_color)
   y_tick_vals <- if(isTRUE(show_y_axis)) ylim else NULL
   # Add unit if unchanged xlab and time
-  if(xlab == audio_params$xunit && xlab == "Time"){
+  if(!is.null(xlab) && xlab == audio_params$xunit && xlab == "Time"){
     xlab <- paste(xlab, "(minutes)")
   }
 
+  # set margin
+  slider_adjust <- ifelse(isTRUE(range_slider), 10, 40)
+  margin <- if(shiny::isRunning()){
+    list(b = 50 + slider_adjust, l = 70, r = 10)
+  }else{
+    list(b = 80 + slider_adjust, l = 70, r = 10)
+  }
+
   # Core plot
-  pl <- plotly::plot_ly(pl_data, x = ~x, y = ~y, source = source) %>%
-    plotly::add_lines( color = I(line_color))
+  pl <- plotly::plot_ly(pl_data, x = ~x_time, y = ~y, source = source) %>%
+    plotly::add_lines(color = I(line_color))
+
+  # Add Inner plot (looks nicer)
+  if(isTRUE(inner_plot)){
+    pl_data_inner <- pl_data %>% dplyr::mutate(
+      y2 = .data$y/1.35,
+      y3 = .data$y/5.5
+    )
+    pl <- pl %>%
+      plotly::add_lines(data = pl_data_inner, y = ~y2, color = I(inner_line_color1)) %>%
+      plotly::add_lines(data = pl_data_inner, y = ~y3, color = I(inner_line_color2))
+  }
+
+
+  # Range slider
+  rangeslider <- if(isTRUE(range_slider)){
+    list(visible = TRUE, thickness = 0.125, range = range(pl_data$x_time),
+         yaxis = list(range = range(pl_data$y), rangemode = "fixed"))
+  }else{
+    FALSE
+  }
 
   # Format
   pl %>%
     plotly::layout(
+      # y-axis
       yaxis = list(
-        range = ylim*2,
-        fixedrange = TRUE, title = ylab,
+        title = list(text = ylab, font = ty),
+        range = ylim*1.1, # increase data padding by 10%
+        fixedrange = TRUE,
         tickvals = y_tick_vals,
         zerolinecolor = "black",
-        tickfont = list(size = 18)
+        tickfont = list(size = 15)
       ),
+      # main x-axis (date)
       xaxis = list(
-        title = xlab,
-        range = duration
+        title = list(text = xlab, font = tx),
+        type = "date",
+        range = duration_min_date,
+        side = "bottom",
+        anchor = "y",
+        showgrid  = TRUE,
+        showticklabels = TRUE,
+        rangeslider = rangeslider,
+        tickfont = list(size = 12),
+        # Format as {minutes:seconds}
+        tickformat="%M:%S" #  add \n(%L ms) to show milliseconds (looks ugly)
       ),
       # styling
       font = t1,
       paper_bgcolor = bg_color,
       plot_bgcolor = bg_color,
       # margin
-      margin = list(pad = 30, b = 130, t = 80),
+      margin = margin,
       # Legend
       showlegend = FALSE
-    ) %>% config_plotly()
+    ) %>% config_plotly(edit_shapes = FALSE)
 }
 
 
@@ -336,10 +414,10 @@ plot_wave_channel_fancy <- function(audio_data,
 #'
 #' @param audio_data Audio data returned from `process_wave_channel`.
 #' @param audio_params List of audio parameters returned from `process_wave_channel`.
-#' @inheritParams plot_wave_audio
 #' @param axes Logical (`TRUE`/`FALSE`). If `TRUE`, add axes to the plot
 #' @param center Logical (`TRUE`/`FALSE`). If `TRUE`, center the plot
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 plot_wave_channel_base <- function(audio_data,
                                    audio_params,
@@ -387,8 +465,8 @@ plot_wave_channel_base <- function(audio_data,
 
 #' Process Wave channel
 #'
-#' @inheritParams plot_wave_audio
 #'
+#' @rdname plot_wave_audio
 #' @keywords internal
 process_wave_channel <- function(audio_obj,
                                  xunit = "Time",
@@ -421,11 +499,16 @@ process_wave_channel <- function(audio_obj,
     # Take whole channel
     index <- seq(along = channel)
     if(xunit == "Time") index <- index / audio_obj@samp.rate
-    audio_data <- tibble::tibble(x = index, y=channel)
-    # TODO: I got this warning, when I accidentally passed the right channel of an already left-filtered channel:
-    # i.e. new_channel <- tuneR::mono(audio_obj, "left")
-    # new_channel@right --> this makes sense, as it's empty. Might want to check for empty channels separately
-    dev_warning("Unexpected audio format (may just be short): plotting code may have to be adjusted")
+    audio_data <- tibble::tibble(x = index, y=channel, line_group = 1, y_point = "y")
+    if(l > 0.5e6){
+      warning("This is a large audio file and `simplify = FALSE` was passed. You may experience lags in the plot")
+    }
+    if(isTRUE(simplify)){
+      # TODO: I got this warning, when I accidentally passed the right channel of an already left-filtered channel:
+      # i.e. new_channel <- tuneR::mono(audio_obj, "left")
+      # new_channel@right --> this makes sense, as it's empty. Might want to check for empty channels separately
+      dev_warning("Unexpected audio format (may just be short): plotting code may have to be adjusted")
+    }
   }
 
   return(
@@ -441,6 +524,187 @@ process_wave_channel <- function(audio_obj,
     )
   )
 }
+
+
+
+#' Add vertical line to `plotly` object to track current play time
+#'
+#' Add vertical line to `plotly` returned from \code{\link{plot_wave_audio}}, to track
+#' current play time. This function can also be used to update its underlying data inside
+#' a shiny app by supplying a \code{\link{plotlyProxy}} object instead of `pl_plotly`.
+#'
+#' @param pl_plotly a `plotly` object. Only one of `proxy`, `pl_plotly` should be supplied.
+#' @param x_val x-axis coordinate for placing the vertical line (in seconds).
+#' @param proxy a \code{\link{plotlyProxy}} object used for updating the location of the tracker.
+#'        Only one of `proxy`, `pl_plotly` should be supplied.
+#' @param color color of the play tracker line
+#' @param shapeId id of the shape to be tracked. Required for updating the location.
+#'
+#' @seealso plot_wave_audio
+#'
+#'
+#' @examples
+#'
+#' \dontrun{
+#' # Read in audio file with `tuneR`
+#' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
+#'
+#' # Process wave file
+#' wave_channel <- process_wave_channel(audio_obj)
+#' pl_plotly <- plot_wave_channel_fancy(
+#'                audio_data = wave_channel$audio_data,
+#'                audio_params = wave_channel$params
+#'              )
+#'
+#' ## Add tracker ##
+#' # 1 min (numeric scale is in minutes)
+#' pl_plotly %>% add_play_tracker_line(1)
+#'
+#'
+#' ## Add loop trackers ##
+#' pl_plotly %>% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
+#'}
+#'
+#' @keywords internal
+add_play_tracker_line <- function(
+    pl_plotly = NULL,
+    x_val = 0,
+    proxy = NULL,
+    color = "red",
+    shapeId = "redTrackerLine"
+){
+
+  # Function for creating vertical tracker line
+  make_tracker_shape <- function(x_val, color, shapeId){
+    list(
+      # vertical line
+      list(
+        type = "line",
+        xref = "x1",
+        yref = "paper",
+        line = list(color = color),
+        x0 = x_val, x1 = x_val,
+        y0 = 0.05, y1 = 0.95,
+        name = shapeId
+      )
+    )
+  }
+
+  # x-axis handling
+  x_val <- format_seconds(x_val, as_date = TRUE, as_char = TRUE)
+
+  # Make shapes
+  shapes <- make_tracker_shape(x_val, color, shapeId)
+
+  if(!is.null(pl_plotly) && inherits(pl_plotly, "plotly")){
+    # add tracker line to `plotly` object
+    pl_plotly %>% plotly::layout(shapes = shapes)
+  }else if(!is.null(proxy)){
+    # update tracker line in `renderPlotly` object
+    plotly::plotlyProxyInvoke(proxy, "relayout", list(shapes = shapes))
+  }else{
+    stop("Only one of `proxy`, `pl_plotly` should be supplied. Make sure you passed the right object")
+  }
+}
+
+
+#' @rdname add_play_tracker_line
+#'
+#' @param toggle Logical (`TRUE`/`FALSE`). If `TRUE`, add loop trackers. If `FALSE`,
+#'        remove them if they exist.
+#' @param x_range starting x-axis values for the loop tracker (minutes)
+#' @param y_val Y-axis value for the loop trackers. Should be the minimum of the
+#'        y-axis range
+#'
+#' @keywords internal
+toggle_loop_trackers <- function(
+    pl_plotly = NULL,
+    toggle = TRUE,
+    update = FALSE,
+    proxy = NULL,
+    channel_type = c("left", "right", "stereo"),
+    x_range = c(0, 1),
+    y_val = 0,
+    shapeId = "loopTrackers"
+){
+
+  is_valid_plotly <- !is.null(pl_plotly) && inherits(pl_plotly, "plotly")
+  channel_type <- match.arg(channel_type)
+
+  rm_trackers_plotly <- function(pl_plotly, shapeId){
+    # remove tracker attribute
+    attrs <- purrr::keep(pl_plotly$x$attrs, function(attr){
+      is.null(attr$name) || attr$name != shapeId
+    })
+    pl_plotly$x$attrs <- attrs
+    return(pl_plotly)
+  }
+
+  rm_trackers_proxy <- function(proxy){
+    # Remove last trace from proxy
+    # TODO: find a way to reference shapeId, or guarantee the tracker
+    # is the last trace somehow.
+    plotly::plotlyProxyInvoke(proxy, "deleteTraces", list(as.integer(-1)))
+  }
+
+  if(isFALSE(toggle)){
+    # Disable loop trackers
+    if(isTRUE(is_valid_plotly)){
+      rm_trackers_plotly(pl_plotly, shapeId)
+    }else{
+      rm_trackers_proxy(proxy)
+    }
+  }else{
+    # Add or modify loop trackers
+    checkmate::assert_numeric(x_range, len = 2)
+    checkmate::assert_numeric(y_val, len = 1)
+
+    # Adjust y_val for shiny and stereo channels
+    y_val_pl <- ifelse(shiny::isRunning(), y_val*0.8, y_val*1.1)
+    y_val_pl <- ifelse(channel_type != "stereo", y_val_pl, y_val_pl*0.8)
+
+    loop_data <- tibble::tibble(
+      x = x_range,
+      x_time = format_seconds(x_range*60, as_date = TRUE, as_char = TRUE),
+      y = rep(y_val_pl, 2)
+    )
+
+    # Make shapes
+    markers <- list(symbol = "arrow-up", size = 30, color = c("#FFD700", "#FFA500"))
+    y_axis <- ifelse(channel_type != "stereo", "y1", "y2")
+
+    # Handle updating
+    if(isTRUE(update)){
+      if(isTRUE(is_valid_plotly)){
+        rm_trackers_plotly(pl_plotly, shapeId)
+      }else{
+        rm_trackers_proxy(proxy)
+      }
+    }
+
+    if(isTRUE(is_valid_plotly)){
+      # add loop trackers to `plotly` object
+      pl_plotly %>% plotly::add_markers(
+        data = loop_data, x = ~ as.POSIXct(x_time), y = ~y,
+        marker = markers, name = shapeId,
+        xaxis = "x1", yaxis = y_axis, hoverinfo = "none"
+      )
+    }else{
+      # add loop trackers in `renderPlotly` object
+      plotly::plotlyProxyInvoke(proxy, "addTraces", list(list(
+        x = loop_data$x_time,
+        y = loop_data$y,
+        xaxis = "x1",
+        yaxis = y_axis,
+        mode = "markers",
+        name = shapeId,
+        marker = markers,
+        hoverinfo = "none"
+      )))
+    }
+  }
+}
+
 
 
 
@@ -466,24 +730,6 @@ add_crop_lines <- function(pl_plotly, audio_params, color = "#0BDA51"){
       list(type = "line",
            line = list(color = color, width = 3),
            x0 = crop_start[2], x1 = crop_start[2],
-           y0 = 0, y1 = 1, yref = "paper")
-    )
-  )
-}
-
-#' Add vertical line to plotly object to track current play time
-#'
-#' @param pl_plotly a `plotly` object
-#' @param color color of line
-#'
-#' @keywords internal
-add_play_tracker_line <- function(pl_plotly, color = "red"){
-  pl_plotly %>% plotly::layout(
-    shapes = list(
-      # vertical line
-      list(type = "line",
-           line = list(color = color),
-           x0 = 0, x1 = 0,
            y0 = 0, y1 = 1, yref = "paper")
     )
   )

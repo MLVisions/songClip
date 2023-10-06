@@ -72,19 +72,12 @@
       "Repository": "CRAN",
       "Hash": "cad6cf7f1d5f6e906700b9d3e718c796"
     },
-    "audio": {
-      "Package": "audio",
-      "Version": "0.1-11",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "4ea781155975a6d220888443f5e823dc"
-    },
     "av": {
       "Package": "av",
-      "Version": "0.8.4",
+      "Version": "0.8.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a5827e9c659b5d73d09926838287fcec"
+      "Hash": "bbe8736acc5465f47997ea6f31921dfc"
     },
     "backports": {
       "Package": "backports",
@@ -674,6 +667,13 @@
       "Repository": "CRAN",
       "Hash": "c6acc72327e63668bbc7bd258ee54132"
     },
+    "shinyalert": {
+      "Package": "shinyalert",
+      "Version": "3.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2fd42421abd79dcaf0855fa1d21599a3"
+    },
     "shinycssloaders": {
       "Package": "shinycssloaders",
       "Version": "1.0.0",
@@ -694,6 +694,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "5045276dcad7ad9b785d593b1a710681"
+    },
+    "shinydisconnect": {
+      "Package": "shinydisconnect",
+      "Version": "0.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5c16e89e3737c836858979aee93e3c33"
     },
     "shinyjs": {
       "Package": "shinyjs",
@@ -792,6 +799,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "1fe17157424bb09c48a8b3b550c753bc"
+    },
+    "uuid": {
+      "Package": "uuid",
+      "Version": "1.1-1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3d78edfb977a69fc7a0341bee25e163f"
     },
     "vctrs": {
       "Package": "vctrs",

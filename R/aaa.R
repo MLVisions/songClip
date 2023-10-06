@@ -9,18 +9,8 @@ utils::globalVariables(".rs.invokeShinyWindowExternal")
 utils::globalVariables(".data")
 
 
-.onLoad <- function(libname, pkgname){
+# .onLoad <- function(libname, pkgname){}
 
-  # Check audio player is set
-  wav_player <- set_audio_player()
-  if (!is.null(wav_player)) {
-    packageStartupMessage(glue::glue("Detected Audio Player: '{wav_player}'"))
-  }else{
-    cli::cli_div(theme = list(span.emph = list(color = "red"), span.code = list(color = "blue")))
-    cli::cli_warn(c("!" = "{.emph Could not find audio player}",
-                    ">" = "Please set the path to your audio player via {.code tuneR::setWavPlayer('path/to/player')}"))
-  }
-}
 
 #' Adds the content of www to src_name for use in the shiny app
 #'
@@ -53,7 +43,13 @@ pkg_version <- src_params$version
 VERSION_HEADER <- sprintf("songClip %s", pkg_version)
 
 #' Example audio directory
+#' @export
 EXAMPLE_AUDIO_DIR <- system.file(file.path("examples"), package = "songClip", mustWork = TRUE)
+
+get_audio_examples <- function() {
+  example_dir <- system.file(file.path("examples"), package = "songClip", mustWork = TRUE)
+  list.files(example_dir)
+}
 
 # Make sure python is set up ----------------------------------------------
 

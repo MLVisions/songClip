@@ -8,12 +8,13 @@ make_equalizer_ui <- function(id) {
   ns <- NS(id)
   tagList(
     br(),
-    fluidRow(
-      style = "background-color: #252525; padding-bottom: 1em;
-      margin-right: 0px; margin-left: 0px;",
+    no_margin_row(
+      easy_col = TRUE,
+      bg_color = "#252525",
+      style = "padding-bottom: 1em;",
+      class = "border-gradient border-gradient-green border-shadow-green",
       plotly::plotlyOutput(ns("equalizer_plot"), height = "325px"),
-      fluidRow(
-        style = "margin-right: 0px; margin-left: 0px;",
+      no_margin_row(
         column(
           width = 2, offset = 10, align = "right",
           shinyWidgets::actionBttn(
@@ -62,6 +63,7 @@ make_equalizer_server <- function(id) {
         return(pl)
       })
 
+      outputOptions(output, "equalizer_plot", suspendWhenHidden = FALSE)
 
       # observe plotly events -> update equalizer data in response to dragging points
       observer <- observeEvent(
@@ -185,7 +187,7 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
       showlegend = FALSE
     ) %>%
     stagger_eq_ribbon(data_pl = data_pl) %>%
-    config_plotly()
+    config_plotly(edit_shapes = TRUE)
 
   return(pl_plotly)
 }
@@ -232,7 +234,7 @@ make_equalizer_data <- function(starting_vals = rep(0, 6)){
 update_equalizer_data <- function(eq_data, event_data){
 
   shape_anchors <- event_data[grepl("^shapes.*anchor$", names(event_data))]
-  if (length(shape_anchors) != 2) return(NULL)
+  if (length(shape_anchors) != 2) return(eq_data)
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
   pts <- as.numeric(shape_anchors)
 
@@ -246,9 +248,9 @@ update_equalizer_data <- function(eq_data, event_data){
 }
 
 
-config_plotly <- function(pl){
+config_plotly <- function(pl, edit_shapes = FALSE){
   pl %>% plotly::config(
-    edits = list(shapePosition = TRUE),
+    edits = list(shapePosition = edit_shapes),
     showTips = FALSE, displayModeBar = FALSE
   ) %>%
     plotly::style(hoverinfo = "none")
@@ -312,13 +314,3 @@ stagger_eq_ribbon <- function(pl,
   return(pl)
 }
 
-
-
-format_freq <- function(freq){
-  freq <- round(freq)
-  ifelse(freq >= 1000, paste0(freq/1000, "KHz"), paste0(freq, "Hz"))
-}
-
-format_shift <- function(shift){
-  ifelse(shift >= 0, paste0("+",shift, "dB"), paste0(shift, "dB"))
-}
