@@ -58,11 +58,19 @@ Developer Notes
 
 #### Installation
 
-Run the following in your terminal:
+Assuming you have `git` installed, run the following in your terminal:
 
 ``` bash
 git clone git@github.com:MLVisions/songClip.git
 ```
+
+- **Note for `git` noobs**: You will have to configure `git` to clone
+  successfully. Make sure to <u>use the email you were invited with</u>.
+
+  ``` bash
+  git config --global user.name "FIRST_NAME LAST_NAME"
+  git config --global user.email "MY_NAME@example.com"
+  ```
 
 Run one the following to download all the packages:
 
