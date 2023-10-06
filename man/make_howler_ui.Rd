@@ -9,7 +9,7 @@ make_howler_ui(
   howler_id = "howler",
   seek_ping_rate = 100,
   include_current_track = TRUE,
-  width = "300px",
+  width = NULL,
   options = list(),
   ...
 )

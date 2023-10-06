@@ -9,8 +9,10 @@ make_equalizer_ui <- function(id) {
   tagList(
     br(),
     no_margin_row(
+      easy_col = TRUE,
       bg_color = "#252525",
       style = "padding-bottom: 1em;",
+      class = "border-gradient border-gradient-green border-shadow-green",
       plotly::plotlyOutput(ns("equalizer_plot"), height = "325px"),
       no_margin_row(
         column(
@@ -61,6 +63,7 @@ make_equalizer_server <- function(id) {
         return(pl)
       })
 
+      outputOptions(output, "equalizer_plot", suspendWhenHidden = FALSE)
 
       # observe plotly events -> update equalizer data in response to dragging points
       observer <- observeEvent(
@@ -231,7 +234,7 @@ make_equalizer_data <- function(starting_vals = rep(0, 6)){
 update_equalizer_data <- function(eq_data, event_data){
 
   shape_anchors <- event_data[grepl("^shapes.*anchor$", names(event_data))]
-  if (length(shape_anchors) != 2) return(NULL)
+  if (length(shape_anchors) != 2) return(eq_data)
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
   pts <- as.numeric(shape_anchors)
 

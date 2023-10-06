@@ -20,11 +20,7 @@ audio_playpack_ui <- function(id) {
         color = "black",
         br(),
         column(
-          width = 6,
-          uiOutput(ns("audio_playback_controls"))
-        ),
-        column(
-          width = 2, offset = 2, align = "right",
+          width = 2, offset = 8, align = "right",
           shinyWidgets::dropdown(
             label = "View",
             width = "240px",
@@ -106,27 +102,40 @@ audio_playpack_ui <- function(id) {
           )
         )
       ),
+      #### Audio playback plot ###
       plotly::plotlyOutput(ns("audio_plot")) %>% withSpinner(color="#086A87"),
+      ### Howler UI ###
+      uiOutput(ns("audio_playback_controls")),
+      ### Editing Features ###
       no_margin_row(
         color = "white",
         column(
           width = 10, offset = 1,
+          ### Editing Features ###
           conditionalPanel(
             "input.enable_edits && input.edit_type == 'create_loop'", ns = ns, {
               tagList(
+                tags$hr(class = "custom-hr"),
                 h3("Editing: Create a loop"),
-                sliderInput(
-                  ns("loop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
-                  timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+                div(
+                  class = "gradient-slider-blue",
+                  sliderInput(
+                    ns("loop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
+                    timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+                  )
                 )
               )
             }),
           conditionalPanel("input.enable_edits && input.edit_type == 'crop_audio'", ns = ns, {
             tagList(
-              h3("Editing: Crop Audio"),
-              sliderInput(
-                ns("crop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
-                timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+              tags$hr(class = "custom-hr"),
+              h3("Editing: Crop Audio Track"),
+              div(
+                class = "gradient-slider-blue",
+                sliderInput(
+                  ns("crop_range"), label = NULL, value = c(0, 60), min = 0, max = 60,
+                  timeFormat = "%M:%S (%L ms)", dragRange = TRUE
+                )
               )
             )
           })
@@ -185,7 +194,8 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
 
       output$audio_playback_controls <- renderUI({
         audio_files <- shiny::req(audio_files())
-        make_howler_ui(audio_files, howler_id = ns("howler"), seek_ping_rate = 100)
+        make_howler_ui(audio_files, howler_id = ns("howler"),
+                       seek_ping_rate = 100)
         # This allows playback
         # tags$audio(
         #   src = file.path(src_name, "play.wav"), type = "audio/wav",

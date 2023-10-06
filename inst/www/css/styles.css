@@ -732,6 +732,52 @@ ul.menu #nested-div {
     line-height: 1.333;
 }
 
+/* Gradient Sliders*/
+.gradient-slider-main .irs--shiny .irs-bar {
+  background: linear-gradient(to right, #086A87, #043543) !important;
+  border-top: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.gradient-slider-orange .irs--shiny .irs-bar {
+  background: linear-gradient(to right, #FFD700, #FFA500) !important;
+  border-top: 1px solid #FFA500;
+  border-bottom: 1px solid #FFA500;
+}
+
+.gradient-slider-blue .irs--shiny .irs-bar {
+  background: linear-gradient(to right,  #75b8ed, #4d91c8, #1b5fa6) !important;
+}
+
+.gradient-slider-green .irs--shiny .irs-bar {
+  background: linear-gradient(to right, #00a86b, #0BDA51, #24f46a) !important;
+  border-top: 1px solid #00a86b;
+  border-bottom: 1px solid #00a86b;
+}
+
+/* Gradient borders*/
+.border-gradient {
+  border: 10px solid;
+  border-image-slice: 1;
+  border-width: 4px;
+}
+
+.border-gradient-purple {
+  border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
+}
+
+.border-gradient-green {
+  border-image-source: linear-gradient(to left, #00C853, #B2FF59);
+}
+
+.border-shadow-green {
+  -moz-box-shadow: 0px 0px 16px 6px #0bda51;
+  -webkit-box-shadow: 0px 0px 16px 6px #0bda51;
+  box-shadow: 0px 0px 16px 6px #0bda51;
+  margin-bottom: 2.5em !important;
+  margin-left: 2em !important;
+  margin-right: 2em !important;
+}
 
 /* Regular shiny radiobutton*/
 /* Special case that is native to each OS/browser, normally cant change this color, */

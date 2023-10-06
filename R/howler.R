@@ -15,12 +15,13 @@ make_howler_ui <- function(
     howler_id = "howler",
     seek_ping_rate = 100,
     include_current_track = TRUE,
-    width = "300px",
+    width = NULL,
     options = list(),
     ...
 ){
 
-  # TODO: define new div classes for improved styling (dont delete old ones)
+  # Fill full width if not specified
+  width <- if(is.null(width)) "-webkit-fill-available" else width
 
   div(
     class = "howler-module",

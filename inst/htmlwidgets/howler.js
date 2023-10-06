@@ -368,12 +368,12 @@ HTMLWidgets.widget({
   }
 });
 
+
 function updateVolume() {
   const percent = this.value / this.max * 100;
-  $(this).css(
-    "background",
-    "linear-gradient(to right, #888 0%, #888 " + percent + "%, #F1F3F4 " + percent + "%, #F1F3F4 100%)"
-  );
+  const percent_lag = percent / 3;
+  const gradientColor = `linear-gradient(to right, #FFD700 0%, #FFD700 ${percent_lag}%, #FFA500 ${percent}%, transparent ${percent}%, transparent 100%)`;
+  $(this).css("background", gradientColor);
 }
 
 $(function() {

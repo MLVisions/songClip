@@ -76,17 +76,16 @@ format_shift <- function(shift){
 #' be added when they aren't necessary. Manually removing the left and right margins
 #' was the easiest method for removing these scrollbars.
 #'
-#' @param ... HTML tags
-#' @param style html formatted string to append to the `style` argument of a `fluidRow`.
-#' @param color font color of the `fluidRow`.
-#' @param bg_color background color of the `fluidRow`.
+#' @inheritParams easy_row
 #'
 #' @keywords internal
 no_margin_row <- function(
     ...,
     easy_col = FALSE,
+    width = 12,
     align = c("left", "right", "center", "justify"),
     style = NULL,
+    class = NULL,
     color = NULL,
     bg_color = NULL
 ){
@@ -101,15 +100,29 @@ no_margin_row <- function(
     easy_col = easy_col,
     align = align,
     style = style,
+    class = class,
     color = color,
     bg_color = bg_color
   )
 }
 
 
+#' Shorthand for full width \code{\link{fluidRow}}
+#'
+#' @param ... HTML tags
+#' @param easy_col Logical (`TRUE`/`FALSE`). If `TRUE`, add a single \code{\link{column}}.
+#' @param width width of the `column()` if `easy_col = TRUE`.
+#' @param align alignment of `column()` if `easy_col = TRUE`.
+#' @param style html formatted string to append to the `style` argument of a `fluidRow`.
+#' @param class element class to pass to `fluidRow`.
+#' @param color font color of the `fluidRow`.
+#' @param bg_color background color of the `fluidRow`.
+#'
+#' @keywords internal
 easy_row <- function(
     ...,
     easy_col = FALSE,
+    width = 12,
     align = c("left", "right", "center", "justify"),
     style = NULL,
     class = NULL,
@@ -128,7 +141,7 @@ easy_row <- function(
       style = style,
       class = class,
       shiny::column(
-        width = 12,
+        width = width,
         align = align,
         ...
       )

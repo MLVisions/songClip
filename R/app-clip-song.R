@@ -64,6 +64,7 @@ clip_song <- function(browser = FALSE, audio_dir = EXAMPLE_AUDIO_DIR){
           tags$script(HTML(jqueryHeader)),
           tags$style(HTML(noWrap_css)),
           # Styling
+          tags$script(src = file.path(src_name, "js", "gradient-slider.js")),
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "styles.css")),
           tags$link(rel = "stylesheet", type = "text/css", href = file.path(src_name, "css", "roboto.css")),
           tags$style(HTML(".content-wrapper, .right-side {
