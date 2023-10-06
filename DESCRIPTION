@@ -13,7 +13,6 @@ License: MIT + file LICENSE
 Depends:
     R (>= 3.5),
 Imports: 
-    audio,
     av,
     bslib,
     cli (>= 3.3.0),
@@ -25,9 +24,11 @@ Imports:
     grDevices,
     here,
     htmltools,
+    htmlwidgets,
     magrittr (>= 2.0.3),
     purrr,
     plotly (>= 4.9.2),
+    processx,
     readr,
     reticulate,
     rlang,

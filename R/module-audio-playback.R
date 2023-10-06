@@ -259,7 +259,6 @@ audio_playpack_server <- function(id, audio_choices, audio_dir, audio_select) {
       # Audio inspection plot
       audio_plot <- reactive({
         audio_obj <- shiny::req(audio_obj())
-        assign("audio_obj", audio_obj, envir = .GlobalEnv)
         # update value of tracker on client side (always start at 0 for new audio object)
         plot_wave_audio(audio_obj, type = input$channel_type,
                         source = "wave_audio", include_info = input$show_info)

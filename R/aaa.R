@@ -43,6 +43,7 @@ pkg_version <- src_params$version
 VERSION_HEADER <- sprintf("songClip %s", pkg_version)
 
 #' Example audio directory
+#' @export
 EXAMPLE_AUDIO_DIR <- system.file(file.path("examples"), package = "songClip", mustWork = TRUE)
 
 get_audio_examples <- function() {
