@@ -137,6 +137,8 @@ features.
 Not sure if \code{source} will be supported for \code{stereo} types
 }
 \examples{
+
+\dontrun{
 # Read in audio file with `tuneR`
 audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
@@ -153,7 +155,7 @@ plot_wave_channel_fancy(
     audio_data = wave_channel$audio_data,
     audio_params = wave_channel$params
 )
-
+}
 
 }
 \seealso{

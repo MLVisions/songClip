@@ -40,9 +40,9 @@ dev_warning <- function(warn_msg){
 #'        string.
 #'
 #' @examples
-#'
+#' \dontrun{
 #' format_seconds(80, as_date = FALSE)
-#'
+#' }
 #' @return character string formatted as `{minutes:seconds}`
 #' @keywords internal
 format_seconds <- function(time, as_date = TRUE, as_char = FALSE){

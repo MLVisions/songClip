@@ -50,6 +50,8 @@ current play time. This function can also be used to update its underlying data 
 a shiny app by supplying a \code{\link{plotlyProxy}} object instead of \code{pl_plotly}.
 }
 \examples{
+
+\dontrun{
 # Read in audio file with `tuneR`
 audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 
@@ -67,6 +69,7 @@ pl_plotly \%>\% add_play_tracker_line(1)
 
 ## Add loop trackers ##
 pl_plotly \%>\% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
+}
 
 }
 \seealso{

@@ -19,8 +19,8 @@ character string formatted as \code{{minutes:seconds}}
 Format seconds as \code{{minutes:seconds}}
 }
 \examples{
-
+\dontrun{
 format_seconds(80, as_date = FALSE)
-
+}
 }
 \keyword{internal}

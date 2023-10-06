@@ -35,6 +35,8 @@
 #'
 #' @seealso [add_play_tracker_line()]
 #' @examples
+#'
+#' \dontrun{
 #' # Read in audio file with `tuneR`
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
@@ -51,7 +53,7 @@
 #'     audio_data = wave_channel$audio_data,
 #'     audio_params = wave_channel$params
 #' )
-#'
+#' }
 #'
 #' @importFrom graphics par title mtext segments axis axTicks
 #' @return a `plotly` object if `format = "fancy"`. Otherwise `NULL` invisibly
@@ -542,6 +544,8 @@ process_wave_channel <- function(audio_obj,
 #'
 #'
 #' @examples
+#'
+#' \dontrun{
 #' # Read in audio file with `tuneR`
 #' audio_obj <- tuneR::readMP3(file.path(EXAMPLE_AUDIO_DIR, "flowers.mp3"))
 #'
@@ -559,6 +563,7 @@ process_wave_channel <- function(audio_obj,
 #'
 #' ## Add loop trackers ##
 #' pl_plotly %>% toggle_loop_trackers(x_range = c(0, 3.36), y_val = -32768)
+#'}
 #'
 #' @keywords internal
 add_play_tracker_line <- function(
