@@ -65,6 +65,22 @@ import_audio_server <- function(id,
 
     ns <- session$ns
 
+    # Handling for specified audio directory
+    observeEvent(audio_dir, {
+      if(!fs::dir_exists(audio_dir)){
+        msg <- paste0("
+        Please select the appropriate location using the
+        `Set Library` dropdown or re-launch the app. Defaulting to example
+        library.") %>% gsub("\n", " ", .)
+        shinyalert::shinyalert(
+          title = "The audio library you specified does not exist", text = msg,
+          type = "warning", session = session
+        )
+        global$audio_dir <- EXAMPLE_AUDIO_DIR
+      }
+    }, priority = 2)
+
+
     # Directory Options
     root_opts <- set_root_opts(audio_dir, title)
 
@@ -78,12 +94,28 @@ import_audio_server <- function(id,
     global <- reactiveValues(audio_dir = audio_dir, audio_choices = NULL)
 
     output$dir_selected <- renderUI({
-      HTML(paste0("<span class='folder-path-small'>", global$audio_dir, "</span>"))
+      path_abs <- fs::path_real(shiny::req(global$audio_dir))
+      HTML(
+        paste0(
+          "<span class='folder-path-small' style = 'word-wrap: break-word;
+          max-width: 320px; width: fit-content;'>", path_abs, "</span>")
+      )
     })
 
     output$dir_selected_rel <- renderUI({
-      path_rel <- fs::path_rel(global$audio_dir, "~")
-      HTML(paste0("Audio library: <span class='folder-path-small'>", path_rel, "</span>"))
+      path <- shiny::req(global$audio_dir)
+      if(fs::path_real(path) == path.expand("~")){
+        path_rel <- "Home"
+      }else{
+        path_rel <- file.path("~", fs::path_rel(path, "~"))
+      }
+      HTML(
+        paste0(
+          "Audio library: <span class='folder-path-small'
+          style = 'word-wrap: break-word; max-width: 250px; width: fit-content;'>",
+          path_rel, "</span>"
+        )
+      )
     })
 
     observeEvent(input$audio_dir, {
@@ -159,9 +191,27 @@ set_root_opts <- function(audio_dir, title){
     )
   }
 
+  # Add example directory if not set to audio_dir
+  if(is.null(audio_dir) || audio_dir != EXAMPLE_AUDIO_DIR){
+    root_opts <- c(
+      eval(parse(text = glue::glue("c('Examples' = EXAMPLE_AUDIO_DIR)"))),
+      root_opts
+    )
+  }
+
   # Add specified audio_dir if it's not part of the current list
-  if(!is.null(audio_dir) && !(fs::path_norm(audio_dir) %in% fs::path_norm(unname(root_opts)))){
-    root_opts <- c(eval(parse(text = glue::glue("c('{title}' = audio_dir)"))), root_opts)
+  valid_dir <- !is.null(audio_dir) && nzchar(audio_dir) && fs::dir_exists(audio_dir)
+  already_specified <- fs::path_real(audio_dir) %in% fs::path_real(unname(root_opts))
+
+  if(isTRUE(valid_dir) && !already_specified){
+    root_opts <- c(
+      eval(parse(text = glue::glue("c('{title}' = audio_dir)"))),
+      root_opts
+    )
+  }else if(isTRUE(already_specified)){
+    # Reorder to specified
+    selected <- which(fs::path_real(audio_dir) == fs::path_real(unname(root_opts)))
+    root_opts <- c(root_opts[selected], root_opts[-selected])
   }
 
   return(root_opts)
