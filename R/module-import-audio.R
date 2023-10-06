@@ -64,6 +64,7 @@ import_audio_server <- function(id,
   moduleServer(id, function(input, output, session) {
 
     ns <- session$ns
+    global <- reactiveValues(audio_dir = audio_dir, audio_choices = NULL)
 
     # Handling for specified audio directory
     observeEvent(audio_dir, {
@@ -93,7 +94,6 @@ import_audio_server <- function(id,
       filetypes = c('', 'mp4','mp3', 'wav')
     )
 
-    global <- reactiveValues(audio_dir = audio_dir, audio_choices = NULL)
 
     output$dir_selected <- renderUI({
       path_abs <- fs::path_real(shiny::req(global$audio_dir))
@@ -203,7 +203,7 @@ set_root_opts <- function(audio_dir, title){
 
   # Add specified audio_dir if it's not part of the current list
   valid_dir <- !is.null(audio_dir) && nzchar(audio_dir) && fs::dir_exists(audio_dir)
-  already_specified <- fs::path_real(audio_dir) %in% fs::path_real(unname(root_opts))
+  already_specified <- valid_dir && fs::path_real(audio_dir) %in% fs::path_real(unname(root_opts))
 
   if(isTRUE(valid_dir) && !already_specified){
     root_opts <- c(
