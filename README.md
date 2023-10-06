@@ -27,6 +27,8 @@ UIs present in the app:
 
 - Crop songs to save as new MP3 files
 - Cache loop settings
+- Alter playback speed while preserving the pitch
+- Equalizer (UI is set up)
 - The ability to load multiple tracks at once, with the goal of
   mimicking basic features of music production software.
   - Many new features would be added after this point, but better to
