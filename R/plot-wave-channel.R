@@ -665,7 +665,7 @@ toggle_loop_trackers <- function(
     )
 
     # Make shapes
-    markers <- list(symbol = "arrow-up", size = 30, color = c("green", "red"))
+    markers <- list(symbol = "arrow-up", size = 30, color = c("#FFD700", "#FFA500"))
     y_axis <- ifelse(channel_type != "stereo", "y1", "y2")
 
     # Handle updating
