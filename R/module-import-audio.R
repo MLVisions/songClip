@@ -67,7 +67,9 @@ import_audio_server <- function(id,
 
     # Handling for specified audio directory
     observeEvent(audio_dir, {
-      if(!fs::dir_exists(audio_dir)){
+      if(is.null(audio_dir)){
+        global$audio_dir <- EXAMPLE_AUDIO_DIR
+      }else if(!fs::dir_exists(audio_dir)){
         msg <- paste0("
         Please select the appropriate location using the
         `Set Library` dropdown or re-launch the app. Defaulting to example
@@ -78,7 +80,7 @@ import_audio_server <- function(id,
         )
         global$audio_dir <- EXAMPLE_AUDIO_DIR
       }
-    }, priority = 2)
+    }, priority = 2, ignoreNULL = FALSE)
 
 
     # Directory Options
