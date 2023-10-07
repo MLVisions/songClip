@@ -31,7 +31,6 @@
 #' `plot_wave_channel_fancy` uses `plotly` to create a much nicer plot with additional
 #' features.
 #'
-#' Not sure if `source` will be supported for `stereo` types
 #'
 #' @seealso [add_play_tracker_line()]
 #' @examples
@@ -45,11 +44,11 @@
 #' plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 #' plot_wave_audio(audio_obj, type = "right")
 #' plot_wave_audio(audio_obj, type = "stereo")
-#' plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
+#' plot_wave_audio(audio_obj, range_slider = FALSE, include_info = TRUE)
 #'
 #' # step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
-#' wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
-#' plot_wave_channel_fancy(
+#' wave_channel <- songClip:::process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+#' songClip:::plot_wave_channel_fancy(
 #'     audio_data = wave_channel$audio_data,
 #'     audio_params = wave_channel$params
 #' )
@@ -255,7 +254,7 @@ plot_wave_audio <- function(audio_obj,
       # Adjust for range slider
       y_shift <- ifelse(isTRUE(range_slider), y_shift - 0.15, y_shift)
       # Adjust for shiny environment
-      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.09, y_shift)
+      y_shift <- ifelse(shiny::isRunning(), y_shift - 0.18, y_shift)
 
       pl <- pl %>% plotly::layout(
         annotations = list(

@@ -133,8 +133,6 @@ We want more control over the visual, the ability to plot the different wave cha
 and for the plot to be interactive, so this code had to be pulled out and refactored.
 \code{plot_wave_channel_fancy} uses \code{plotly} to create a much nicer plot with additional
 features.
-
-Not sure if \code{source} will be supported for \code{stereo} types
 }
 \examples{
 
@@ -147,11 +145,11 @@ plot_wave_audio(audio_obj)
 plot_wave_audio(audio_obj, format = "base") # similar to `tuneR::plot()`
 plot_wave_audio(audio_obj, type = "right")
 plot_wave_audio(audio_obj, type = "stereo")
-plot_wave_audio(audio_obj, range_slider = FALSE, include_info = FALSE)
+plot_wave_audio(audio_obj, range_slider = FALSE, include_info = TRUE)
 
 # step-wise (can only process one channel at a time - defaults to `audio_obj@left`)
-wave_channel <- process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
-plot_wave_channel_fancy(
+wave_channel <- songClip:::process_wave_channel(audio_obj, simplify = TRUE, nr = 2500)
+songClip:::plot_wave_channel_fancy(
     audio_data = wave_channel$audio_data,
     audio_params = wave_channel$params
 )
