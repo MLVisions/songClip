@@ -3,9 +3,10 @@ Title: Modify songs
 Version: 0.0.0.9000
 Authors@R: 
     c(
-      person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", role = c("aut", "cre")),
-      person(given = "Krzysztof", family = "Mazur", email = "krzysztofm321@gmail.com", role = c("aut")),
-      person("Ashley", "Baldry", email = "arbaldry91@gmail.com", role = "aut", comment = "foundation of howler widget"),
+      person(given = "Kyle", family = "Barrett", email = "barrettk@metrumrg.com", 
+      role = c("aut", "cre"), comment = "Creator of songClip"),
+      person("Ashley", "Baldry", email = "arbaldry91@gmail.com", role = "aut", 
+      comment = "Created foundation of the howler widget, used for some audio playback options"),
       person("James", "Simpson", role = "aut", comment = "Creator of howler.js")
     )
 Description: R package (with python dependencies) for cropping & tuning songs.

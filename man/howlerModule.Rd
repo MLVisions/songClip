@@ -42,6 +42,7 @@ A simple module containing a howler player and a default set of howler buttons. 
 current position of the track being played and the duration of the track.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR)[1:2])
   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
@@ -62,6 +63,6 @@ if (interactive()) {
 
   shinyApp(ui, server)
 }
-
+}
 }
 \keyword{internal}

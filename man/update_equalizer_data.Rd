@@ -14,3 +14,4 @@ update_equalizer_data(eq_data, event_data)
 \description{
 Update equalizer data in response to changes in plotly shape anchors
 }
+\keyword{internal}

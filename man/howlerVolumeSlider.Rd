@@ -26,6 +26,7 @@ If using \code{howlerVolumeSlider}, avoid using the volume buttons, as this will
 shiny application and prevents the slider from working properly.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   library(shiny)
   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
@@ -42,6 +43,7 @@ if (interactive()) {
   }
 
   shinyApp(ui, server)
+}
 }
 
 }

@@ -59,6 +59,8 @@ that the buttons are linked to the player.
 i.e. If \code{howler(id = "howler")}, then \code{howlerPlayButton(id = "howler")}
 }
 \examples{
+
+\dontrun{
 if (interactive()) {
   library(shiny)
 
@@ -77,7 +79,7 @@ if (interactive()) {
   shinyApp(ui, server)
 }
 
-\dontrun{
+
 # Multiple file formats
 howler(
   elementId = "howler",

@@ -93,6 +93,7 @@ When using a \code{play_pause} button, the icon will toggle between the play and
 depending on whether or not the track is playing.
 }
 \examples{
+\dontrun{
 if (interactive()) {
   library(shiny)
   sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
@@ -116,5 +117,6 @@ if (interactive()) {
   shinyApp(ui, server)
 }
 
+}
 }
 \keyword{internal}
