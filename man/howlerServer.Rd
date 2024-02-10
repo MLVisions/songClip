@@ -56,6 +56,7 @@ will all be applied to the current track.
 \code{addTrack} will add a new track to the specified player.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   library(shiny)
   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))
@@ -74,6 +75,7 @@ if (interactive()) {
   }
 
   shinyApp(ui, server)
+}
 }
 
 }

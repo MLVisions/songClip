@@ -18,6 +18,7 @@ playing.
 A UI element that can be included with a \code{\link{howler}} to manually change the location of the track.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   library(shiny)
   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
@@ -34,6 +35,7 @@ if (interactive()) {
   }
 
   shinyApp(ui, server)
+}
 }
 
 }

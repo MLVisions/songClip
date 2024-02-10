@@ -25,6 +25,7 @@ A \code{div} tag that will be linked to the \code{\link{howler}} to show the cur
 A way to display track information in the UI without having to communicate with the server.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   library(shiny)
 
@@ -44,6 +45,7 @@ if (interactive()) {
   }
 
   shinyApp(ui, server)
+}
 }
 
 }

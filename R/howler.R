@@ -86,6 +86,7 @@ make_howler_ui <- function(
 #' }
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR)[1:2])
 #'   addResourcePath("audio", EXAMPLE_AUDIO_DIR)
@@ -106,7 +107,7 @@ make_howler_ui <- function(
 #'
 #'   shinyApp(ui, server)
 #' }
-#'
+#' }
 #' @name howlerModule
 #' @rdname howlerModule
 #' @keywords internal
@@ -419,6 +420,7 @@ widget_html.howler <- function(id, style, class, ...) {
 #' depending on whether or not the track is playing.
 #'
 #' @examples
+#' \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'   sound_file <- list.files(EXAMPLE_AUDIO_DIR)[1]
@@ -442,6 +444,7 @@ widget_html.howler <- function(id, style, class, ...) {
 #'   shinyApp(ui, server)
 #' }
 #'
+#'}
 #' @rdname howlerButton
 #' @keywords internal
 howlerButton <- function(howler_id, button_type = HOWLER_BUTTON_TYPES, ...) {
@@ -554,6 +557,7 @@ HOWLER_BUTTON_TYPES <- c(
 #' A \code{div} tag that will be linked to the \code{\link{howler}} to show the current track.
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'
@@ -573,6 +577,7 @@ HOWLER_BUTTON_TYPES <- c(
 #'   }
 #'
 #'   shinyApp(ui, server)
+#' }
 #' }
 #'
 #' @rdname howler_meta
@@ -618,6 +623,7 @@ howlerDurationTime <- function(id, ...) {
 #'
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'   sound_files <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))
@@ -636,6 +642,7 @@ howlerDurationTime <- function(id, ...) {
 #'   }
 #'
 #'   shinyApp(ui, server)
+#' }
 #' }
 #'
 #' @return
@@ -738,6 +745,7 @@ seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
 #' shiny application and prevents the slider from working properly.
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
@@ -754,6 +762,7 @@ seekHowl <- function(id, seek, session = getDefaultReactiveDomain()) {
 #'   }
 #'
 #'   shinyApp(ui, server)
+#' }
 #' }
 #'
 #' @keywords internal
@@ -789,6 +798,7 @@ howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
 #' playing.
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'   sound_file <- file.path("audio", list.files(EXAMPLE_AUDIO_DIR))[1]
@@ -806,6 +816,7 @@ howlerVolumeSlider <- function(id, volume = 1, button = TRUE) {
 #'
 #'   shinyApp(ui, server)
 #' }
+#'}
 #'
 #' @keywords internal
 howlerSeekSlider <- function(id) {
