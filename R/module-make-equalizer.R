@@ -202,6 +202,8 @@ make_equalizer_plot <- function(eq_data = make_equalizer_data(),
 #' Make equalizer data
 #'
 #' @param starting_vals vector of starting values
+#'
+#' @keywords internal
 make_equalizer_data <- function(starting_vals = rep(0, 6)){
 
   # Must be exactly 6 values (this is how presets will work)
@@ -231,6 +233,8 @@ make_equalizer_data <- function(starting_vals = rep(0, 6)){
 #'
 #' @param eq_data dataset in the form returned by `make_equalizer_data`
 #' @param event_data data returned by `plotly::event_data()`
+#'
+#' @keywords internal
 update_equalizer_data <- function(eq_data, event_data){
 
   shape_anchors <- event_data[grepl("^shapes.*anchor$", names(event_data))]

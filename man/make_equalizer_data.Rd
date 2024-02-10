@@ -12,3 +12,4 @@ make_equalizer_data(starting_vals = rep(0, 6))
 \description{
 Make equalizer data
 }
+\keyword{internal}

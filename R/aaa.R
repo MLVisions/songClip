@@ -40,6 +40,7 @@ src_path <- src_params$src_path
 pkg_version <- src_params$version
 
 #' Header Text
+#' @keywords internal
 VERSION_HEADER <- sprintf("songClip %s", pkg_version)
 
 #' Example audio directory
