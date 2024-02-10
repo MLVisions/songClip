@@ -248,6 +248,8 @@ howlerModuleServer <- function(id) {
 #' }
 #'
 #' @examples
+#'
+#' \dontrun{
 #' if (interactive()) {
 #'   library(shiny)
 #'
@@ -266,7 +268,7 @@ howlerModuleServer <- function(id) {
 #'   shinyApp(ui, server)
 #' }
 #'
-#' \dontrun{
+#'
 #' # Multiple file formats
 #' howler(
 #'   elementId = "howler",
