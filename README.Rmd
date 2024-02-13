@@ -15,7 +15,7 @@ if (interactive() || isTRUE(getOption('knitr.in.progress'))) {
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-# songClip
+# songClip <a href='https://github.com/MLVisions/songClip'><img src='man/figures/logo.png' align="right" height="180" style="float:right; height:180px;"/></a>
 
 ## Running the app
 
