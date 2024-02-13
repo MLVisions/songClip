@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# songClip
+# songClip <a href='https://github.com/MLVisions/songClip'><img src='man/figures/logo.png' align="right" height="180" style="float:right; height:180px;"/></a>
 
 ## Running the app
 
