@@ -2,7 +2,7 @@ pandoc: 3.1.1
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-02-10T16:35Z
+last_built: 2024-02-13T14:33Z
 urls:
   reference: https://mlvisions.github.io/songClip/reference
   article: https://mlvisions.github.io/songClip/articles
